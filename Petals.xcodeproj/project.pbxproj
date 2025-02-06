@@ -1,0 +1,554 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		AC9B1C942D5526B300F3525D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC9B1C7A2D5526B000F3525D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC9B1C812D5526B100F3525D;
+			remoteInfo = Petals;
+		};
+		AC9B1C9E2D5526B300F3525D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC9B1C7A2D5526B000F3525D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC9B1C812D5526B100F3525D;
+			remoteInfo = Petals;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AC9B1C822D5526B100F3525D /* Petals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Petals.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC9B1C932D5526B300F3525D /* PetalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		AC9B1C842D5526B100F3525D /* Petals */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Petals;
+			sourceTree = "<group>";
+		};
+		AC9B1C962D5526B300F3525D /* PetalsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PetalsTests;
+			sourceTree = "<group>";
+		};
+		AC9B1CA02D5526B300F3525D /* PetalsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PetalsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AC9B1C7F2D5526B100F3525D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC9B1C902D5526B300F3525D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC9B1C9A2D5526B300F3525D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AC9B1C792D5526B000F3525D = {
+			isa = PBXGroup;
+			children = (
+				AC9B1C842D5526B100F3525D /* Petals */,
+				AC9B1C962D5526B300F3525D /* PetalsTests */,
+				AC9B1CA02D5526B300F3525D /* PetalsUITests */,
+				AC9B1C832D5526B100F3525D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AC9B1C832D5526B100F3525D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AC9B1C822D5526B100F3525D /* Petals.app */,
+				AC9B1C932D5526B300F3525D /* PetalsTests.xctest */,
+				AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AC9B1C812D5526B100F3525D /* Petals */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC9B1CA72D5526B300F3525D /* Build configuration list for PBXNativeTarget "Petals" */;
+			buildPhases = (
+				AC9B1C7E2D5526B100F3525D /* Sources */,
+				AC9B1C7F2D5526B100F3525D /* Frameworks */,
+				AC9B1C802D5526B100F3525D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AC9B1C842D5526B100F3525D /* Petals */,
+			);
+			name = Petals;
+			packageProductDependencies = (
+			);
+			productName = Petals;
+			productReference = AC9B1C822D5526B100F3525D /* Petals.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AC9B1C922D5526B300F3525D /* PetalsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC9B1CAA2D5526B300F3525D /* Build configuration list for PBXNativeTarget "PetalsTests" */;
+			buildPhases = (
+				AC9B1C8F2D5526B300F3525D /* Sources */,
+				AC9B1C902D5526B300F3525D /* Frameworks */,
+				AC9B1C912D5526B300F3525D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC9B1C952D5526B300F3525D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AC9B1C962D5526B300F3525D /* PetalsTests */,
+			);
+			name = PetalsTests;
+			packageProductDependencies = (
+			);
+			productName = PetalsTests;
+			productReference = AC9B1C932D5526B300F3525D /* PetalsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AC9B1C9C2D5526B300F3525D /* PetalsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC9B1CAD2D5526B300F3525D /* Build configuration list for PBXNativeTarget "PetalsUITests" */;
+			buildPhases = (
+				AC9B1C992D5526B300F3525D /* Sources */,
+				AC9B1C9A2D5526B300F3525D /* Frameworks */,
+				AC9B1C9B2D5526B300F3525D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC9B1C9F2D5526B300F3525D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AC9B1CA02D5526B300F3525D /* PetalsUITests */,
+			);
+			name = PetalsUITests;
+			packageProductDependencies = (
+			);
+			productName = PetalsUITests;
+			productReference = AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AC9B1C7A2D5526B000F3525D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					AC9B1C812D5526B100F3525D = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					AC9B1C922D5526B300F3525D = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = AC9B1C812D5526B100F3525D;
+					};
+					AC9B1C9C2D5526B300F3525D = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = AC9B1C812D5526B100F3525D;
+					};
+				};
+			};
+			buildConfigurationList = AC9B1C7D2D5526B000F3525D /* Build configuration list for PBXProject "Petals" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AC9B1C792D5526B000F3525D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = AC9B1C832D5526B100F3525D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AC9B1C812D5526B100F3525D /* Petals */,
+				AC9B1C922D5526B300F3525D /* PetalsTests */,
+				AC9B1C9C2D5526B300F3525D /* PetalsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AC9B1C802D5526B100F3525D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC9B1C912D5526B300F3525D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC9B1C9B2D5526B300F3525D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AC9B1C7E2D5526B100F3525D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC9B1C8F2D5526B300F3525D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC9B1C992D5526B300F3525D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AC9B1C952D5526B300F3525D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC9B1C812D5526B100F3525D /* Petals */;
+			targetProxy = AC9B1C942D5526B300F3525D /* PBXContainerItemProxy */;
+		};
+		AC9B1C9F2D5526B300F3525D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC9B1C812D5526B100F3525D /* Petals */;
+			targetProxy = AC9B1C9E2D5526B300F3525D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AC9B1CA52D5526B300F3525D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AC9B1CA62D5526B300F3525D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AC9B1CA82D5526B300F3525D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Petals/Petals.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Petals/Preview Content\"";
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.Petals;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AC9B1CA92D5526B300F3525D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Petals/Petals.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Petals/Preview Content\"";
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.Petals;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AC9B1CAB2D5526B300F3525D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Petals.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Petals";
+			};
+			name = Debug;
+		};
+		AC9B1CAC2D5526B300F3525D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Petals.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Petals";
+			};
+			name = Release;
+		};
+		AC9B1CAE2D5526B300F3525D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Petals;
+			};
+			name = Debug;
+		};
+		AC9B1CAF2D5526B300F3525D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Petals;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AC9B1C7D2D5526B000F3525D /* Build configuration list for PBXProject "Petals" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC9B1CA52D5526B300F3525D /* Debug */,
+				AC9B1CA62D5526B300F3525D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC9B1CA72D5526B300F3525D /* Build configuration list for PBXNativeTarget "Petals" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC9B1CA82D5526B300F3525D /* Debug */,
+				AC9B1CA92D5526B300F3525D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC9B1CAA2D5526B300F3525D /* Build configuration list for PBXNativeTarget "PetalsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC9B1CAB2D5526B300F3525D /* Debug */,
+				AC9B1CAC2D5526B300F3525D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC9B1CAD2D5526B300F3525D /* Build configuration list for PBXNativeTarget "PetalsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC9B1CAE2D5526B300F3525D /* Debug */,
+				AC9B1CAF2D5526B300F3525D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AC9B1C7A2D5526B000F3525D /* Project object */;
+}
