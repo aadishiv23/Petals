@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AC9B1CE12D5527F000F3525D /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = AC9B1CE02D5527F000F3525D /* GoogleGenerativeAI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AC9B1C942D5526B300F3525D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC9B1CE12D5527F000F3525D /* GoogleGenerativeAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 				AC9B1C842D5526B100F3525D /* Petals */,
 				AC9B1C962D5526B300F3525D /* PetalsTests */,
 				AC9B1CA02D5526B300F3525D /* PetalsUITests */,
+				AC9B1CDF2D5527F000F3525D /* Frameworks */,
 				AC9B1C832D5526B100F3525D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +96,13 @@
 				AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AC9B1CDF2D5527F000F3525D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +125,7 @@
 			);
 			name = Petals;
 			packageProductDependencies = (
+				AC9B1CE02D5527F000F3525D /* GoogleGenerativeAI */,
 			);
 			productName = Petals;
 			productReference = AC9B1C822D5526B100F3525D /* Petals.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = AC9B1C792D5526B000F3525D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AC9B1CBC2D55277D00F3525D /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AC9B1C832D5526B100F3525D /* Products */;
 			projectDirPath = "";
@@ -549,6 +566,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AC9B1CBC2D55277D00F3525D /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/generative-ai-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AC9B1CE02D5527F000F3525D /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC9B1CBC2D55277D00F3525D /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AC9B1C7A2D5526B000F3525D /* Project object */;
 }
