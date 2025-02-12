@@ -195,6 +195,9 @@
 			);
 			mainGroup = AC9B1C792D5526B000F3525D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AC5D700C2D5CFF5B007314B6 /* XCRemoteSwiftPackageReference "OllamaKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AC9B1C832D5526B100F3525D /* Products */;
 			projectDirPath = "";
@@ -549,6 +552,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AC5D700C2D5CFF5B007314B6 /* XCRemoteSwiftPackageReference "OllamaKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kevinhermawan/OllamaKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.7;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = AC9B1C7A2D5526B000F3525D /* Project object */;
 }

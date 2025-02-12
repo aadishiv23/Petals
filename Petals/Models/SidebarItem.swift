@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+/// We define an enum for what the user selected in the sidebar
+enum SidebarItem: Hashable {
+    case home
+    case chat(id: UUID)
+}
