@@ -92,6 +92,7 @@ class ConversationViewModel: ObservableObject {
                     }
                 }
             } catch {
+                print("here")
                 self.error = error
                 print(error.localizedDescription)
                 messages.removeLast()

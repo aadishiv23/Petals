@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		ACFFFDF12D5D36470057BEC2 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = ACFFFDF02D5D36470057BEC2 /* GoogleGenerativeAI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AC9B1C942D5526B300F3525D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACFFFDF12D5D36470057BEC2 /* GoogleGenerativeAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = Petals;
 			packageProductDependencies = (
+				ACFFFDF02D5D36470057BEC2 /* GoogleGenerativeAI */,
 			);
 			productName = Petals;
 			productReference = AC9B1C822D5526B100F3525D /* Petals.app */;
@@ -197,6 +203,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AC5D700C2D5CFF5B007314B6 /* XCRemoteSwiftPackageReference "OllamaKit" */,
+				ACFFFDEF2D5D36470057BEC2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AC9B1C832D5526B100F3525D /* Products */;
@@ -562,7 +569,23 @@
 				minimumVersion = 5.0.7;
 			};
 		};
+		ACFFFDEF2D5D36470057BEC2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/generative-ai-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.6;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ACFFFDF02D5D36470057BEC2 /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ACFFFDEF2D5D36470057BEC2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AC9B1C7A2D5526B000F3525D /* Project object */;
 }

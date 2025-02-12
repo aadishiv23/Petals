@@ -1,6 +1,15 @@
 {
-  "originHash" : "2a6dd4690782eafea32e6e7295c65202dfd26738f2ea7ea9dea09c65b0d93057",
+  "originHash" : "642d04bb70d8d2c94eb46f6520eddcf70cbe21fd2991e78d1a5e1360de94ee94",
   "pins" : [
+    {
+      "identity" : "generative-ai-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/generative-ai-swift",
+      "state" : {
+        "revision" : "44b8ce120425f9cf53ca756f3434ca2c2696f8bd",
+        "version" : "0.5.6"
+      }
+    },
     {
       "identity" : "ollamakit",
       "kind" : "remoteSourceControl",

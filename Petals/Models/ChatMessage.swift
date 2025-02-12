@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChatMessage: Identifiable, Equatable {
+struct ChatMessage: Identifiable, Equatable, Hashable {
     let id = UUID()
     let date = Date()
     

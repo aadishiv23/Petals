@@ -16,6 +16,8 @@ struct SidebarView: View {
     /// The binding to the selected sidebar item.
     @Binding var selectedItem: SidebarItem?
     
+    @Binding var chatHistory: [ChatHistory]
+
     // FIXME: Temp
     @ObservedObject var conversationalVM: ConversationViewModel
 
@@ -26,7 +28,7 @@ struct SidebarView: View {
                 .padding()
 
             List(selection: $selectedItem) {
-                Label("Home", image: "house")
+                Label("Home", systemImage: "house")
                     .tag(SidebarItem.home)
 
                 // LLM Chat (just a placeholder if you want to jump right in)
@@ -34,19 +36,30 @@ struct SidebarView: View {
                     .tag(SidebarItem.chat(id: UUID())) // ephemeral ID if you want direct switch
 
                 Divider()
-                
-                Button {
-                    // Do action in future
-                } label: {
-                    HStack {
-                        Image(systemName: "plus.circle")
-                        Text("New Chat")
+
+                // Display the actual chat sessions in the sidebar
+                Section("Chats") {
+                    ForEach(chatHistory) { chat in
+                        Text(chat.title)
+                            .tag(SidebarItem.chat(id: chat.id))
                     }
                 }
-                .buttonStyle(LinkButtonStyle())
-                .padding()
             }
             .listStyle(.sidebar)
+
+            Button {
+                conversationalVM.startNewChat()
+                let newSession = ChatHistory(title: "Chat #\(chatHistory.count + 1)")
+                chatHistory.append(newSession)
+                selectedItem = .chat(id: newSession.id)
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle")
+                    Text("New Chat")
+                }
+            }
+            .buttonStyle(LinkButtonStyle())
+            .padding(.horizontal)
         }
     }
 }
