@@ -12,7 +12,7 @@ import SwiftUI
 struct LLMChatView: View {
     @ObservedObject var conversationVM: ConversationViewModel
     @State private var userInput: String = ""
-    @Namespace private var animation
+    @State private var showActionBar = false
 
     let availableModels = [
         "gemini-1.5-flash-8b",
@@ -23,24 +23,48 @@ struct LLMChatView: View {
     ]
 
     var body: some View {
-        VStack(spacing: 0) { // Set spacing to 0
-            VStack {
-                // Model selection dropdown
-                Picker("Model", selection: $conversationVM.selectedModel) {
-                    ForEach(availableModels, id: \.self) { model in
-                        Text(model).tag(model)
-                    }
+        VStack(spacing: 0) {
+            Picker("Model", selection: $conversationVM.selectedModel) {
+                ForEach(availableModels, id: \.self) { model in
+                    Text(model).tag(model)
                 }
-                .pickerStyle(.menu)
-                .padding()
-
-                ScrollView {
-                    ForEach(conversationVM.messages, id: \.id) { msg in
-                        ChatBubbleView(message: msg)
-                    }
-                }
-                .padding()
             }
+            .pickerStyle(.menu)
+            .padding()
+
+            ScrollView {
+                ForEach(conversationVM.messages, id: \.id) { msg in
+                    ChatBubbleView(message: msg)
+                }
+            }
+            .padding()
+            
+            HStack {
+                Button {
+                    showActionBar.toggle()
+                } label: {
+                    Image(systemName: "chevron.up")
+                        .rotationEffect(showActionBar ? Angle(degrees: 90) : Angle(degrees: 0))
+                }
+
+                if showActionBar {
+                    withAnimation {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ActionButton(icon: "doc.fill", label: "Docs")
+                                ActionButton(icon: "pencil", label: "Canvas")
+                                ActionButton(icon: "calendar", label: "Calendar")
+                                ActionButton(icon: "lightbulb", label: "Ideas")
+                                ActionButton(icon: "chart.bar", label: "Analyze")
+                                ActionButton(icon: "graduationcap", label: "Advice")
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                }
+                
+            }
+            .padding(.bottom, 10)
 
             ChatInputBar(userInput: $userInput) {
                 Task {
@@ -53,5 +77,25 @@ struct LLMChatView: View {
                 }
             }
         }
+    }
+}
+
+struct ActionButton: View {
+    let icon: String
+    let label: String
+
+    var body: some View {
+        VStack {
+            Image(systemName: icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+
+            Text(label)
+                .font(.caption)
+        }
+        .padding(8)
+        .background(Color.white.opacity(0.7))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
