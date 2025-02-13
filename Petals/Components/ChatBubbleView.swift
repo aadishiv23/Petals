@@ -18,16 +18,17 @@ struct ChatBubbleView: View {
             if message.participant == .user {
                 Spacer()
                 bubbleContent
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.white)
                     .padding()
                     .background(Color.blue.opacity(0.8))
-                    .clipShape(.capsule)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             } else {
                 bubbleContent
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.white)
                     .padding()
                     .background(Color.gray.opacity(0.8))
-                    .clipShape(.capsule)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                Spacer()
             }
         }
     }

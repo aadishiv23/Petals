@@ -91,14 +91,21 @@ class ConversationViewModel: ObservableObject {
                         messages[messages.count - 1].message += text
                     }
                 }
+            } catch let GenerateContentError.internalError(underlying: error) {
+                if String(describing: error).contains("User location is not supported for the API use.") {
+                    print("Unsupported region, see https://ai.google.dev/available_regions#available_regions")
+                } else {
+                    print("Generate Content Internal Error: \(error)")
+                }
+                messages.removeLast()
             } catch {
-                print("here")
+                print("Generate Content Error: \(error)")
                 self.error = error
-                print(error.localizedDescription)
                 messages.removeLast()
             }
         }
     }
+
 
     private func internalSendMessage(_ text: String) async {
         chatTask?.cancel()

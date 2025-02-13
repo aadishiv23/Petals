@@ -15,7 +15,7 @@ struct SidebarView: View {
 
     /// The binding to the selected sidebar item.
     @Binding var selectedItem: SidebarItem?
-    
+
     @Binding var chatHistory: [ChatHistory]
 
     // FIXME: Temp
@@ -47,7 +47,9 @@ struct SidebarView: View {
             }
             .listStyle(.sidebar)
 
+            // A "new chat" button at bottom
             Button {
+                // Start a brand new chat
                 conversationalVM.startNewChat()
                 let newSession = ChatHistory(title: "Chat #\(chatHistory.count + 1)")
                 chatHistory.append(newSession)
@@ -59,7 +61,8 @@ struct SidebarView: View {
                 }
             }
             .buttonStyle(LinkButtonStyle())
-            .padding(.horizontal)
+            .padding()
         }
+        .listStyle(.sidebar)
     }
 }
