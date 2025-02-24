@@ -1,5 +1,5 @@
 {
-  "originHash" : "642d04bb70d8d2c94eb46f6520eddcf70cbe21fd2991e78d1a5e1360de94ee94",
+  "originHash" : "6d5d7e58c3432a11f920e57342b852b0a79d4a1fcb7c04a580018c83241d89a6",
   "pins" : [
     {
       "identity" : "generative-ai-swift",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "ollamakit",
+      "identity" : "ollama-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kevinhermawan/OllamaKit.git",
+      "location" : "https://github.com/mattt/ollama-swift.git",
       "state" : {
-        "revision" : "791c4c74ee3e67a5bb4a50dc6620c590f119cfd1",
-        "version" : "5.0.7"
+        "revision" : "5b2fe0356781b7033a4089b7c7d89299ae5e52bf",
+        "version" : "1.2.0"
       }
     }
   ],

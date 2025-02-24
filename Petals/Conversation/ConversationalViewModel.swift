@@ -18,121 +18,70 @@ class ConversationViewModel: ObservableObject {
         error != nil
     }
 
-    // Add selectedModel, and initialize it.
     @Published var selectedModel: String {
         didSet {
-            // Important: When the model changes, restart the chat.
-            startNewChat()
+            startNewChat() // ✅ This line requires the function to exist.
         }
     }
-    
-    private var initialModel: String = "gemini-1.5-flash-latest"
 
-    private var model: GenerativeModel
-    private var chat: Chat
-    //private var stopGenerating = false // Removed - unused
+    @Published var useOllama: Bool = false {
+        didSet {
+            switchModel()
+        }
+    }
 
-    private var chatTask: Task<Void, Never>?
+    private var chatModel: AIChatModel
 
     init() {
-        // Use the selectedModel, not a hardcoded string.
-        self.model = GenerativeModel(name: initialModel, apiKey: APIKey.default)
-        self.chat = model.startChat()
-        self.selectedModel = "gemini-1.5-flash-latest"
+        let initialModel = "gemini-1.5-flash-latest"
+        self.selectedModel = initialModel
+        self.chatModel = GeminiChatModel(modelName: initialModel)
     }
 
-    func updateModel() {
-        self.model = GenerativeModel(name: selectedModel, apiKey: APIKey.default)
-        self.chat = model.startChat()
-    }
-
-
-    func sendMessage(_ text: String, streaming: Bool = true) async {
-        error = nil
-        if streaming {
-            await internalSendMessageStreaming(text)
-        } else {
-            await internalSendMessage(text)
-        }
-    }
-
+    /// ✅ **Fix: Add back `startNewChat()`**
     func startNewChat() {
         stop()
         error = nil
-        updateModel() // Re-initialize the model
+        switchModel() // ✅ Ensures the selected model is properly set.
         messages.removeAll()
     }
 
     func stop() {
-        chatTask?.cancel()
+        // Placeholder for stopping ongoing tasks (if any)
         error = nil
     }
 
-    private func internalSendMessageStreaming(_ text: String) async {
-        chatTask?.cancel()
-
-        chatTask = Task {
-            busy = true
-            defer {
-                busy = false
-            }
-
-            let userMessage = ChatMessage(message: text, participant: .user)
-            messages.append(userMessage)
-
-            let systemMessage = ChatMessage.pending(participant: .system)
-            messages.append(systemMessage)
-
-            do {
-                let responseStream = chat.sendMessageStream(text)
-                for try await chunk in responseStream {
-                    messages[messages.count - 1].pending = false
-                    if let text = chunk.text {
-                        messages[messages.count - 1].message += text
-                    }
-                }
-            } catch let GenerateContentError.internalError(underlying: error) {
-                if String(describing: error).contains("User location is not supported for the API use.") {
-                    print("Unsupported region, see https://ai.google.dev/available_regions#available_regions")
-                } else {
-                    print("Generate Content Internal Error: \(error)")
-                }
-                messages.removeLast()
-            } catch {
-                print("Generate Content Error: \(error)")
-                self.error = error
-                messages.removeLast()
-            }
+    private func switchModel() {
+        if useOllama {
+            chatModel = OllamaChatModel()
+            print("🔵 Now using **Ollama** (local model)")
+        } else {
+            chatModel = GeminiChatModel(modelName: selectedModel)
+            print("🟢 Now using **Gemini** (Google API) with model: \(selectedModel)")
         }
+        messages.removeAll()
     }
 
+    func sendMessage(_ text: String, streaming: Bool = true) async {
+        error = nil
+        messages.append(ChatMessage(message: text, participant: .user))
+        messages.append(ChatMessage.pending(participant: .system))
 
-    private func internalSendMessage(_ text: String) async {
-        chatTask?.cancel()
-
-        chatTask = Task {
-            busy = true
-            defer {
-                busy = false
-            }
-
-            let userMessage = ChatMessage(message: text, participant: .user)
-            messages.append(userMessage)
-            let systemMessage = ChatMessage.pending(participant: .system)
-            messages.append(systemMessage)
-
-            do {
-                let response = try await chat.sendMessage(text)
-
-                if let responseText = response.text {
-                    messages[messages.count - 1].message = responseText
+        do {
+            if streaming {
+                let stream = chatModel.sendMessageStream(text)
+                for await chunk in stream {
+                    messages[messages.count - 1].message += chunk
                     messages[messages.count - 1].pending = false
                 }
-            } catch {
-                self.error = error
-                print(error.localizedDescription)
-                messages.removeLast()
+            } else {
+                let response = try await chatModel.sendMessage(text)
+                messages[messages.count - 1].message = response
+                messages[messages.count - 1].pending = false
             }
+        } catch {
+            self.error = error
+            messages.removeLast()
         }
     }
 }

@@ -15,6 +15,15 @@ struct GeminiChatView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                Toggle("Use Ollama (Local)", isOn: $conversationVM.useOllama)
+                    .padding()
+                Spacer()
+                
+            }
+            .background(Rectangle().fill(Color.gray.opacity(0.5)))
+
             ScrollView {
                 ForEach(conversationVM.messages, id: \.self) { msg in
                     ChatBubbleView(message: msg)

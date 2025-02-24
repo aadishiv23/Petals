@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+protocol AIChatModel {
+    func sendMessageStream(_ text: String) -> AsyncStream<String>
+    func sendMessage(_ text: String) async throws -> String
+}
