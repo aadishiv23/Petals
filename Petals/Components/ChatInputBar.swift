@@ -15,6 +15,7 @@ struct ChatInputBar: View {
 
     var body: some View {
         HStack {
+            // Use TextField instead of TextEditor for simpler input handling
             TextField("Message", text: $userInput)
                 .textFieldStyle(PlainTextFieldStyle())
                 .padding(8)
@@ -27,13 +28,13 @@ struct ChatInputBar: View {
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 )
                 .focused($isFocused)
-                .onSubmit(sendMessage)
+                .onSubmit(sendMessage)  // This enables Enter key submission
 
             Button(action: sendMessage) {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(userInput.isEmpty ? .gray : .blue)
             }
-            .keyboardShortcut(.return, modifiers: [])
+            .keyboardShortcut(.return, modifiers: [])  // Return key shortcut
             .disabled(userInput.isEmpty)
         }
         .padding(.horizontal, 16)

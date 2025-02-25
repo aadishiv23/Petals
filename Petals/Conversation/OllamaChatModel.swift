@@ -16,7 +16,7 @@ class OllamaChatModel: AIChatModel {
     }
 
     func sendMessageStream(_ text: String) -> AsyncStream<String> {
-        let messages = [OllamaChatMessage(role: "user", content: text)]
+        let messages = [OllamaChatMessage(role: "user", content: text, tool_calls: [])]
 
         return AsyncStream { continuation in
             Task {
@@ -34,7 +34,7 @@ class OllamaChatModel: AIChatModel {
     }
 
     func sendMessage(_ text: String) async throws -> String {
-        let messages = [OllamaChatMessage(role: "user", content: text)]
+        let messages = [OllamaChatMessage(role: "user", content: text, tool_calls: [])]
         return try await ollamaService.sendSingleMessage(model: modelName, messages: messages)
     }
 }
