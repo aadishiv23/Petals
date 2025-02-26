@@ -12,39 +12,39 @@ struct ChatBubbleView: View {
     let message: ChatMessage
     @Environment(\.colorScheme) var colorScheme
     @State private var isHovered = false
-    
-    // Message appearance based on sender
+
+    /// Message appearance based on sender
     var bubbleColor: Color {
-        message.participant == .user ?
-            Color(hex: "5E5CE6") :
-            (colorScheme == .dark ? Color(NSColor.controlBackgroundColor) : Color(NSColor.controlBackgroundColor))
+        message.participant == .user
+            ? Color(hex: "5E5CE6")
+            : (colorScheme == .dark ? Color(NSColor.controlBackgroundColor) : Color(NSColor.controlBackgroundColor))
     }
-    
+
     var textColor: Color {
-        message.participant == .user ?
-            .white :
-            (colorScheme == .dark ? .white : .primary)
+        message.participant == .user
+            ? .white
+            : (colorScheme == .dark ? .white : .primary)
     }
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             if message.participant == .llm || message.participant == .system {
                 // AI avatar
                 Avatar(participant: .llm)
                     .offset(y: 2)
-                
+
                 // AI message
                 MessageContent
                     .padding(.trailing, 60)
-                
+
                 Spacer()
             } else {
                 Spacer()
-                
+
                 // User message
                 MessageContent
                     .padding(.leading, 60)
-                
+
                 // User avatar
                 Avatar(participant: .user)
                     .offset(y: 2)
@@ -52,9 +52,9 @@ struct ChatBubbleView: View {
         }
         .padding(.vertical, 2)
     }
-    
+
     // MARK: - Message Content
-    
+
     @ViewBuilder
     var MessageContent: some View {
         VStack(alignment: message.participant == .user ? .trailing : .leading, spacing: 4) {
@@ -86,10 +86,10 @@ struct ChatBubbleView: View {
                     }
                 }
             }
-            
+
             // Optional timestamp
-            if isHovered && !message.pending {
-                Text("\(Date().timeIntervalSince1970)")
+            if isHovered, !message.pending {
+                Text("\(message.date.formatted(date: .numeric, time: .shortened))")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 4)
@@ -108,14 +108,14 @@ struct ChatBubbleView: View {
 
 struct BubbleShape: Shape {
     var isUser: Bool
-    
+
     func path(in rect: CGRect) -> Path {
         let cornerRadius: CGFloat = 12
         let minX = rect.minX
         let minY = rect.minY
         let maxX = rect.maxX
         let maxY = rect.maxY
-        
+
         let path = Path { p in
             if isUser {
                 // User message (right corner)
@@ -181,17 +181,17 @@ struct BubbleShape: Shape {
 struct Avatar: View {
     let participant: ChatMessage.Participant
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View {
         ZStack {
             Circle()
                 .fill(
-                    participant == .user ?
-                        Color(hex: "5E5CE6") :
-                        (colorScheme == .dark ? Color(hex: "5A5A5A") : Color(hex: "D8D8D8"))
+                    participant == .user
+                        ? Color(hex: "5E5CE6")
+                        : (colorScheme == .dark ? Color(hex: "5A5A5A") : Color(hex: "D8D8D8"))
                 )
                 .frame(width: 28, height: 28)
-            
+
             if participant == .user {
                 Image(systemName: "person.fill")
                     .font(.system(size: 12))
@@ -207,7 +207,7 @@ struct Avatar: View {
 
 struct TypingIndicator: View {
     @State private var animationOffset = 0.0
-    
+
     var body: some View {
         HStack(spacing: 4) {
             ForEach(0..<3, id: \.self) { index in
