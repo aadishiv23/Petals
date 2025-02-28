@@ -23,6 +23,21 @@ enum ToolRegistry {
                     required: ["date"]
                 )
             )
+        ),
+        OllamaTool(
+            type: "function",
+            function: OllamaFunction(
+                name: "fetchCanvasCourses",
+                description: "Fetches user's Canvas courses.",
+                parameters: OllamaFunctionParameters(
+                    type: "object",
+                    properties: [
+                        "completed": OllamaFunctionProperty(type: "boolean",
+                                                            description: "Whether to include completed courses.")
+                    ],
+                    required: []
+                )
+            )
         )
     ]
 
