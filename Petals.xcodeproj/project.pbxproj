@@ -32,6 +32,7 @@
 		AC9B1C822D5526B100F3525D /* Petals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Petals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC9B1C932D5526B300F3525D /* PetalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACEC36C32D7EA27A00B3A361 /* PetalTools */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PetalTools; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -82,6 +83,7 @@
 		AC9B1C792D5526B000F3525D = {
 			isa = PBXGroup;
 			children = (
+				ACEC36C32D7EA27A00B3A361 /* PetalTools */,
 				AC9B1C842D5526B100F3525D /* Petals */,
 				AC9B1C962D5526B300F3525D /* PetalsTests */,
 				AC9B1CA02D5526B300F3525D /* PetalsUITests */,
