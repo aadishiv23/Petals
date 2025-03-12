@@ -8,7 +8,7 @@
 import Foundation
 
 /// A generic protocol used to represent a tool used by Petals (Ollama, Gemini, etc...)
-public protocol PetalTool {
+public protocol PetalTool: Sendable {
 
     /// A unique internal UUID for strict identification.
     var uuid: UUID { get }
@@ -24,7 +24,7 @@ public protocol PetalTool {
 
     // TODO: Implement ToolParameter.
     /// Parameters accepted by the tool (for AI tool execution).
-    var parameters: [ToolParameter] { get }
+    var parameters: [PetalToolParameter] { get }
 
     /// Keywords that might trigger this tool (used by AI models).
     var triggerKeywords: [String] { get }
@@ -34,7 +34,7 @@ public protocol PetalTool {
 
     // TODO: Implement ToolPermission.
     /// Permission level required to use this tool (security & access control).
-    var requiredPermission: ToolPermission { get }
+    var requiredPermission: PetalToolPermission { get }
 
     /// Defines the input type required for execution.
     associatedtype Input: Codable
