@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Ollama
 
 /// Protocol for tools that can be used with Ollama.
-protocol OllamaCompatibleTool: Tool {
+protocol OllamaCompatibleTool: PetalTool {
 
     /// Convert this tool to Ollama's format.
     func asOllamaTool() -> OllamaTool
