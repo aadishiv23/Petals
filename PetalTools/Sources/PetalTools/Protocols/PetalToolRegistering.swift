@@ -12,11 +12,11 @@ public protocol PetalToolRegistering {
     
     // TODO: Create a generic TOOL protocol to wrap Gemini/Ollama tools under one
     /// Registers a tool with the registry.
-    public func registerTool(_ tool: PetalTool)
+    func registerTool(_ tool: any PetalTool) async
     
     /// Retrieves all registered tools
-    public func getAllTools() -> [PetalTool]
+    func getAllTools() async -> [any PetalTool]
     
     /// Retrieves all registered tools matching given criteria.
-    public func getTools(matching criteria: PetalToolFilterCriteria) -> [PetalTool]
+    func getTools(matching criteria: PetalToolFilterCriteria) async -> [any PetalTool]
 }
