@@ -8,19 +8,31 @@
 import Foundation
 
 /// Concrete implementation of `PetalToolRegistry`
-public class PetalToolRegistry: PetalToolRegistering {
+public actor PetalToolRegistry: PetalToolRegistering {
 
     /// Singleton instance.
     public static let shared = PetalToolRegistry()
 
     /// The list of tools registered.
-    let tools: [PetalTool] = []
+    private var tools: [any PetalTool] = []
+
+    /// Tracks whether tools have been registered.
+    private var isInitialized = false
 
     /// Private initializer for singleton.
     private init() {}
 
+    /// Ensures tools are registered before usage.
+    private func ensureInitialized() async {
+        if !isInitialized {
+            await registerDefaultTools()
+            print("true")
+            isInitialized = true
+        }
+    }
+
     /// Registers a `PetalTool` within the registry.
-    public func registerTool(_ tool: any PetalTool) {
+    public func registerTool(_ tool: any PetalTool) async {
         if let index = tools.firstIndex(where: { $0.id == tool.id }) {
             tools[index] = tool
         } else {
@@ -28,13 +40,23 @@ public class PetalToolRegistry: PetalToolRegistering {
         }
     }
 
-    /// Retrieves all `PetalTool`'s that are registed.
-    public func getAllTools() -> [any PetalTool] {
-        tools
+    /// Registers default tools **if not already registered**.
+    private func registerDefaultTools() async {
+        let calendarTool = await PetalToolFactory.createCalendarTool()
+        let canvasTool = await PetalToolFactory.createFetchCanvasCoursesTool()
+        await registerTool(calendarTool)
+        await registerTool(canvasTool)
+        isInitialized = true
     }
 
+    /// Retrieves all `PetalTool`s that are registered **after ensuring initialization**.
+    public func getAllTools() async -> [any PetalTool] {
+        await ensureInitialized()
+        return tools
+    }
+    
     /// Retrieves all registered tools matching given criteria.
-    public func getTools(matching criteria: PetalToolFilterCriteria) -> [any PetalTool] {
+    public func getTools(matching criteria: PetalToolFilterCriteria) async -> [any PetalTool] {
         var filteredTools = tools
 
         if let domain = criteria.domain {
@@ -54,10 +76,11 @@ public class PetalToolRegistry: PetalToolRegistering {
         return filteredTools
     }
 
-    /// Tools available for use in Ollama API format.
-    public static var ollamaTools: [OllamaTool] {
-        shared.getAllTools().compactMap { tool in
-            (tool as? OllamaCompatibleTool)?.asOllamaTool()
+    /// Retrieves tools in **Ollama API format** after ensuring initialization.
+    public static func ollamaTools() async -> [OllamaTool] {
+        await shared.ensureInitialized()
+        return await shared.getAllTools().compactMap { tool in
+            (tool as? (any OllamaCompatibleTool))?.asOllamaTool()
         }
     }
 }
