@@ -20,5 +20,5 @@ public struct PetalSuggestedAction: Codable {
     public let toolId: String
     
     /// The pre-filled parameters for the suggested action.
-    public let parameters: [String: Codable]?
+    public let parameters: [String: AnyCodable]?
 }
