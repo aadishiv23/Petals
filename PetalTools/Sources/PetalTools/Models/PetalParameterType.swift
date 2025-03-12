@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents the type of a parameter.
-enum ParameterType: String, Codable {
+public enum PetalParameterType: String, Codable {
     case string
     case number
     case boolean
