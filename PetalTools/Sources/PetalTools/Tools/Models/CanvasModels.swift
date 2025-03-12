@@ -8,14 +8,14 @@
 import Foundation
 
 /// Add this model for Canvas courses
-struct CanvasCourse: Decodable {
-    let id: Int
-    let name: String
-    let courseCode: String
-    let workflowState: String
-    let completedAt: String?
+public struct CanvasCourse: Decodable {
+    public let id: Int
+    public let name: String
+    public let courseCode: String
+    public let workflowState: String
+    public let completedAt: String?
 
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case id
         case name
         case courseCode = "course_code"
