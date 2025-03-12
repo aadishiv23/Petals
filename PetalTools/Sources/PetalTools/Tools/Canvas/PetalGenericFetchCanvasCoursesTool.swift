@@ -6,83 +6,121 @@
 //
 
 import Foundation
+import SwiftUI
 
 public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
+    
+    // TODO: Need beter way to DI this and not leak keuys
+    private let canvasBaseURL = "https://umich.instructure.com/api/v1/"
+    private let canvasAPIKey =
+        "1770~ZDxrEf7eVyeHkYL3wQXvYXKDRkGm8UN9ZhBQDUkGJUAf7mPRZmJX34JLeR7AUByD"
 
-    public let uuid: UUID = UUID()
-    
-    public var id: String { "petalGenericCanvasTool" }
-    
-    public var name: String { "Petal Mock Calendar Tool" }
-    
-    public var description: String { "Fetches mock calendar events given a date" }
-    
+    public let uuid: UUID = .init()
+
+    public var id: String { "petalGenericCanvasCoursesTool" }
+
+    public var name: String { "Petal Generic Fetch Canvas Courses Tool" }
+
+    public var description: String { "Fetches user's Canvas courses." }
+
     public var parameters: [PetalToolParameter] {
         [PetalToolParameter(
-            name: "date",
-            description: "The date (YYYY-MM-DD) for which to fetch events.",
-            dataType: .string,
-            required: true,
-            example: AnyCodable("2025-02-24")
+            name: "completed",
+            description: "Whether to include completed courses.",
+            dataType: .boolean,
+            required: false,
+            example: AnyCodable(false)
         )]
     }
-    
-    public let triggerKeywords: [String] = ["calendar", "events", "date"]
-    
-    public var domain: String { "productivity" }
-    
+
+    public let triggerKeywords: [String] = ["canvas", "courses", "classes"]
+
+    public var domain: String { "education" }
+
     public var requiredPermission: PetalToolPermission { .basic }
-    
+
     /// Define the input and output types
     public struct Input: Codable {
-        let date: String
+        let completed: Bool?
     }
 
     public struct Output: Codable {
-        let events: [String]
+        let courses: String
     }
 
     /// Implements the `execute` function required by `PetalTool`
     public func execute(_ input: Input) async throws -> Output {
-        return Output(events: fetchCalendarEvents(date: input.date))
+        let result = try await fetchCanvasCourses(completed: input.completed ?? false)
+        return Output(courses: result)
     }
-    
+
     public func asOllamaTool() -> OllamaTool {
         return OllamaTool(
             type: "function",
             function: OllamaFunction(
-                name: id,
-                description: description,
+                name: "petalGenericCanvasCoursesTool",
+                description: "Fetches user's Canvas courses.",
                 parameters: OllamaFunctionParameters(
                     type: "object",
                     properties: [
-                        "date": OllamaFunctionProperty(
-                            type: "string",
-                            description: "The date (YYYY-MM-DD) for which to fetch events."
+                        "completed": OllamaFunctionProperty(
+                            type: "boolean",
+                            description: "Whether to include completed courses."
                         )
                     ],
-                    required: ["date"]
+                    required: []
                 )
             )
         )
     }
 
+    /// Fetches Canvas courses from the API.
+    private func fetchCanvasCourses(completed: Bool) async throws -> String {
+        // Check if we have valid API credentials
+        guard !canvasAPIKey.isEmpty else {
+            return "Canvas API key not configured. Please add your Canvas API key in settings."
+        }
 
-    /// Private helper function to mock calendar events
-    private func fetchCalendarEvents(date: String) -> [String] {
-        switch date {
-        case "2025-02-24":
-            return ["Gym with Michael"]
-        case "2025-02-25":
-            return ["Lunch with Nandan"]
-        case "2025-02-26":
-            return ["No events"]
-        default:
-            return ["No events scheduled"]
+        // Create the API URL
+        let urlString = "\(canvasBaseURL)courses?enrollment_state=active"
+        guard let url = URL(string: urlString) else {
+            return "Invalid Canvas API URL"
+        }
+
+        // Create the request
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(canvasAPIKey)", forHTTPHeaderField: "Authorization")
+
+        // Make the request
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            // Check for a valid response
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200
+            else {
+                return "Failed to fetch Canvas courses. Please check your API key and try again."
+            }
+
+            // Parse the response
+            let decoder = JSONDecoder()
+            let courses = try decoder.decode([CanvasCourse].self, from: data)
+
+            // Filter courses based on completed parameter if needed
+            let filteredCourses = completed ? courses : courses.filter { !($0.completedAt != nil) }
+
+            // Format the courses into a readable string
+            if filteredCourses.isEmpty {
+                return "No \(completed ? "" : "active ")courses found."
+            }
+
+            let courseList = filteredCourses.map { "• \($0.name)" }.joined(separator: "\n")
+            return "Your \(completed ? "" : "active ")Canvas courses:\n\(courseList)"
+        } catch {
+            return "Error fetching Canvas courses: \(error.localizedDescription)"
         }
     }
 
-    init() {
-        
-    }
+    init() {}
 }
