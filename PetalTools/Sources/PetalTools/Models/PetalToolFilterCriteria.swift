@@ -8,7 +8,7 @@
 import Foundation
 
 /// Criteria for filtering tools.
-public struct PetalToolFilterCriteria {
+public struct PetalToolFilterCriteria: Sendable {
 
     /// Filter tools by domain.
     public let domain: String?
