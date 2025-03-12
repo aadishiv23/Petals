@@ -11,7 +11,7 @@ import Foundation
 public struct PetalToolResult {
     
     /// The status of the tool execution.
-    public let status: PetalToolStatus
+    public let status: PetalToolResultStatus
     
     /// The data returned by the tool.
     public let data: [String: Codable]?
