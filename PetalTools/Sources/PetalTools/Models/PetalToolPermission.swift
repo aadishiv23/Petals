@@ -7,23 +7,23 @@
 
 import Foundation
 
-public enum PetalToolPermission: Int, Codable, Comparable {
-    public case basic = 0
-    public case standard = 1
-    public case sensitive = 2
-    public case administrative = 3
+public enum PetalToolPermission: Int, Codable, Comparable, Sendable {
+    case basic = 0
+    case standard = 1
+    case sensitive = 2
+    case administrative = 3
 
-    public static func < (lhs: PetalToolPermission, rhs: PetalToolPermission) -> Bool {
+    static public func < (lhs: PetalToolPermission, rhs: PetalToolPermission) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 
     /// Converts permission to a human-readable string.
     public func toString() -> String {
         switch self {
-            public case .basic: return "basic"
-            public case .standard: return "standard"
-            public case .sensitive: return "sensitive"
-            public case .administrative: return "administrative"
+            case .basic: return "basic"
+            case .standard: return "standard"
+            case .sensitive: return "sensitive"
+            case .administrative: return "administrative"
         }
     }
 }
