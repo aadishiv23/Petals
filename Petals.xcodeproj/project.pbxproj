@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ACE8E7202D63C3C2004A3CBF /* Ollama in Frameworks */ = {isa = PBXBuildFile; productRef = ACE8E71F2D63C3C2004A3CBF /* Ollama */; };
-		ACFFFDF12D5D36470057BEC2 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = ACFFFDF02D5D36470057BEC2 /* GoogleGenerativeAI */; };
+		AC3AA6682D80A67B004A1A2D /* Ollama in Frameworks */ = {isa = PBXBuildFile; productRef = AC3AA6672D80A67B004A1A2D /* Ollama */; };
+		AC3AA66A2D80A67B004A1A2D /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = AC3AA6692D80A67B004A1A2D /* GoogleGenerativeAI */; };
+		AC4382192D80DB90007F89B8 /* PetalTools in Frameworks */ = {isa = PBXBuildFile; productRef = AC4382182D80DB90007F89B8 /* PetalTools */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,8 +59,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ACE8E7202D63C3C2004A3CBF /* Ollama in Frameworks */,
-				ACFFFDF12D5D36470057BEC2 /* GoogleGenerativeAI in Frameworks */,
+				AC3AA66A2D80A67B004A1A2D /* GoogleGenerativeAI in Frameworks */,
+				AC4382192D80DB90007F89B8 /* PetalTools in Frameworks */,
+				AC3AA6682D80A67B004A1A2D /* Ollama in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 				AC9B1C842D5526B100F3525D /* Petals */,
 				AC9B1C962D5526B300F3525D /* PetalsTests */,
 				AC9B1CA02D5526B300F3525D /* PetalsUITests */,
+				ACD98BE62D809D5D00985964 /* Frameworks */,
 				AC9B1C832D5526B100F3525D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,6 +102,13 @@
 				AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		ACD98BE62D809D5D00985964 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,8 +131,9 @@
 			);
 			name = Petals;
 			packageProductDependencies = (
-				ACFFFDF02D5D36470057BEC2 /* GoogleGenerativeAI */,
-				ACE8E71F2D63C3C2004A3CBF /* Ollama */,
+				AC3AA6672D80A67B004A1A2D /* Ollama */,
+				AC3AA6692D80A67B004A1A2D /* GoogleGenerativeAI */,
+				AC4382182D80DB90007F89B8 /* PetalTools */,
 			);
 			productName = Petals;
 			productReference = AC9B1C822D5526B100F3525D /* Petals.app */;
@@ -207,8 +218,8 @@
 			mainGroup = AC9B1C792D5526B000F3525D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				ACFFFDEF2D5D36470057BEC2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
-				ACE8E71E2D63C3C2004A3CBF /* XCRemoteSwiftPackageReference "ollama-swift" */,
+				AC3AA61E2D80A64F004A1A2D /* XCRemoteSwiftPackageReference "ollama-swift" */,
+				AC3AA61F2D80A65C004A1A2D /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AC9B1C832D5526B100F3525D /* Products */;
@@ -566,7 +577,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		ACE8E71E2D63C3C2004A3CBF /* XCRemoteSwiftPackageReference "ollama-swift" */ = {
+		AC3AA61E2D80A64F004A1A2D /* XCRemoteSwiftPackageReference "ollama-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mattt/ollama-swift";
 			requirement = {
@@ -574,7 +585,7 @@
 				minimumVersion = 1.2.0;
 			};
 		};
-		ACFFFDEF2D5D36470057BEC2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
+		AC3AA61F2D80A65C004A1A2D /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/generative-ai-swift";
 			requirement = {
@@ -585,15 +596,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ACE8E71F2D63C3C2004A3CBF /* Ollama */ = {
+		AC3AA6672D80A67B004A1A2D /* Ollama */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ACE8E71E2D63C3C2004A3CBF /* XCRemoteSwiftPackageReference "ollama-swift" */;
+			package = AC3AA61E2D80A64F004A1A2D /* XCRemoteSwiftPackageReference "ollama-swift" */;
 			productName = Ollama;
 		};
-		ACFFFDF02D5D36470057BEC2 /* GoogleGenerativeAI */ = {
+		AC3AA6692D80A67B004A1A2D /* GoogleGenerativeAI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ACFFFDEF2D5D36470057BEC2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			package = AC3AA61F2D80A65C004A1A2D /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
 			productName = GoogleGenerativeAI;
+		};
+		AC4382182D80DB90007F89B8 /* PetalTools */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalTools;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
