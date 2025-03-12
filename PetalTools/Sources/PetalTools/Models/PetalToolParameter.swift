@@ -22,8 +22,8 @@ public struct PetalToolParameter: Codable {
     /// Whether this parameter is required for the tool to run.
     public let required: Bool
 
-    /// Example value for documentation (supports any `Codable` type).
-    public let example: Codable?
+    /// Example value for documentation (supports any `AnyCodable` type).
+    public let example: AnyCodable?
 
     /// Possible values (if this parameter is an enum).
     public let enumValues: [String]?
@@ -34,7 +34,7 @@ public struct PetalToolParameter: Codable {
         description: String,
         dataType: PetalParameterType,
         required: Bool,
-        example: Codable? = nil,
+        example: AnyCodable? = nil,
         enumValues: [String]? = nil
     ) {
         self.name = name
