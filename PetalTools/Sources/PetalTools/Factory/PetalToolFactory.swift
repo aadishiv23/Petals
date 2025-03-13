@@ -17,10 +17,25 @@ public class PetalToolFactory {
         return calendarTool
     }
     
-    /// Create a generic canvas tool.
+    /// Creates a generic Canvas tool for fetching courses.
     public static func createFetchCanvasCoursesTool() async -> any PetalTool {
         let canvasTool = PetalGenericFetchCanvasCoursesTool()
         await PetalToolRegistry.shared.registerTool(canvasTool)
         return canvasTool
     }
+
+    /// Creates a Canvas tool for fetching assignments.
+    public static func createFetchCanvasAssignmentsTool() async -> any PetalTool {
+        let assignmentsTool = PetalFetchCanvasAssignmentsTool()
+        await PetalToolRegistry.shared.registerTool(assignmentsTool)
+        return assignmentsTool
+    }
+
+    /// Creates a Canvas tool for fetching grades.
+    public static func createFetchCanvasGradesTool() async -> any PetalTool {
+        let gradesTool = PetalFetchCanvasGradesTool()
+        await PetalToolRegistry.shared.registerTool(gradesTool)
+        return gradesTool
+    }
 }
+
