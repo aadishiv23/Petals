@@ -344,7 +344,7 @@ class PetalOllamaService {
         let url = baseURL.appendingPathComponent("chat")
         let messages = [OllamaChatMessage(role: "user", content: prompt, tool_calls: nil)]
         let payload = OllamaChatRequest(
-            model: "llama3.1",
+            model: "llama3.1:8b",
             messages: messages,
             stream: false,
             tools: nil,
