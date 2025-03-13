@@ -72,17 +72,10 @@ struct ToolProcessingView: View {
         )
         .opacity(opacity)
         .onReceive(timer) { _ in
-            withAnimation {
-                // Cycle through steps with a pulsing effect
-                currentStep = (currentStep + 1) % processingSteps.count
-                
-                // Create a subtle breathing effect
-                withAnimation(.easeInOut(duration: 0.7)) {
-                    opacity = 0.7
-                }
-                
-                withAnimation(.easeInOut(duration: 0.7).delay(0.7)) {
-                    opacity = 1.0
+            withAnimation(.easeInOut(duration: 0.5)) {
+                // Only increment until the last step; once reached, keep pulsing
+                if currentStep < processingSteps.count - 1 {
+                    currentStep += 1
                 }
             }
         }
