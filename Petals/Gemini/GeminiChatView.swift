@@ -36,10 +36,18 @@ struct GeminiChatView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(conversationVM.messages, id: \.self) { msg in
+                    ForEach(conversationVM.messages, id: \.self) { msg in
+                        if msg.pending && conversationVM.isProcessingTool {
+                            HStack {
+                                ToolProcessingView()
+                                    .id(msg)
+                                Spacer()
+                            }
+                        } else {
                             ChatBubbleView(message: msg)
                                 .id(msg)
                         }
+                    }
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 20)
