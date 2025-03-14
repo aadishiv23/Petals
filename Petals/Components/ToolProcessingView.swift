@@ -10,7 +10,7 @@ import SwiftUI
 
 /// An animated view that displays the chain-of-thought process during tool calls
 struct ToolProcessingView: View {
-    // Animation states
+    // Animation states for the steps
     @State private var currentStep = 0
     @State private var opacity = 0.7
     
@@ -24,6 +24,9 @@ struct ToolProcessingView: View {
     
     // Timer for animation progression
     let timer = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
+    
+    // For the glowing outline
+    @State private var glowPhase: Double = 0
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -62,34 +65,48 @@ struct ToolProcessingView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
+        // Main background
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.controlBackgroundColor))
         )
+        // Standard border stroke
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color(.separatorColor), lineWidth: 0.5)
         )
+        // Glowing animated border
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(
+                    AngularGradient(
+                        gradient: Gradient(colors: [.purple, .blue, .pink, .purple]),
+                        center: .center,
+                        startAngle: .degrees(glowPhase),
+                        endAngle: .degrees(glowPhase + 360)
+                    ),
+                    lineWidth: 3
+                )
+                .blur(radius: 3) // Softens the glow
+                .onAppear {
+                    withAnimation(.linear(duration: 2).repeatForever(autoreverses: false)) {
+                        glowPhase = 360
+                    }
+                }
+        )
         .opacity(opacity)
         .onReceive(timer) { _ in
-            withAnimation {
-                // Cycle through steps with a pulsing effect
-                currentStep = (currentStep + 1) % processingSteps.count
-                
-                // Create a subtle breathing effect
-                withAnimation(.easeInOut(duration: 0.7)) {
-                    opacity = 0.7
-                }
-                
-                withAnimation(.easeInOut(duration: 0.7).delay(0.7)) {
-                    opacity = 1.0
+            withAnimation(.easeInOut(duration: 0.5)) {
+                // Increment the step until the last one, then remain there
+                if currentStep < processingSteps.count - 1 {
+                    currentStep += 1
                 }
             }
         }
     }
 }
 
-// Preview provider for SwiftUI Canvas
+// MARK: - Preview
 struct ToolProcessingView_Previews: PreviewProvider {
     static var previews: some View {
         ToolProcessingView()

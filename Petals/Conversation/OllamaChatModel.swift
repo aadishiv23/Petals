@@ -19,16 +19,23 @@ class OllamaChatModel: AIChatModel {
     private let ollamaService = PetalOllamaService() // OllamaService()
 
     /// The name of the AI model used for processing messages.
-    private let modelName: String
+    private var modelName: String
 
     // **MARK: Initializer**
 
     /// Initializes the Ollama chat model with an optional model name.
     ///
-    /// - **Parameter** modelName: The name of the model to use. Defaults to `"llama3.1"` `petallama3.2` is a WIP custom model.
-    init(modelName: String = "llama3.1") {
+    /// - **Parameter** modelName: The name of the model to use. Defaults to `"llama3.1"` `petallama3.2` is a WIP custom
+    /// model. gemma3 is new testing
+    init(modelName: String = "llama3.1:8b") {
         self.modelName = modelName
         print("OllamaChatModel initialized with model: \(modelName)")
+    }
+
+    /// Updates the model name
+    func updateModel(_ modelName: String) {
+        self.modelName = modelName
+        print("OllamaChatModel updated to use: \(modelName)")
     }
 
     // **MARK: Streaming Message Handling**
@@ -50,19 +57,17 @@ class OllamaChatModel: AIChatModel {
         return AsyncStream { continuation in
             Task {
                 do {
-                    print("OllamaChatModel: Requesting stream from Ollama service")
                     var chunkCount = 0
                     var totalLength = 0
                     var finalOutput = ""
-                    
+
                     for try await chunk in ollamaService.streamConversation(model: modelName, messages: messages) {
                         chunkCount += 1
                         totalLength += chunk.count
                         finalOutput.append(chunk)
-                        print("OllamaChatModel: Received chunk #\(chunkCount), size: \(chunk.count) characters")
                         continuation.yield(chunk)
                     }
-                    
+
                     print("OllamaChatModel: Stream completed - \(chunkCount) chunks, \(totalLength) total characters")
                     print("OllamaChatModel: Final Output:\n\(finalOutput)")
                     continuation.finish()
@@ -89,14 +94,16 @@ class OllamaChatModel: AIChatModel {
     func sendMessage(_ text: String) async throws -> String {
         print("OllamaChatModel: Sending single message: \(text.prefix(50))...")
         let messages = [OllamaChatMessage(role: "user", content: text, tool_calls: [])]
-        
+
         do {
             print("OllamaChatModel: Requesting response from Ollama service")
             let startTime = Date()
             let response = try await ollamaService.sendSingleMessage(model: modelName, messages: messages)
             let duration = Date().timeIntervalSince(startTime)
-            
-            print("OllamaChatModel: Received response in \(String(format: "%.2f", duration))s, length: \(response.count) characters")
+
+            print(
+                "OllamaChatModel: Received response in \(String(format: "%.2f", duration))s, length: \(response.count) characters"
+            )
             print("\(response)")
             return response
         } catch {

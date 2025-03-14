@@ -13,7 +13,7 @@ struct GeminiChatView: View {
     @State private var userInput: String = ""
     @State private var showSettings: Bool = false
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header with model selector
@@ -37,17 +37,24 @@ struct GeminiChatView: View {
                 ScrollView {
                     LazyVStack(spacing: 16) {
                         ForEach(conversationVM.messages, id: \.self) { msg in
-                            ChatBubbleView(message: msg)
-                                .id(msg)
+                            if msg.pending, conversationVM.isProcessingTool {
+                                withAnimation {
+                                    toolLoadingView(for: msg)
+                                }
+                            } else {
+                                withAnimation {
+                                    ChatBubbleView(message: msg)
+                                        .id(msg)
+                                }
+                            }
                         }
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 20)
                 }
+                .padding(.vertical, 10)
                 .background(
-                    colorScheme == .dark ?
-                        Color(NSColor.windowBackgroundColor).opacity(0.6) :
-                        Color(NSColor.textBackgroundColor).opacity(0.6)
+                    VisualEffectView(material: .headerView, blendingMode: .behindWindow)
                 )
                 .onChange(of: conversationVM.messages.count) { _ in
                     if let lastMessage = conversationVM.messages.last {
@@ -57,18 +64,32 @@ struct GeminiChatView: View {
                     }
                 }
             }
-            
+
             // Input area
             ChatInputBar(userInput: $userInput) {
                 Task {
                     let text = userInput.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !text.isEmpty else { return }
+                    guard !text.isEmpty else {
+                        return
+                    }
                     userInput = ""
                     await conversationVM.sendMessage(text, streaming: true)
                 }
             }
         }
     }
+
+    private func toolLoadingView(for msg: ChatMessage) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Avatar(participant: .llm)
+                .offset(y: 2)
+
+            ToolProcessingView()
+                .id(msg)
+            Spacer()
+        }
+    }
+
 }
 
 // MARK: - Supporting Views
@@ -76,13 +97,13 @@ struct GeminiChatView: View {
 struct ModelToggle: View {
     @Binding var isOn: Bool
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View {
         Toggle(isOn: $isOn) {
             HStack(spacing: 6) {
                 Image(systemName: isOn ? "desktopcomputer" : "cloud")
                     .font(.system(size: 12))
-                
+
                 Text(isOn ? "Ollama" : "Gemini API")
                     .font(.system(size: 12, weight: .medium))
             }
@@ -91,9 +112,11 @@ struct ModelToggle: View {
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(colorScheme == .dark ?
-                      Color(NSColor.controlBackgroundColor) :
-                      Color(NSColor.controlBackgroundColor).opacity(0.8))
+                .fill(
+                    colorScheme == .dark
+                        ? Color(NSColor.controlBackgroundColor)
+                        : Color(NSColor.controlBackgroundColor).opacity(0.8)
+                )
         )
     }
 }
@@ -103,7 +126,7 @@ struct ModelToggle: View {
 struct VisualEffectView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
     let blendingMode: NSVisualEffectView.BlendingMode
-    
+
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = material
@@ -111,7 +134,7 @@ struct VisualEffectView: NSViewRepresentable {
         view.state = .active
         return view
     }
-    
+
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
         nsView.material = material
         nsView.blendingMode = blendingMode

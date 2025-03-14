@@ -14,7 +14,7 @@ public actor PetalToolRegistry: PetalToolRegistering {
     public static let shared = PetalToolRegistry()
 
     /// The list of tools registered.
-    private var tools: [any PetalTool] = []
+    private var tools: [String: any PetalTool] = [:]
 
     /// Tracks whether tools have been registered.
     private var isInitialized = false
@@ -33,31 +33,37 @@ public actor PetalToolRegistry: PetalToolRegistering {
 
     /// Registers a `PetalTool` within the registry.
     public func registerTool(_ tool: any PetalTool) async {
-        if let index = tools.firstIndex(where: { $0.id == tool.id }) {
-            tools[index] = tool
-        } else {
-            tools.append(tool)
-        }
+        tools[tool.id] = tool
     }
 
     /// Registers default tools **if not already registered**.
     private func registerDefaultTools() async {
         let calendarTool = await PetalToolFactory.createCalendarTool()
-        let canvasTool = await PetalToolFactory.createFetchCanvasCoursesTool()
+        let getCanvasCoursesTool = await PetalToolFactory.createFetchCanvasCoursesTool()
+        let fetchCanvasAssignmentsTool = await PetalToolFactory.createFetchCanvasAssignmentsTool()
+        let fetchCanvasGradesTool = await PetalToolFactory.createFetchCanvasGradesTool()
         await registerTool(calendarTool)
-        await registerTool(canvasTool)
+        await registerTool(getCanvasCoursesTool)
+        await registerTool(fetchCanvasAssignmentsTool)
+        await registerTool(fetchCanvasGradesTool)
         isInitialized = true
     }
 
     /// Retrieves all `PetalTool`s that are registered **after ensuring initialization**.
     public func getAllTools() async -> [any PetalTool] {
         await ensureInitialized()
-        return tools
+        return Array(tools.values)
+    }
+
+    /// Retrieves a tool by its ID.
+    public func getTool(id: String) async -> (any PetalTool)? {
+        await ensureInitialized()
+        return tools[id]
     }
     
     /// Retrieves all registered tools matching given criteria.
     public func getTools(matching criteria: PetalToolFilterCriteria) async -> [any PetalTool] {
-        var filteredTools = tools
+        var filteredTools = Array(tools.values)
 
         if let domain = criteria.domain {
             filteredTools = filteredTools.filter { $0.domain.lowercased() == domain.lowercased() }

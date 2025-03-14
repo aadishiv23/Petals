@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ChatBubbleView: View {
     let message: ChatMessage
+    // Removed dependency on ConversationViewModel
     @Environment(\.colorScheme) var colorScheme
     @State private var isHovered = false
 
@@ -69,6 +70,7 @@ struct ChatBubbleView: View {
                 Group {
                     Text(message.message)
                         .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
                 }
                 .foregroundColor(textColor)
                 .padding(.vertical, 8)
@@ -88,7 +90,7 @@ struct ChatBubbleView: View {
             }
 
             // Optional timestamp
-            if isHovered, !message.pending {
+            if !message.pending {
                 Text("\(message.date.formatted(date: .numeric, time: .shortened))")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
