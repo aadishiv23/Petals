@@ -42,10 +42,14 @@ public actor PetalToolRegistry: PetalToolRegistering {
         let getCanvasCoursesTool = await PetalToolFactory.createFetchCanvasCoursesTool()
         let fetchCanvasAssignmentsTool = await PetalToolFactory.createFetchCanvasAssignmentsTool()
         let fetchCanvasGradesTool = await PetalToolFactory.createFetchCanvasGradesTool()
+        let calendarCreateEventTool = await PetalToolFactory.createCalendarCreateEventTool()
+        let calendarFetchEventTool = await PetalToolFactory.createCalendarFetchEventTool()
         await registerTool(calendarTool)
         await registerTool(getCanvasCoursesTool)
         await registerTool(fetchCanvasAssignmentsTool)
         await registerTool(fetchCanvasGradesTool)
+        await registerTool(calendarCreateEventTool)
+        await registerTool(calendarFetchEventTool)
         isInitialized = true
     }
 

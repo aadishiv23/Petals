@@ -8,34 +8,47 @@
 import Foundation
 import SwiftUI
 
+/// A SwiftUI view representing the chat input bar.
+/// This view supports dynamic height adjustment, placeholder display, and
+/// sends messages either by pressing the send button or the Enter key.
 struct ChatInputBar: View {
+    /// A binding to the text entered by the user.
     @Binding var userInput: String
-    var sendMessage: () -> Void
+    /// Closure that sends the trimmed message.
+    var sendMessage: (String) -> Void
     
-    // Text Style
+    // MARK: - UI Constants
+    
+    /// The font used for the text editor.
     private let font: Font = .body
+    /// The spacing between lines in the text editor.
     private let lineSpacing: CGFloat = 4
-    private let minHeight: CGFloat = 36  // 1-line height with padding
-    private let maxHeight: CGFloat = 150 // max height before scrolling
+    /// The minimum height of the text editor (approx. one line).
+    private let minHeight: CGFloat = 36
+    /// The maximum height of the text editor before scrolling becomes enabled.
+    private let maxHeight: CGFloat = 150
     
-    // Track measured text height
+    // MARK: - State
+    
+    /// Tracks the current height of the text editor.
     @State private var textHeight: CGFloat = 36
+    
+    // MARK: - Body
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 12) {
-            // Simple TextEditor approach - more reliable
+            // Text input area with a placeholder.
             ZStack(alignment: .leading) {
-                // Placeholder text
                 if userInput.isEmpty {
                     Text("Message")
                         .font(font)
                         .foregroundColor(.secondary)
                         .padding(.leading, 5)
                         .padding(.top, 8)
-                        .allowsHitTesting(false) // Make sure it doesn't block input
+                        .allowsHitTesting(false) // So that it doesn't intercept taps.
                 }
                 
-                // Regular TextEditor with dynamic height
+                // A TextEditor with dynamic height.
                 TextEditor(text: $userInput)
                     .font(font)
                     .lineSpacing(lineSpacing)
@@ -49,8 +62,9 @@ struct ChatInputBar: View {
                         }
                     )
                     .onPreferenceChange(ViewHeightKey.self) { height in
+                        // Limit the height between the minimum and maximum.
                         let calculatedHeight = min(max(height, minHeight), maxHeight)
-                        if abs(calculatedHeight - textHeight) > 2 { // Only update if significant change
+                        if abs(calculatedHeight - textHeight) > 2 {
                             self.textHeight = calculatedHeight
                         }
                     }
@@ -64,7 +78,7 @@ struct ChatInputBar: View {
                     .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
             )
             
-            // Send Button
+            // Send Button.
             Button(action: sendAndClear) {
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 16, weight: .medium))
@@ -82,22 +96,32 @@ struct ChatInputBar: View {
         .padding(.vertical, 10)
         .background(Color(.windowBackgroundColor))
         .animation(.easeOut(duration: 0.2), value: textHeight)
+        // Listen for Enter key press notifications to trigger send.
+        .onReceive(NSEvent.pressedEnter) { _ in
+            sendAndClear()
+        }
     }
     
+    // MARK: - Helper Methods
+    
+    /// Returns the current height for the TextEditor.
     private func calculateHeight() -> CGFloat {
         return textHeight
     }
     
+    /// Trims the user input, sends the message if not empty, and resets the input.
     private func sendAndClear() {
         let trimmed = userInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        sendMessage()
+        // Send the message using the provided closure.
+        sendMessage(trimmed)
+        // Clear the input field and reset the text editor height.
         userInput = ""
-        textHeight = minHeight // Reset height after sending
+        textHeight = minHeight
     }
 }
 
-// Simple preference key to track view height
+/// A preference key to capture the height of a view.
 struct ViewHeightKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
@@ -105,21 +129,27 @@ struct ViewHeightKey: PreferenceKey {
     }
 }
 
-// Extension to handle Enter key presses globally
+// MARK: - NSEvent and NSApplication Extensions for Enter Key Handling
+
 extension NSEvent {
+    /// A publisher that emits events when the Enter key is pressed without Shift.
     static var pressedEnter: NotificationCenter.Publisher {
         NotificationCenter.default.publisher(for: NSEvent.didPressEnter)
     }
     
+    /// Notification posted when the Enter key (without Shift) is pressed.
     static let didPressEnter = Notification.Name("didPressEnter")
 }
 
 extension NSApplication {
+    /// Sets up a local monitor for keyDown events to detect when the Enter key is pressed.
+    /// This should be called early in your app's lifecycle (for example, in the app delegate).
     static func setupEnterKeyListener() {
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-            if event.keyCode == 36 && !event.modifierFlags.contains(.shift) {  // Return/Enter without Shift
+            // Key code 36 corresponds to the Return/Enter key.
+            if event.keyCode == 36 && !event.modifierFlags.contains(.shift) {
                 NotificationCenter.default.post(name: NSEvent.didPressEnter, object: nil)
-                return nil // Prevents default behavior
+                return nil // Prevent the default behavior.
             }
             return event
         }

@@ -37,5 +37,17 @@ public class PetalToolFactory {
         await PetalToolRegistry.shared.registerTool(gradesTool)
         return gradesTool
     }
+    
+    public static func createCalendarCreateEventTool() async -> any PetalTool {
+        let gradesTool = PetalCalendarCreateEventTool()
+        await PetalToolRegistry.shared.registerTool(gradesTool)
+        return gradesTool
+    }
+    
+    public static func createCalendarFetchEventTool() async -> any PetalTool {
+        let gradesTool = PetalCalendarFetchEventsTool()
+        await PetalToolRegistry.shared.registerTool(gradesTool)
+        return gradesTool
+    }
 }
 

@@ -8,15 +8,19 @@
 import Foundation
 import SwiftUI
 
+/// The main chat interface view.
 struct GeminiChatView: View {
+    /// The view model managing conversation data.
     @ObservedObject var conversationVM: ConversationViewModel
+    /// Holds the current user input text.
     @State private var userInput: String = ""
+    /// Controls whether settings are shown.
     @State private var showSettings: Bool = false
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header with model selector
+            // Header with the app title and a model toggle.
             HStack {
                 Text("Petals")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
@@ -32,7 +36,7 @@ struct GeminiChatView: View {
                 VisualEffectView(material: .headerView, blendingMode: .behindWindow)
             )
             
-            // Chat area
+            // Chat messages area.
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 16) {
@@ -64,36 +68,38 @@ struct GeminiChatView: View {
                     }
                 }
             }
-
-            // Input area
-            ChatInputBar(userInput: $userInput) {
+            
+            // Chat input area.
+            ChatInputBar(userInput: $userInput) { message in
                 Task {
-                    let text = userInput.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !text.isEmpty else {
-                        return
-                    }
-                    userInput = ""
-                    await conversationVM.sendMessage(text, streaming: true)
+                    // Asynchronously send the message via the conversation view model.
+                    await conversationVM.sendMessage(message, streaming: true)
                 }
             }
         }
+        // Set up the global Enter key listener when the view appears.
+        .onAppear {
+            NSApplication.setupEnterKeyListener()
+        }
     }
-
+    
+    /// Displays a loading view for tool messages that are still processing.
+    /// - Parameter msg: The pending chat message.
+    /// - Returns: A view representing the loading state.
     private func toolLoadingView(for msg: ChatMessage) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Avatar(participant: .llm)
                 .offset(y: 2)
-
             ToolProcessingView()
                 .id(msg)
             Spacer()
         }
     }
-
 }
 
 // MARK: - Supporting Views
 
+/// A toggle view to switch between different models.
 struct ModelToggle: View {
     @Binding var isOn: Bool
     @Environment(\.colorScheme) var colorScheme
@@ -103,7 +109,6 @@ struct ModelToggle: View {
             HStack(spacing: 6) {
                 Image(systemName: isOn ? "desktopcomputer" : "cloud")
                     .font(.system(size: 12))
-
                 Text(isOn ? "Ollama" : "Gemini API")
                     .font(.system(size: 12, weight: .medium))
             }
@@ -121,8 +126,7 @@ struct ModelToggle: View {
     }
 }
 
-// MARK: - Helper Views
-
+/// A view that wraps NSVisualEffectView for blurred or vibrant backgrounds.
 struct VisualEffectView: NSViewRepresentable {
     let material: NSVisualEffectView.Material
     let blendingMode: NSVisualEffectView.BlendingMode
@@ -144,6 +148,8 @@ struct VisualEffectView: NSViewRepresentable {
 // MARK: - Color Extension
 
 extension Color {
+    /// Initializes a Color using a hexadecimal string.
+    /// - Parameter hex: A hex string representing the color (e.g., "5E5CE6").
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0

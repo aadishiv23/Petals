@@ -46,6 +46,9 @@ class PetalOllamaService {
             lastMessageContent.contains("grades") ||
             lastMessageContent.contains("performance") ||
             lastMessageContent.contains("hw") ||
+            lastMessageContent.contains("fetch") ||
+            lastMessageContent.contains("calendar") ||
+            lastMessageContent.contains("create") ||
             lastMessageContent.range(of: "\\d{4}-\\d{2}-\\d{2}", options: .regularExpression) != nil
 
         // Use the tool registry from PetalTools to provide tools to the API.
@@ -91,6 +94,9 @@ class PetalOllamaService {
                         lastMessageContent.contains("grades") ||
                         lastMessageContent.contains("performance") ||
                         lastMessageContent.contains("hw") ||
+                        lastMessageContent.contains("fetch") ||
+                        lastMessageContent.contains("calendar") ||
+                        lastMessageContent.contains("create") ||
                         lastMessageContent.range(of: "\\d{4}-\\d{2}-\\d{2}", options: .regularExpression) != nil
 
                     let toolList: [OllamaTool]? = shouldUseTools
@@ -173,6 +179,9 @@ class PetalOllamaService {
                     continue
                 }
 
+            case "petalCalendarFetchEventsTool", "petalCalendarCreateEventTool":
+                rawResult = try await handleCalendarEventsToolCall(toolCall)
+
             default:
                 continue
             }
@@ -181,6 +190,44 @@ class PetalOllamaService {
             return try await formatToolResponse(toolName, raw: rawResult)
         }
         return ""
+    }
+
+    // MARK: - Calendar Tools Execution
+
+    /// Handles tool calls for calendar event actions (both fetching and creating events).
+    ///
+    /// This method decodes the JSON arguments from the tool call,
+    /// instantiates the corresponding calendar tool, executes it,
+    /// and returns the resulting output as a string.
+    ///
+    /// - Parameter toolCall: The tool call containing the function name and arguments.
+    /// - Returns: A formatted string result from executing the calendar tool.
+    /// - Throws: An error if decoding or execution fails.
+    private func handleCalendarEventsToolCall(_ toolCall: OllamaToolCall) async throws -> String {
+        let arguments = toolCall.function.arguments
+        // Encode the arguments into JSON data.
+        let jsonData = try JSONEncoder().encode(arguments)
+        let decoder = JSONDecoder()
+        let encoder = JSONEncoder()
+
+        switch toolCall.function.name {
+        case "petalCalendarFetchEventsTool":
+            let fetchTool = PetalCalendarFetchEventsTool()
+            let input = try decoder.decode(PetalCalendarFetchEventsTool.Input.self, from: jsonData)
+            let output = try await fetchTool.execute(input)
+            return String(data: try encoder.encode(output), encoding: .utf8) ?? ""
+        case "petalCalendarCreateEventTool":
+            let createTool = PetalCalendarCreateEventTool()
+            let input = try decoder.decode(PetalCalendarCreateEventTool.Input.self, from: jsonData)
+            let output = try await createTool.execute(input)
+            return String(data: try encoder.encode(output), encoding: .utf8) ?? ""
+        default:
+            throw NSError(
+                domain: "CalendarTool",
+                code: 500,
+                userInfo: [NSLocalizedDescriptionKey: "Unsupported calendar tool call: \(toolCall.function.name)"]
+            )
+        }
     }
 
     // MARK: - Canvas API Fetch Methods
@@ -243,7 +290,6 @@ class PetalOllamaService {
         return assignments.map { "• \($0.name) (Due: \($0.dueAt ?? "No due date"))" }.joined(separator: "\n")
     }
 
-
     /// Fetches grades for a given course.
     /// Fetches grades for a given course.
     private func fetchCanvasGrades(courseName: String) async throws -> String {
@@ -273,7 +319,6 @@ class PetalOllamaService {
         return submissions.map { "• \($0.assignmentName): \($0.grade ?? "Not graded")" }.joined(separator: "\n")
     }
 
-
     /// Gets the course ID for a given course name.
     /// Gets the course ID for a given course name.
     private func getCanvasCourseId(for courseName: String) async throws -> Int? {
@@ -300,7 +345,6 @@ class PetalOllamaService {
 
         return courses.first { $0.name.localizedCaseInsensitiveContains(courseName) }?.id
     }
-
 
     // MARK: - Formatting & Summarization
 
@@ -332,6 +376,18 @@ class PetalOllamaService {
         case "petalFetchCanvasGradesTool":
             prompt = """
             The following grades were retrieved for a course: "\(raw)". Convert this into a clean, structured summary.
+            """
+
+        case "petalCalendarFetchEventsTool":
+            prompt = """
+            The following events were retrieved from the user's calendar: "\(
+                raw
+            )". Format them into a clean, readable list.
+            """
+
+        case "petalCalendarCreateEventTool":
+            prompt = """
+            The following event has been successfully created: "\(raw)". Summarize it in a short confirmation message.
             """
         default:
             return raw // If it's an unknown tool, return as-is.
