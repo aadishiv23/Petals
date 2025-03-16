@@ -36,9 +36,22 @@
 		ACEC36C32D7EA27A00B3A361 /* PetalTools */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PetalTools; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AC28FD7E2D86870C007BF39E /* Exceptions for "Petals" folder in "Petals" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AC9B1C812D5526B100F3525D /* Petals */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AC9B1C842D5526B100F3525D /* Petals */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AC28FD7E2D86870C007BF39E /* Exceptions for "Petals" folder in "Petals" target */,
+			);
 			path = Petals;
 			sourceTree = "<group>";
 		};
@@ -427,6 +440,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Petals/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Petals needs access to your calendar to create and manage events";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -454,6 +469,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Petals/Info.plist;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Petals needs access to your calendar to create and manage events";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

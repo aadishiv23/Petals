@@ -382,7 +382,7 @@ class PetalOllamaService {
             prompt = """
             The following events were retrieved from the user's calendar: "\(
                 raw
-            )". Format them into a clean, readable list.
+            )". Format them into a clean, readable list, showcasing the events in a neat list.
             """
 
         case "petalCalendarCreateEventTool":

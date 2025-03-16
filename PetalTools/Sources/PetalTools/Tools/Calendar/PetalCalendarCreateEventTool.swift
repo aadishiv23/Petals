@@ -203,6 +203,7 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
 
     public func execute(_ input: Input) async throws -> Output {
         let eventStore = EKEventStore()
+        try await eventStore.requestFullAccessToEvents()
         try await requestCalendarAccess(eventStore: eventStore)
 
         let event = EKEvent(eventStore: eventStore)
