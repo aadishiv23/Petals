@@ -53,13 +53,13 @@ class OllamaChatModel: AIChatModel {
     func sendMessageStream(_ text: String) -> AsyncStream<String> {
         print("OllamaChatModel: Starting stream with message: \(text.prefix(50))...")
         let messages = [OllamaChatMessage(role: "user", content: text, tool_calls: [])]
+        var finalOutput = ""  // Move declaration outside Task scope
 
         return AsyncStream { continuation in
             Task {
                 do {
                     var chunkCount = 0
                     var totalLength = 0
-                    var finalOutput = ""
 
                     for try await chunk in ollamaService.streamConversation(model: modelName, messages: messages) {
                         chunkCount += 1
@@ -73,6 +73,7 @@ class OllamaChatModel: AIChatModel {
                     continuation.finish()
                 } catch {
                     print("OllamaChatModel: Streaming error: \(error.localizedDescription)")
+                    print("OllamaChatModel: Incomplete Output:\n\(finalOutput)")
                     continuation.finish()
                 }
             }
