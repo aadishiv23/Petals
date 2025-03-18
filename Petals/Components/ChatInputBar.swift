@@ -5,7 +5,6 @@
 //  Created by Aadi Shiv Malhotra on 2/6/25.
 //
 
-import Foundation
 import SwiftUI
 
 /// A SwiftUI view representing the chat input bar.
@@ -33,26 +32,33 @@ struct ChatInputBar: View {
     /// Tracks the current height of the text editor.
     @State private var textHeight: CGFloat = 36
     
+    // MARK: - Environment
+    
+    @Environment(\.colorScheme) private var colorScheme
+    
     // MARK: - Body
     
     var body: some View {
-        HStack(alignment: .bottom, spacing: 12) {
+        ZStack(alignment: .trailing) {
             // Text input area with a placeholder.
             ZStack(alignment: .leading) {
                 if userInput.isEmpty {
                     Text("Message")
                         .font(font)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.secondary) // Adaptive placeholder color
                         .padding(.leading, 5)
-                        .padding(.top, 8)
-                        .allowsHitTesting(false) // So that it doesn't intercept taps.
+                        .padding(.bottom, 10)
+                        .allowsHitTesting(false)
                 }
                 
-                // A TextEditor with dynamic height.
+                // TextEditor with dynamic height
                 TextEditor(text: $userInput)
                     .font(font)
                     .lineSpacing(lineSpacing)
                     .frame(height: calculateHeight())
+                    .foregroundColor(.primary) // Adaptive text color
+                    // For iOS 16 and later, hides the background while scrolling
+                    .scrollContentBackground(.hidden)
                     .background(
                         GeometryReader { geo in
                             Color.clear.preference(
@@ -62,39 +68,49 @@ struct ChatInputBar: View {
                         }
                     )
                     .onPreferenceChange(ViewHeightKey.self) { height in
-                        // Limit the height between the minimum and maximum.
                         let calculatedHeight = min(max(height, minHeight), maxHeight)
                         if abs(calculatedHeight - textHeight) > 2 {
                             self.textHeight = calculatedHeight
                         }
                     }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color(.textBackgroundColor).opacity(0.5))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-            )
+            .padding(.trailing, 40) // Make room for the button
             
-            // Send Button.
-            Button(action: sendAndClear) {
-                Image(systemName: "paperplane.fill")
-                    .font(.system(size: 16, weight: .medium))
-                    .frame(width: 36, height: 36)
-                    .foregroundColor(userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .gray.opacity(0.5) : .blue)
-                    .background(
-                        Circle()
-                            .fill(Color.blue.opacity(userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0 : 0.1))
-                    )
+            // Send Button
+            withAnimation {
+                Button(action: sendAndClear) {
+                    Image(systemName: "arrow.up")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 30, height: 30)
+                        .background(
+                            Circle()
+                                .fill(userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?
+                                      Color.secondary.opacity(0.3) : Color.blue)
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .disabled(userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .padding(.trailing, 5)
             }
-            .buttonStyle(PlainButtonStyle())
-            .animation(.easeInOut(duration: 0.2), value: userInput.isEmpty)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(Color(.windowBackgroundColor))
+        .frame(maxWidth: .infinity)
+        // A background that’s not pure black or white in either mode
+        .background(
+            colorScheme == .dark
+            ? Color(white: 0.15, opacity: 0.9)
+            : Color(white: 0.95, opacity: 0.9)
+        )
+        .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(colorScheme == .dark
+                        ? Color.gray.opacity(0.2)
+                        : Color.gray.opacity(0.3),
+                        lineWidth: 0.5)
+        )
         .animation(.easeOut(duration: 0.2), value: textHeight)
         // Listen for Enter key press notifications to trigger send.
         .onReceive(NSEvent.pressedEnter) { _ in
