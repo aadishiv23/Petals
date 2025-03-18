@@ -51,6 +51,8 @@ class ConversationViewModel: ObservableObject {
 
     /// The active AI chat model being used for conversation.
     private var chatModel: AIChatModel
+    
+    private let toolEvaluator = ToolTriggerEvaluator()
 
     // MARK: Initializer
 
@@ -126,9 +128,8 @@ class ConversationViewModel: ObservableObject {
 
         let needsTool = messageRequiresTool(text)
         isProcessingTool = needsTool
-        // Append the user's message.
+
         messages.append(ChatMessage(message: text, participant: .user))
-        // Append a pending system response.
         messages.append(ChatMessage.pending(participant: .system))
 
         do {
@@ -151,17 +152,68 @@ class ConversationViewModel: ObservableObject {
         isProcessingTool = false
     }
 
+//    private func messageRequiresTool(_ text: String) -> Bool {
+//        // Define criteria for triggering tools (dates, explicit phrases, etc.)
+//        let toolPatterns = [
+//            "\\d{4}-\\d{2}-\\d{2}", // Date in YYYY-MM-DD format
+//            "(calendar|event|schedule|appointment)", // Explicit calendar keywords
+//            "(canvas|courses|course|class|classes)",
+//            "(grade|grades|performance|assignment)"
+//        ]
+//
+//        return toolPatterns.contains { pattern in
+//            text.range(of: pattern, options: .regularExpression) != nil
+//        }
+//    }
+
+    // MARK: Tool Trigger Evaluation (Using `ToolTriggerEvaluator`)
+
     private func messageRequiresTool(_ text: String) -> Bool {
-        // Define criteria for triggering tools (dates, explicit phrases, etc.)
-        let toolPatterns = [
-            "\\d{4}-\\d{2}-\\d{2}", // Date in YYYY-MM-DD format
-            "(calendar|event|schedule|appointment)", // Explicit calendar keywords
-            "(canvas|courses|course|class|classes)",
-            "(grade|grades|performance|assignment)"
+        let toolExemplars: [String: [String]] = [
+            "petalCalendarFetchEventsTool": [
+                "Fetch calendar events for me",
+                "Show calendar events",
+                "List my events",
+                "Get events from my calendar",
+                "Retrieve calendar events"
+            ],
+            "petalCalendarCreateEventTool": [
+                "Create a calendar event on [date]",
+                "Schedule a new calendar event",
+                "Add a calendar event to my schedule",
+                "Book an event on my calendar",
+                "Set up a calendar event"
+            ],
+            "petalFetchRemindersTool": [
+                "Show me my reminders",
+                "List my tasks for today",
+                "Fetch completed reminders",
+                "Get all my pending reminders",
+                "Find reminders containing 'doctor'"
+            ],
+            "petalFetchCanvasAssignmentsTool": [
+                "Fetch assignments for my course",
+                "Show my Canvas assignments",
+                "Get assignments for my class",
+                "Retrieve course assignments from Canvas",
+                "List assignments for my course"
+            ],
+            "petalFetchCanvasGradesTool": [
+                "Show me my grades",
+                "Get my Canvas grades",
+                "Fetch my course grades",
+                "Display grades for my class",
+                "Retrieve my grades from Canvas"
+            ]
         ]
 
-        return toolPatterns.contains { pattern in
-            text.range(of: pattern, options: .regularExpression) != nil
+        for (_, exemplars) in toolExemplars {
+            if let prototype = toolEvaluator.prototype(for: exemplars) {
+                if toolEvaluator.shouldTriggerTool(for: text, exemplarPrototype: prototype) {
+                    return true
+                }
+            }
         }
+        return false
     }
 }
