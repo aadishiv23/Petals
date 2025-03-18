@@ -112,5 +112,5 @@ public final class PetalFetchCanvasGradesTool: OllamaCompatibleTool {
         return submissions.map { "• \($0.assignmentName): \($0.grade ?? "Not graded")" }.joined(separator: "\n")
     }
 
-    init() {}
+    public init() {}
 }

@@ -122,5 +122,5 @@ public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
         }
     }
 
-    init() {}
+    public init() {}
 }

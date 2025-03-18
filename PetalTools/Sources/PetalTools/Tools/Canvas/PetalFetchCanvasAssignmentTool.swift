@@ -113,5 +113,5 @@ public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool {
         return assignments.map { "• \($0.name) (Due: \($0.dueAt ?? "No due date"))" }.joined(separator: "\n")
     }
 
-    init() {}
+    public init() {}
 }

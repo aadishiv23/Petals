@@ -11,6 +11,7 @@ import Foundation
 public enum PetalParameterType: String, Codable {
     case string
     case number
+    case double
     case boolean
     case date
     case object
