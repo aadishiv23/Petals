@@ -49,5 +49,11 @@ public class PetalToolFactory {
         await PetalToolRegistry.shared.registerTool(gradesTool)
         return gradesTool
     }
+    
+    public static func createFetchRemindersTool() async -> any PetalTool {
+        let remindersTool = PetalFetchRemindersTool()
+        await PetalToolRegistry.shared.registerTool(remindersTool)
+        return remindersTool
+    }
 }
 
