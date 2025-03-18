@@ -30,6 +30,68 @@ class PetalOllamaService {
         return url
     }
 
+    /// Determines if tools should be used for the given message by comparing it against exemplar prototypes.
+    /// Uses five exemplars per tool.
+    private func shouldUseTools(for message: String) -> Bool {
+        // Define exemplar phrases (5 per tool) for each tool ID.
+        let toolExemplars: [String: [String]] = [
+            "petalCalendarCreateEventTool": [
+                "Create a calendar event on [date]",
+                "Schedule a new calendar event",
+                "Add a calendar event to my schedule",
+                "Book an event on my calendar",
+                "Set up a calendar event"
+            ],
+            "petalGenericCanvasCoursesTool": [
+                "Show me my Canvas courses",
+                "List my classes on Canvas",
+                "Display my Canvas courses",
+                "What courses am I enrolled in?",
+                "Fetch my Canvas classes"
+            ],
+            "petalFetchCanvasAssignmentsTool": [
+                "Fetch assignments for my course",
+                "Show my Canvas assignments",
+                "Get assignments for my class",
+                "Retrieve course assignments from Canvas",
+                "List assignments for my course"
+            ],
+            "petalFetchCanvasGradesTool": [
+                "Show me my grades",
+                "Get my Canvas grades",
+                "Fetch my course grades",
+                "Display grades for my class",
+                "Retrieve my grades from Canvas"
+            ],
+            "petalCalendarFetchEventsTool": [
+                "Fetch calendar events for me",
+                "Show calendar events",
+                "List my events",
+                "Get events from my calendar",
+                "Retrieve calendar events"
+            ],
+            "petalFetchRemindersTool": [
+                "Show me my reminders",
+                "List my tasks for today",
+                "Fetch completed reminders",
+                "Get all my pending reminders",
+                "Find reminders containing 'doctor'"
+            ]
+        ]
+
+        let evaluator = ToolTriggerEvaluator()
+
+        // Check if the incoming message meets the threshold for any tool.
+        for (_, exemplars) in toolExemplars {
+            if let prototype = evaluator.prototype(for: exemplars) {
+                if evaluator.shouldTriggerTool(for: message, exemplarPrototype: prototype) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     // MARK: - Message Handling
 
     /// Sends a single message to the Ollama API.
@@ -37,19 +99,20 @@ class PetalOllamaService {
         let url = baseURL.appendingPathComponent("chat")
 
         let lastMessageContent = messages.last?.content?.lowercased() ?? ""
-        let shouldUseTools = lastMessageContent.contains("calendar") ||
-            lastMessageContent.contains("event") ||
-            lastMessageContent.contains("canvas") ||
-            lastMessageContent.contains("course") ||
-            lastMessageContent.contains("assignment") ||
-            lastMessageContent.contains("classwork") ||
-            lastMessageContent.contains("grades") ||
-            lastMessageContent.contains("performance") ||
-            lastMessageContent.contains("hw") ||
-            lastMessageContent.contains("fetch") ||
-            lastMessageContent.contains("calendar") ||
-            lastMessageContent.contains("create") ||
-            lastMessageContent.range(of: "\\d{4}-\\d{2}-\\d{2}", options: .regularExpression) != nil
+        let shouldUseTools = shouldUseTools(for: lastMessageContent)
+//        let shouldUseTools = lastMessageContent.contains("calendar") ||
+//            lastMessageContent.contains("event") ||
+//            lastMessageContent.contains("canvas") ||
+//            lastMessageContent.contains("course") ||
+//            lastMessageContent.contains("assignment") ||
+//            lastMessageContent.contains("classwork") ||
+//            lastMessageContent.contains("grades") ||
+//            lastMessageContent.contains("performance") ||
+//            lastMessageContent.contains("hw") ||
+//            lastMessageContent.contains("fetch") ||
+//            lastMessageContent.contains("calendar") ||
+//            lastMessageContent.contains("create") ||
+//            lastMessageContent.range(of: "\\d{4}-\\d{2}-\\d{2}", options: .regularExpression) != nil
 
         // Use the tool registry from PetalTools to provide tools to the API.
         let payload = OllamaChatRequest(
@@ -85,19 +148,21 @@ class PetalOllamaService {
                     let url = baseURL.appendingPathComponent("chat")
 
                     let lastMessageContent = messages.last?.content?.lowercased() ?? ""
-                    let shouldUseTools = lastMessageContent.contains("calendar") ||
-                        lastMessageContent.contains("event") ||
-                        lastMessageContent.contains("canvas") ||
-                        lastMessageContent.contains("course") ||
-                        lastMessageContent.contains("assignment") ||
-                        lastMessageContent.contains("classwork") ||
-                        lastMessageContent.contains("grades") ||
-                        lastMessageContent.contains("performance") ||
-                        lastMessageContent.contains("hw") ||
-                        lastMessageContent.contains("fetch") ||
-                        lastMessageContent.contains("calendar") ||
-                        lastMessageContent.contains("create") ||
-                        lastMessageContent.range(of: "\\d{4}-\\d{2}-\\d{2}", options: .regularExpression) != nil
+                    let shouldUseTools = self.shouldUseTools(for: lastMessageContent)
+
+//                    let shouldUseTools = lastMessageContent.contains("calendar") ||
+//                        lastMessageContent.contains("event") ||
+//                        lastMessageContent.contains("canvas") ||
+//                        lastMessageContent.contains("course") ||
+//                        lastMessageContent.contains("assignment") ||
+//                        lastMessageContent.contains("classwork") ||
+//                        lastMessageContent.contains("grades") ||
+//                        lastMessageContent.contains("performance") ||
+//                        lastMessageContent.contains("hw") ||
+//                        lastMessageContent.contains("fetch") ||
+//                        lastMessageContent.contains("calendar") ||
+//                        lastMessageContent.contains("create") ||
+//                        lastMessageContent.range(of: "\\d{4}-\\d{2}-\\d{2}", options: .regularExpression) != nil
 
                     let toolList: [OllamaTool]? = shouldUseTools
                         ? await PetalToolRegistry.ollamaTools() as? [OllamaTool]
@@ -152,6 +217,11 @@ class PetalOllamaService {
             let arguments = toolCall.function.arguments
             let toolName = toolCall.function.name
 
+            // Encode args into json data
+            let jsonData = try JSONEncoder().encode(arguments)
+            let decoder = JSONDecoder()
+            let encoder = JSONEncoder()
+
             let rawResult: String
             switch toolName {
             case "petalMockCalendarTool":
@@ -162,25 +232,39 @@ class PetalOllamaService {
                 }
 
             case "petalGenericCanvasCoursesTool":
-                let completed = arguments["completed"]?.value as? Bool ?? false
-                rawResult = try await fetchCanvasCourses(completed: completed)
+//                let completed = arguments["completed"]?.value as? Bool ?? false
+//                rawResult = try await fetchCanvasCourses(completed: completed)
+                let petalGenericCanvasCoursesTool = PetalGenericFetchCanvasCoursesTool()
+                let input = try decoder.decode(PetalGenericFetchCanvasCoursesTool.Input.self, from: jsonData)
+                let output = try await petalGenericCanvasCoursesTool.execute(input)
+                rawResult = String(data: try encoder.encode(output), encoding: .utf8) ?? ""
 
             case "petalFetchCanvasAssignmentsTool":
-                if let courseName = arguments["courseName"]?.value as? String {
-                    rawResult = try await fetchCanvasAssignments(courseName: courseName)
-                } else {
-                    continue
-                }
+//                if let courseName = arguments["courseName"]?.value as? String {
+//                    rawResult = try await fetchCanvasAssignments(courseName: courseName)
+//                } else {
+//                    continue
+//                }
+
+                let tool = PetalFetchCanvasAssignmentsTool()
+                let input = try decoder.decode(PetalFetchCanvasAssignmentsTool.Input.self, from: jsonData)
+                let output = try await tool.execute(input)
+                rawResult = String(data: try encoder.encode(output), encoding: .utf8) ?? ""
 
             case "petalFetchCanvasGradesTool":
-                if let courseName = arguments["courseName"]?.value as? String {
-                    rawResult = try await fetchCanvasGrades(courseName: courseName)
-                } else {
-                    continue
-                }
+                let tool = PetalFetchCanvasGradesTool()
+                let input = try decoder.decode(PetalFetchCanvasGradesTool.Input.self, from: jsonData)
+                let output = try await tool.execute(input)
+                rawResult = String(data: try encoder.encode(output), encoding: .utf8) ?? ""
 
             case "petalCalendarFetchEventsTool", "petalCalendarCreateEventTool":
                 rawResult = try await handleCalendarEventsToolCall(toolCall)
+                
+            case "petalFetchRemindersTool":
+                let tool = PetalFetchRemindersTool()
+                let input = try decoder.decode(PetalFetchRemindersTool.Input.self, from: jsonData)
+                let output = try await tool.execute(input)
+                rawResult = String(data: try encoder.encode(output), encoding: .utf8) ?? ""
 
             default:
                 continue
@@ -390,7 +474,9 @@ class PetalOllamaService {
             The following event has been successfully created: "\(raw)". Summarize it in a short confirmation message.
             """
         default:
-            return raw // If it's an unknown tool, return as-is.
+            prompt = """
+            Reformat the following text into a conversational message: \(raw)
+            """ // If it's an unknown tool, return as-is.
         }
         return try await summarizeToolResponse(prompt)
     }
