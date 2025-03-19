@@ -43,7 +43,7 @@ public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool {
     }
 
     public struct Output: Codable {
-        let assignments: String
+        public let assignments: String
     }
     
     public func asOllamaTool() -> OllamaTool {
@@ -68,12 +68,12 @@ public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool {
 
 
     public func execute(_ input: Input) async throws -> Output {
-        let courseId = try await getCourseId(for: input.courseName)
-        guard let courseId = courseId else {
-            return Output(assignments: "Course not found.")
-        }
+//        let courseId = try await getCourseId(for: input.courseName)
+//        guard let courseId = courseId else {
+//            return Output(assignments: "Course not found.")
+//        }
 
-        let result = try await fetchAssignments(courseId: courseId)
+        let result = try await fetchAssignments(courseId: 720596)
         return Output(assignments: result)
     }
 

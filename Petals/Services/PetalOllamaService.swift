@@ -237,7 +237,7 @@ class PetalOllamaService {
                 let petalGenericCanvasCoursesTool = PetalGenericFetchCanvasCoursesTool()
                 let input = try decoder.decode(PetalGenericFetchCanvasCoursesTool.Input.self, from: jsonData)
                 let output = try await petalGenericCanvasCoursesTool.execute(input)
-                rawResult = String(data: try encoder.encode(output), encoding: .utf8) ?? ""
+                rawResult = output.courses// String(data: try encoder.encode(output), encoding: .utf8) ?? ""
 
             case "petalFetchCanvasAssignmentsTool":
 //                if let courseName = arguments["courseName"]?.value as? String {
@@ -249,7 +249,7 @@ class PetalOllamaService {
                 let tool = PetalFetchCanvasAssignmentsTool()
                 let input = try decoder.decode(PetalFetchCanvasAssignmentsTool.Input.self, from: jsonData)
                 let output = try await tool.execute(input)
-                rawResult = String(data: try encoder.encode(output), encoding: .utf8) ?? ""
+                rawResult = output.assignments //String(data: try encoder.encode(output), encoding: .utf8) ?? ""
 
             case "petalFetchCanvasGradesTool":
                 let tool = PetalFetchCanvasGradesTool()
@@ -455,7 +455,7 @@ class PetalOllamaService {
             prompt = """
             The following assignments were retrieved for a course: "\(
                 raw
-            )". Convert this data into a neatly formatted list.
+            )". Convert this data into a neatly formatted list. Respond with a cheery comment like here are your courses, followed by the formatted list.
             """
         case "petalFetchCanvasGradesTool":
             prompt = """

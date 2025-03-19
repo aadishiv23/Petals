@@ -45,7 +45,7 @@ public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
     }
 
     public struct Output: Codable {
-        let courses: String
+        public let courses: String
     }
 
     /// Implements the `execute` function required by `PetalTool`
