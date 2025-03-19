@@ -18,7 +18,7 @@ struct ToolProcessingView: View {
     let processingSteps = [
         (icon: "arrow.down.doc.fill", text: "Processing Input"),
         (icon: "hammer.fill", text: "Using Tool"),
-        (icon: "gear", text: "Analyzing Data"),
+        (icon: "lightbulb.max.fill", text: "Thinking"),
         (icon: "text.badge.checkmark", text: "Preparing Output")
     ]
     
