@@ -14,6 +14,7 @@ struct ChatMessage: Identifiable, Equatable, Hashable {
     var message: String
     var pending: Bool = false
     var participant: Participant
+    var toolCallName: String? = nil
     
     enum Participant {
         case user

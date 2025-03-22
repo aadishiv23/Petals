@@ -7,6 +7,7 @@
 
 import Foundation
 import GoogleGenerativeAI
+import PetalTools
 
 class GeminiChatModel: AIChatModel {
     private var model: GenerativeModel
@@ -17,13 +18,13 @@ class GeminiChatModel: AIChatModel {
         self.chat = model.startChat()
     }
 
-    func sendMessageStream(_ text: String) -> AsyncStream<String> {
+    func sendMessageStream(_ text: String) -> AsyncStream<PetalMessageStreamChunk> {
         return AsyncStream { continuation in
             Task {
                 do {
                     for try await response in chat.sendMessageStream(text) {
                         if let textChunk = response.text {
-                            continuation.yield(textChunk)
+                            continuation.yield(PetalMessageStreamChunk(message: textChunk, toolCallName: nil))
                         }
                     }
                     continuation.finish()

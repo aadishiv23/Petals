@@ -50,7 +50,7 @@ class OllamaChatModel: AIChatModel {
     /// - Calls `OllamaService.streamConversation` to fetch a streaming response.
     /// - Yields each chunk of the response asynchronously.
     /// - Handles errors and ensures the stream is properly closed.
-    func sendMessageStream(_ text: String) -> AsyncStream<String> {
+    func sendMessageStream(_ text: String) -> AsyncStream<PetalMessageStreamChunk> {
         print("OllamaChatModel: Starting stream with message: \(text.prefix(50))...")
         let messages = [OllamaChatMessage(role: "user", content: text, tool_calls: [])]
         var finalOutput = ""  // Move declaration outside Task scope
@@ -63,8 +63,8 @@ class OllamaChatModel: AIChatModel {
 
                     for try await chunk in ollamaService.streamConversation(model: modelName, messages: messages) {
                         chunkCount += 1
-                        totalLength += chunk.count
-                        finalOutput.append(chunk)
+                        totalLength += chunk.message.count
+                        finalOutput.append(chunk.message)
                         continuation.yield(chunk)
                     }
 

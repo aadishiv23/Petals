@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import PetalTools
 
 protocol AIChatModel {
-    func sendMessageStream(_ text: String) -> AsyncStream<String>
+    func sendMessageStream(_ text: String) -> AsyncStream<PetalMessageStreamChunk>
     func sendMessage(_ text: String) async throws -> String
 }

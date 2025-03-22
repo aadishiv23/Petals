@@ -77,14 +77,14 @@ class ConversationViewModel: ObservableObject {
         error = nil
         messages.removeAll()
 
-        let systemInstruction = ChatMessage(
-            message: """
-            System: You are a helpful assistant. Only call the function 'fetchCalendarEvents' if the user's request explicitly asks for calendar events (with a date in YYYY-MM-DD format). Otherwise, respond conversationally without invoking any functions.
-            """,
-            participant: .system
-        )
-
-        messages.append(systemInstruction)
+//        let systemInstruction = ChatMessage(
+//            message: """
+//            System: You are a helpful assistant. Only call the function 'fetchCalendarEvents' if the user's request explicitly asks for calendar events (with a date in YYYY-MM-DD format). Otherwise, respond conversationally without invoking any functions.
+//            """,
+//            participant: .system
+//        )
+//
+//        messages.append(systemInstruction)
         switchModel()
     }
 
@@ -136,7 +136,10 @@ class ConversationViewModel: ObservableObject {
             if streaming {
                 let stream = chatModel.sendMessageStream(text)
                 for await chunk in stream {
-                    messages[messages.count - 1].message += chunk
+                    messages[messages.count - 1].message += chunk.message
+                    if let toolName = chunk.toolCallName {
+                        messages[messages.count - 1].toolCallName = toolName
+                    }
                     messages[messages.count - 1].pending = false
                 }
             } else {

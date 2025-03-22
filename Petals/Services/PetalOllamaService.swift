@@ -141,7 +141,7 @@ class PetalOllamaService {
     // MARK: - Stream Conversation
 
     /// Method to stream conversation.
-    func streamConversation(model: String, messages: [OllamaChatMessage]) -> AsyncThrowingStream<String, Error> {
+    func streamConversation(model: String, messages: [OllamaChatMessage]) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
@@ -188,12 +188,24 @@ class PetalOllamaService {
                            let res = try? JSONDecoder().decode(OllamaChatResponse.self, from: data)
                         {
                             if let toolCalls = res.message?.tool_calls, !toolCalls.isEmpty {
+                                let firstToolCall = toolCalls.first!
                                 let toolResponse = try await handleToolCall(toolCalls)
-                                continuation.yield(toolResponse)
+                                let toolName = firstToolCall.function.name
+                                continuation.yield(
+                                    PetalMessageStreamChunk(
+                                        message: toolResponse,
+                                        toolCallName: toolName
+                                    )
+                                )
                             }
 
                             if let content = res.message?.content, !content.isEmpty {
-                                continuation.yield(content)
+                                continuation.yield(
+                                    PetalMessageStreamChunk(
+                                        message: content,
+                                        toolCallName: nil
+                                    )
+                                )
                             }
 
                             if res.done {
@@ -299,12 +311,14 @@ class PetalOllamaService {
             let fetchTool = PetalCalendarFetchEventsTool()
             let input = try decoder.decode(PetalCalendarFetchEventsTool.Input.self, from: jsonData)
             let output = try await fetchTool.execute(input)
-            return String(data: try encoder.encode(output), encoding: .utf8) ?? ""
+            let res = output.events
+            return res
         case "petalCalendarCreateEventTool":
             let createTool = PetalCalendarCreateEventTool()
             let input = try decoder.decode(PetalCalendarCreateEventTool.Input.self, from: jsonData)
             let output = try await createTool.execute(input)
-            return String(data: try encoder.encode(output), encoding: .utf8) ?? ""
+            let res = output.event
+            return res
         default:
             throw NSError(
                 domain: "CalendarTool",
