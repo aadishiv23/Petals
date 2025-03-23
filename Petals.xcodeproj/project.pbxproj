@@ -10,6 +10,11 @@
 		AC3AA6682D80A67B004A1A2D /* Ollama in Frameworks */ = {isa = PBXBuildFile; productRef = AC3AA6672D80A67B004A1A2D /* Ollama */; };
 		AC3AA66A2D80A67B004A1A2D /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = AC3AA6692D80A67B004A1A2D /* GoogleGenerativeAI */; };
 		AC4382192D80DB90007F89B8 /* PetalTools in Frameworks */ = {isa = PBXBuildFile; productRef = AC4382182D80DB90007F89B8 /* PetalTools */; };
+		AC7A606A2D8F26D400A9A7E5 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A60692D8F26D400A9A7E5 /* MLXLLM */; };
+		AC7A606C2D8F26D400A9A7E5 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606B2D8F26D400A9A7E5 /* MLXLMCommon */; };
+		AC7A606E2D8F26D400A9A7E5 /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606D2D8F26D400A9A7E5 /* MLXMNIST */; };
+		AC7A60702D8F26D400A9A7E5 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606F2D8F26D400A9A7E5 /* MLXVLM */; };
+		AC7A60722D8F26D400A9A7E5 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A60712D8F26D400A9A7E5 /* StableDiffusion */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AC7A60672D8F262000A9A7E5 /* PetalMLX */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PetalMLX; sourceTree = "<group>"; };
 		AC9B1C822D5526B100F3525D /* Petals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Petals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC9B1C932D5526B300F3525D /* PetalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,6 +78,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC7A606E2D8F26D400A9A7E5 /* MLXMNIST in Frameworks */,
+				AC7A60722D8F26D400A9A7E5 /* StableDiffusion in Frameworks */,
+				AC7A606C2D8F26D400A9A7E5 /* MLXLMCommon in Frameworks */,
+				AC7A606A2D8F26D400A9A7E5 /* MLXLLM in Frameworks */,
+				AC7A60702D8F26D400A9A7E5 /* MLXVLM in Frameworks */,
 				AC3AA66A2D80A67B004A1A2D /* GoogleGenerativeAI in Frameworks */,
 				AC4382192D80DB90007F89B8 /* PetalTools in Frameworks */,
 				AC3AA6682D80A67B004A1A2D /* Ollama in Frameworks */,
@@ -98,6 +109,7 @@
 		AC9B1C792D5526B000F3525D = {
 			isa = PBXGroup;
 			children = (
+				AC7A60672D8F262000A9A7E5 /* PetalMLX */,
 				ACEC36C32D7EA27A00B3A361 /* PetalTools */,
 				AC9B1C842D5526B100F3525D /* Petals */,
 				AC9B1C962D5526B300F3525D /* PetalsTests */,
@@ -147,6 +159,11 @@
 				AC3AA6672D80A67B004A1A2D /* Ollama */,
 				AC3AA6692D80A67B004A1A2D /* GoogleGenerativeAI */,
 				AC4382182D80DB90007F89B8 /* PetalTools */,
+				AC7A60692D8F26D400A9A7E5 /* MLXLLM */,
+				AC7A606B2D8F26D400A9A7E5 /* MLXLMCommon */,
+				AC7A606D2D8F26D400A9A7E5 /* MLXMNIST */,
+				AC7A606F2D8F26D400A9A7E5 /* MLXVLM */,
+				AC7A60712D8F26D400A9A7E5 /* StableDiffusion */,
 			);
 			productName = Petals;
 			productReference = AC9B1C822D5526B100F3525D /* Petals.app */;
@@ -233,6 +250,7 @@
 			packageReferences = (
 				AC3AA61E2D80A64F004A1A2D /* XCRemoteSwiftPackageReference "ollama-swift" */,
 				AC3AA61F2D80A65C004A1A2D /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+				AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AC9B1C832D5526B100F3525D /* Products */;
@@ -610,6 +628,14 @@
 				minimumVersion = 0.5.6;
 			};
 		};
+		AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.21.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -626,6 +652,31 @@
 		AC4382182D80DB90007F89B8 /* PetalTools */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PetalTools;
+		};
+		AC7A60692D8F26D400A9A7E5 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		AC7A606B2D8F26D400A9A7E5 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		AC7A606D2D8F26D400A9A7E5 /* MLXMNIST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXMNIST;
+		};
+		AC7A606F2D8F26D400A9A7E5 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXVLM;
+		};
+		AC7A60712D8F26D400A9A7E5 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = StableDiffusion;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
