@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D70" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CDChatMessage" representedClassName="CDChatMessage" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="message" optional="YES" attributeType="String"/>
+        <attribute name="participant" optional="YES" attributeType="String"/>
+        <attribute name="pending" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="cdConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDConversation" inverseName="cdMessages" inverseEntity="CDConversation"/>
+    </entity>
+    <entity name="CDConversation" representedClassName="CDConversation" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="cdMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDChatMessage" inverseName="cdConversation" inverseEntity="CDChatMessage"/>
+    </entity>
+</model>

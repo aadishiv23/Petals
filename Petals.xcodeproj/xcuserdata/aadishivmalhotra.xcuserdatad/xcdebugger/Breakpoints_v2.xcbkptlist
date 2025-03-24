@@ -114,6 +114,36 @@
             endingLineNumber = "111"
             landmarkName = "fetchCanvasCourses(completed:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "689F6ECF-05E2-4486-9A95-B528E84A2152 - 9aa0ce2cbd67e1d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for PetalTools.PetalGenericFetchCanvasCoursesTool.fetchCanvasCourses(completed: Swift.Bool) async throws -&gt; Swift.String"
+                  moduleName = "Petals.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Canvas/PetalGenericFetchCanvasCoursesTool.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "111"
+                  endingLineNumber = "111">
+               </Location>
+               <Location
+                  uuid = "689F6ECF-05E2-4486-9A95-B528E84A2152 - 8a0aa11162b6d200"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (PetalTools.CanvasCourse) -&gt; Swift.Bool in PetalTools.PetalGenericFetchCanvasCoursesTool.fetchCanvasCourses(completed: Swift.Bool) async throws -&gt; Swift.String"
+                  moduleName = "Petals.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Canvas/PetalGenericFetchCanvasCoursesTool.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "111"
+                  endingLineNumber = "111">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -370,6 +400,36 @@
             endingLineNumber = "118"
             landmarkName = "sendSingleMessage(model:messages:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8EE2BC54-A5F9-4772-B8DE-A419313E7B46 - 3fb590262ee82e9b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Petals.PetalOllamaService.sendSingleMessage(model: Swift.String, messages: Swift.Array&lt;PetalTools.OllamaChatMessage&gt;) async throws -&gt; Swift.String"
+                  moduleName = "Petals.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/Petals/Services/PetalOllamaService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "118"
+                  endingLineNumber = "118">
+               </Location>
+               <Location
+                  uuid = "8EE2BC54-A5F9-4772-B8DE-A419313E7B46 - 750709334cd6ea9d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Petals.PetalOllamaService.sendSingleMessage(model: Swift.String, messages: Swift.Array&lt;PetalTools.OllamaChatMessage&gt;) async throws -&gt; Swift.String"
+                  moduleName = "Petals.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/Petals/Services/PetalOllamaService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "118"
+                  endingLineNumber = "118">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -465,6 +525,38 @@
             startingLineNumber = "108"
             endingLineNumber = "108"
             landmarkName = "fetchCanvasCourses(completed:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4FBB52B9-399A-4ED5-80F3-7438A0B5C75D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Petals/Conversation/ConversationalViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
+            landmarkName = "sendMessage(_:streaming:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E2838033-BB0D-4945-96AA-FFCC8654013E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Petals/Conversation/ConversationalViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
+            landmarkName = "sendMessage(_:streaming:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -16,10 +16,17 @@ import SwiftUI
 @MainActor
 class ConversationViewModel: ObservableObject {
 
+    // MARK: Dependencies
+
+    private let repository: ChatRepository
+
     // MARK: Published Properties
 
     /// An array of chat messages in the conversation.
     @Published var messages = [ChatMessage]()
+
+    /// The current conversation?
+    @Published var currentConversation: Conversation?
 
     /// A boolean indicating whether the system is currently processing a request.
     @Published var busy = false
@@ -51,7 +58,7 @@ class ConversationViewModel: ObservableObject {
 
     /// The active AI chat model being used for conversation.
     private var chatModel: AIChatModel
-    
+
     private let toolEvaluator = ToolTriggerEvaluator()
 
     // MARK: Initializer
@@ -59,7 +66,8 @@ class ConversationViewModel: ObservableObject {
     /// Initializes the view model with a default AI model and sets up the chat session.
     /// Gemini models are initialized in this particular format, changing this will result in errors.
     /// Ollama models are initialized inside their respective ViewModel.
-    init() {
+    init(repository: ChatRepository = CoreDataChatRepository()) {
+        self.repository = repository
         let initialModel = "gemini-1.5-flash-latest"
         self.selectedModel = initialModel
         self.chatModel = GeminiChatModel(modelName: initialModel)
@@ -85,6 +93,10 @@ class ConversationViewModel: ObservableObject {
 //        )
 //
 //        messages.append(systemInstruction)
+
+        let conversation = repository
+            .createConversation(title: "Chat - \(Date().formatted(date: .numeric, time: .shortened))")
+        currentConversation = conversation
         switchModel()
     }
 
@@ -129,14 +141,37 @@ class ConversationViewModel: ObservableObject {
         let needsTool = messageRequiresTool(text)
         isProcessingTool = needsTool
 
-        messages.append(ChatMessage(message: text, participant: .user))
-        messages.append(ChatMessage.pending(participant: .system))
+        let userMessage = ChatMessage(message: text, participant: .user)
+        messages.append(userMessage)
+        repository.addMessage(userMessage, to: currentConversation!)
+
+        // Also update the in-memory conversation struct:
+        currentConversation?.messages.append(userMessage)
+
+        let pendingResponse = ChatMessage.pending(participant: .system)
+        messages.append(pendingResponse)
+        repository.addMessage(pendingResponse, to: currentConversation!)
+
+        // Update in-memory struct for pending response:
+        currentConversation?.messages.append(pendingResponse)
+
+        let contextString = currentConversation?.fullContext(withCurrentMessage: userMessage)
+            ?? userMessage.message
 
         do {
             if streaming {
-                let stream = chatModel.sendMessageStream(text)
+                // Build the context using the conversation history plus the new user message.
+                let stream = chatModel.sendMessageStream(contextString)
+
                 for await chunk in stream {
-                    messages[messages.count - 1].message += chunk.message
+                    var systemMsg = messages.removeLast()
+                    systemMsg.message += chunk.message
+                    systemMsg.pending = false
+                    messages.append(systemMsg)
+
+                    // Also persist updated message
+                    repository.addMessage(systemMsg, to: currentConversation!)
+
                     if let toolName = chunk.toolCallName {
                         messages[messages.count - 1].toolCallName = toolName
                     }
@@ -153,6 +188,16 @@ class ConversationViewModel: ObservableObject {
         }
         busy = false
         isProcessingTool = false
+    }
+
+    func loadConversation(_ conversation: Conversation) {
+        currentConversation = conversation
+        messages = repository.fetchMessages(for: conversation)
+    }
+
+    /// Retrieve context (for example, when sending the conversation history to your AI model).
+    func conversationContext() -> String {
+        currentConversation?.fullContext() ?? ""
     }
 
 //    private func messageRequiresTool(_ text: String) -> Bool {
