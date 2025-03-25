@@ -25,9 +25,9 @@ struct GeminiChatView: View {
                 Text("Petals")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .padding(.leading)
-                
+
                 Spacer()
-                
+
                 ModelToggle(isOn: $conversationVM.useOllama)
                     .padding(.trailing)
             }
@@ -35,7 +35,7 @@ struct GeminiChatView: View {
             .background(
                 VisualEffectView(material: .headerView, blendingMode: .behindWindow)
             )
-            
+
             // Chat messages area.
             ScrollViewReader { proxy in
                 ScrollView {
@@ -52,6 +52,11 @@ struct GeminiChatView: View {
                                 }
                             }
                         }
+
+                        // Add an invisible spacer view that we can scroll to
+                        Color.clear
+                            .frame(height: 1)
+                            .id("bottomScrollAnchor")
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 20)
@@ -60,15 +65,20 @@ struct GeminiChatView: View {
                 .background(
                     VisualEffectView(material: .headerView, blendingMode: .behindWindow)
                 )
+                // Scroll when message count changes
                 .onChange(of: conversationVM.messages.count) { _ in
-                    if let lastMessage = conversationVM.messages.last {
-                        withAnimation {
-                            proxy.scrollTo(lastMessage, anchor: .bottom)
-                        }
-                    }
+                    scrollToBottom(proxy: proxy)
+                }
+                // Also scroll when the content of the last message changes (for streaming)
+                .onChange(of: conversationVM.messages.last?.message) { _ in
+                    scrollToBottom(proxy: proxy)
+                }
+                // Initial scroll when view appears
+                .onAppear {
+                    scrollToBottom(proxy: proxy)
                 }
             }
-            
+
             // Chat input area.
             ChatInputBar(userInput: $userInput) { message in
                 Task {
@@ -82,7 +92,7 @@ struct GeminiChatView: View {
             NSApplication.setupEnterKeyListener()
         }
     }
-    
+
     /// Displays a loading view for tool messages that are still processing.
     /// - Parameter msg: The pending chat message.
     /// - Returns: A view representing the loading state.
@@ -93,6 +103,12 @@ struct GeminiChatView: View {
             ToolProcessingView()
                 .id(msg)
             Spacer()
+        }
+    }
+
+    private func scrollToBottom(proxy: ScrollViewProxy) {
+        withAnimation(.smooth(duration: 0.3)) {
+            proxy.scrollTo("bottomScrollAnchor", anchor: .bottom)
         }
     }
 }
