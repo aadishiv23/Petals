@@ -8,6 +8,7 @@
 import Foundation
 import GoogleGenerativeAI
 import SwiftUI
+import PetalMLX
 
 /// A view model for managing conversation interactions in the `Petals` app.
 ///
@@ -99,7 +100,7 @@ class ConversationViewModel: ObservableObject {
     /// and optionally resets the conversation history.
     private func switchModel() {
         if useOllama {
-            chatModel = OllamaChatModel()
+            chatModel = PetalMLXService(model: ModelConfiguration.llama_3_2_3b_4bit)
             print("🔵 Now using Ollama (local model)")
         } else {
             chatModel = GeminiChatModel(modelName: selectedModel)

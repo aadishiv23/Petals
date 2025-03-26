@@ -46,7 +46,7 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit"
     )
 
-    public static var availableModels: [ModelConfiguration] = [
+    public static let availableModels: [ModelConfiguration] = [
         llama_3_2_1b_4bit,
         llama_3_2_3b_4bit,
         deepseek_r1_distill_qwen_1_5b_4bit,
