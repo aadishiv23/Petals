@@ -17,7 +17,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/google-gemini/generative-ai-swift", from: "0.5.6")
+        .package(url: "https://github.com/google-gemini/generative-ai-swift", from: "0.5.6"),
+        .package(path: "../PetalCore")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,6 +26,7 @@ let package = Package(
         .target(
             name: "PetalTools",
             dependencies: [
+                "PetalCore",
                 .product(name: "GoogleGenerativeAI", package: "generative-ai-swift")
             ]
         ),

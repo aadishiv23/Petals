@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import EventKit
+import PetalCore
 
 /// A tool to fetch calendar events with flexible filtering options.
 public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool {

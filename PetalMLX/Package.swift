@@ -20,7 +20,9 @@ let package = Package(
         .package(
             url: "https://github.com/ml-explore/mlx-swift-examples.git",
             branch: "main"
-        )
+        ),
+        .package(path: "../PetalCore"),
+        .package(path: "../PetalTools")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -28,6 +30,8 @@ let package = Package(
         .target(
             name: "PetalMLX",
             dependencies: [
+                "PetalCore",
+                "PetalTools",
                 .product(name: "MLXLLM", package: "mlx-swift-examples")
             ]
         ),

@@ -113,9 +113,16 @@ struct ChatInputBar: View {
         )
         .animation(.easeOut(duration: 0.2), value: textHeight)
         // Listen for Enter key press notifications to trigger send.
+        #if os(macOS)
+        // Listen for Enter key press notifications to trigger send.
         .onReceive(NSEvent.pressedEnter) { _ in
             sendAndClear()
         }
+        #endif
+        .onSubmit {
+            sendAndClear()
+        }
+
     }
     
     // MARK: - Helper Methods
@@ -146,7 +153,7 @@ struct ViewHeightKey: PreferenceKey {
 }
 
 // MARK: - NSEvent and NSApplication Extensions for Enter Key Handling
-
+#if os(macOS)
 extension NSEvent {
     /// A publisher that emits events when the Enter key is pressed without Shift.
     static var pressedEnter: NotificationCenter.Publisher {
@@ -171,3 +178,4 @@ extension NSApplication {
         }
     }
 }
+#endif

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import PetalCore
 
 struct ChatBubbleView: View {
     let message: ChatMessage

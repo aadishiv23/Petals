@@ -60,7 +60,15 @@ struct SidebarView: View {
                     Text("New Chat")
                 }
             }
+            #if os(macOS)
+            // Use LinkButtonStyle only on macOS
             .buttonStyle(LinkButtonStyle())
+            #else
+            // On iOS (and other platforms), use the default style
+            // or choose another iOS-appropriate style like .bordered
+            .buttonStyle(.bordered) // Example: uncomment if you want bordered
+            #endif
+            // --- End Conditional Style ---
             .padding()
         }
         .listStyle(.sidebar)

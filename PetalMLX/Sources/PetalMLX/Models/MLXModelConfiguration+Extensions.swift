@@ -7,6 +7,7 @@
 
 import Foundation
 import MLXLMCommon
+import PetalCore
 
 extension ModelConfiguration {
 
@@ -38,6 +39,10 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/Llama-3.2-3B-Instruct-4bit"
     )
 
+    public static let llama_3_1_8b_4bit = ModelConfiguration(
+        id: "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit"
+    )
+    
     public static let deepseek_r1_distill_qwen_1_5b_4bit = ModelConfiguration(
         id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit"
     )
@@ -49,12 +54,13 @@ extension ModelConfiguration: @retroactive Equatable {
     public static let availableModels: [ModelConfiguration] = [
         llama_3_2_1b_4bit,
         llama_3_2_3b_4bit,
+        llama_3_1_8b_4bit,
         deepseek_r1_distill_qwen_1_5b_4bit,
         deepseek_r1_distill_qwen_1_5b_8bit
     ]
 
     public static var defaultModel: ModelConfiguration {
-        llama_3_2_1b_4bit
+        llama_3_1_8b_4bit
     }
 
     public static func getModelByName(_ name: String) -> ModelConfiguration? {
@@ -65,23 +71,25 @@ extension ModelConfiguration: @retroactive Equatable {
         }
     }
 
-    /// This function builds the prompt history using a system prompt and sorted messages.
-    /// (Fullmoon – from Models.swift)
-    func getPromptHistory(thread: Thread, systemPrompt: String) -> [[String: String]] {
+    /// Builds the prompt history using a system prompt and an array of ChatMessages.
+    /// - Parameters:
+    ///   - messages: An array of ChatMessage instances.
+    ///   - systemPrompt: The system prompt to prepend.
+    /// - Returns: An array of dictionaries formatted for the MLX model.
+    func getPromptHistory(from messages: [ChatMessage], systemPrompt: String) -> [[String: String]] {
         var history: [[String: String]] = []
 
-        // System prompt first
+        // Add the system prompt first.
         history.append([
             "role": "system",
             "content": systemPrompt
         ])
 
-        // Append messages from the thread.
-        for message in thread.sortedMessages {
-            let role = message.role.rawValue
+        // Append all messages from the conversation.
+        for message in messages {
             history.append([
-                "role": role,
-                "content": formatForTokenizer(message.content)
+                "role": message.participant.stringValue,
+                "content": formatForTokenizer(message.message)
             ])
         }
         return history
@@ -91,8 +99,8 @@ extension ModelConfiguration: @retroactive Equatable {
     func formatForTokenizer(_ message: String) -> String {
         if modelType == .reasoning {
             return " " + message
-                .replacingOccurrences(of: "<think>", with: "")
-                .replacingOccurrences(of: "</think>", with: "")
+                .replacingOccurrences(of: "<think>", with: "Start thinking")
+                .replacingOccurrences(of: "</think>", with: "End thinking")
         }
         return message
     }

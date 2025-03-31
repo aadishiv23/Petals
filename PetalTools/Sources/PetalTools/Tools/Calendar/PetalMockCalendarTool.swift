@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PetalCore
 
 /// A tool to interface with a mock calendar tool.
 public final class PetalMockCalendarTool: OllamaCompatibleTool {

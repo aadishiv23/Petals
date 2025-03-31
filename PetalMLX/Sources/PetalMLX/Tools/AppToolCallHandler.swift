@@ -6,7 +6,15 @@
 //
 
 import Foundation
+import PetalCore
+import PetalTools
 
+public enum ToolCallError: Error {
+    case invalidJSON
+    case unknownTool(String)
+}
+
+@MainActor
 public class AppToolCallHandler {
     /// Singleton instance for simplicity.
     public static let shared = AppToolCallHandler()
@@ -32,11 +40,21 @@ public class AppToolCallHandler {
 
         let toolCall = try JSONDecoder().decode(ToolCall.self, from: data)
 
-        // Look up the handler in the tool registry.
-        if let handler = PetalToolRegistry.shared.handler(for: toolCall.name) {
-            return try await handler.handle(json: data)
-        } else {
+        
+        // Look up the handler in the tool registry (accessing registry is safe from @MainActor)
+        guard let handler = PetalMLXToolRegistry.shared.handler(for: toolCall.name) else {
             throw ToolCallError.unknownTool(toolCall.name)
         }
+
+        // --- CHANGE: Execute the handler in a detached Task ---
+        // This ensures the potentially long-running 'handle' method
+        // does not block the main thread and satisfies concurrency checks,
+        // assuming MLXToolHandling requires Sendable.
+        let result = try await Task { // Runs on a background thread pool
+            try await handler.handle(json: data)
+        }.value // .value unwraps the result or rethrows the error from the Task
+
+        return result
+        // --- END CHANGE ---
     }
 }

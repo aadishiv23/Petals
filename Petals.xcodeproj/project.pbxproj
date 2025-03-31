@@ -16,6 +16,7 @@
 		AC7A606E2D8F26D400A9A7E5 /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606D2D8F26D400A9A7E5 /* MLXMNIST */; };
 		AC7A60702D8F26D400A9A7E5 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606F2D8F26D400A9A7E5 /* MLXVLM */; };
 		AC7A60722D8F26D400A9A7E5 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A60712D8F26D400A9A7E5 /* StableDiffusion */; };
+		AC868B0B2D95AEC5001698D0 /* PetalCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC868B0A2D95AEC5001698D0 /* PetalCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC868B0B2D95AEC5001698D0 /* PetalCore in Frameworks */,
 				AC7A606E2D8F26D400A9A7E5 /* MLXMNIST in Frameworks */,
 				AC7A60722D8F26D400A9A7E5 /* StableDiffusion in Frameworks */,
 				AC7A606C2D8F26D400A9A7E5 /* MLXLMCommon in Frameworks */,
@@ -169,6 +171,7 @@
 				AC7A606F2D8F26D400A9A7E5 /* MLXVLM */,
 				AC7A60712D8F26D400A9A7E5 /* StableDiffusion */,
 				AC3304392D947B05004873A5 /* PetalMLX */,
+				AC868B0A2D95AEC5001698D0 /* PetalCore */,
 			);
 			productName = Petals;
 			productReference = AC9B1C822D5526B100F3525D /* Petals.app */;
@@ -694,6 +697,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
 			productName = StableDiffusion;
+		};
+		AC868B0A2D95AEC5001698D0 /* PetalCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

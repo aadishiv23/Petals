@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PetalCore
 
 /// Concrete implementation of `PetalToolRegistry`
 public actor PetalToolRegistry: PetalToolRegistering {

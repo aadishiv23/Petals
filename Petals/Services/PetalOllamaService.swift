@@ -9,6 +9,7 @@ import Foundation
 import PetalTools
 import PetalMLX
 import SwiftUI
+import PetalCore
 
 /// Service that interfaces with the Ollama API.
 class PetalOllamaService {

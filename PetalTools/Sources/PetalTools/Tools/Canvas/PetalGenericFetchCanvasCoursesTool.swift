@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import PetalCore
 
 public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
     

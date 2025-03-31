@@ -7,6 +7,7 @@
 
 import Foundation
 import Ollama
+import PetalCore
 
 /// Protocol for tools that can be used with Ollama.
 protocol OllamaCompatibleTool: PetalTool {

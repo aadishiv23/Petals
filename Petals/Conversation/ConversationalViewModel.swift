@@ -9,6 +9,8 @@ import Foundation
 import GoogleGenerativeAI
 import SwiftUI
 import PetalMLX
+import PetalCore
+import MLXLMCommon
 
 /// A view model for managing conversation interactions in the `Petals` app.
 ///
@@ -47,6 +49,7 @@ class ConversationViewModel: ObservableObject {
             switchModel()
         }
     }
+
 
     // MARK: Private Properties
 
@@ -100,13 +103,15 @@ class ConversationViewModel: ObservableObject {
     /// and optionally resets the conversation history.
     private func switchModel() {
         if useOllama {
-            chatModel = PetalMLXService(model: ModelConfiguration.llama_3_2_3b_4bit)
-            print("🔵 Now using Ollama (local model)")
+            let modelConfig: ModelConfiguration = ModelConfiguration.defaultModel
+            chatModel = PetalMLXChatModel(model: modelConfig)
+            print("🔵 Now using PetalML (local model) with \(modelConfig.name)")
         } else {
             chatModel = GeminiChatModel(modelName: selectedModel)
             print("🟢 Now using Gemini (Google API) with model: \(selectedModel)")
         }
     }
+
 
     // MARK: Message Handling
 
@@ -136,7 +141,7 @@ class ConversationViewModel: ObservableObject {
         do {
             if streaming {
                 let stream = chatModel.sendMessageStream(text)
-                for await chunk in stream {
+                for try await chunk in stream {
                     messages[messages.count - 1].message += chunk.message
                     if let toolName = chunk.toolCallName {
                         messages[messages.count - 1].toolCallName = toolName

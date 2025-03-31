@@ -8,51 +8,19 @@
 import Foundation
 import MLXLLM
 import MLXLMCommon
+import PetalCore
 import SwiftUI
 
+/// Define a simple error for the cast failure
+enum PetalMLXServiceError: Error {
+    case unexpectedModelContainerType
+}
+
+@MainActor
 public class PetalMLXService {
     private let modelService = CoreModelService()
     private let toolCallHandler = AppToolCallHandler.shared
-    
-    /// A simple chat message structure.
 
-    public struct ChatMessage: Identifiable, Equatable, Hashable {
-        let id = UUID()
-        let date = Date()
-        
-        var message: String
-        var pending: Bool = false
-        var participant: Participant
-        var toolCallName: String? = nil
-
-        enum Participant {
-            case user
-            case system
-            case llm
-        }
-
-        static func pending(participant: Participant) -> ChatMessage {
-            return ChatMessage(message: "", pending: true, participant: participant)
-        }
-    }
-    
-    /// Structure for streaming message chunks.
-    public struct MLXPetalMessageStreamChunk {
-        
-        /// The message returned by the LLM.
-        public let message: String
-        
-        /// (Optional) The name of the tool call used by the assistant.
-        public let toolCallName: String?
-        
-        // MARK: Initializer
-        
-        public init(message: String, toolCallName: String?) {
-            self.message = message
-            self.toolCallName = toolCallName
-        }
-    }
-    
     /// Determines whether the message should trigger tool usage.
     private func shouldUseTools(for message: String) -> Bool {
         let toolExemplars: [String: [String]] = [
@@ -78,52 +46,78 @@ public class PetalMLXService {
         }
         return false
     }
-    
+
     /// Formats chat messages into the MLX expected dictionary format.
     private func formatMessages(_ messages: [ChatMessage]) -> [[String: String]] {
-        return messages.map { ["role": $0.role, "content": $0.content] }
+        messages.map { ["role": $0.participant.stringValue, "content": $0.message] }
     }
-    
+
     /// Generates a complete response from the MLX model.
-    public func sendSingleMessage(model: ModelConfiguration,
-                                  messages: [ChatMessage]) async throws -> String {
-        let lastMessage = messages.last?.content ?? ""
+    public func sendSingleMessage(
+        model: ModelConfiguration,
+        messages: [ChatMessage]
+    ) async throws -> String {
+        let lastMessage = messages.last?.message ?? ""
         let useTools = shouldUseTools(for: lastMessage)
-        let tools: [[String: any Sendable]]? = useTools ? await PetalToolRegistry.mlxTools() : nil
-        
+        let tools: [[String: any Sendable]]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
+
         let formattedMessages = formatMessages(messages)
-        let container = modelService.provideModelContainer()
-        let result = try await container.generate(
+
+        // --- CHANGE START ---
+        // Get the container conforming to the protocol
+        let rawContainer = modelService.provideModelContainer()
+
+        // Explicitly cast to the concrete Sendable type before awaiting its method
+        guard let container = rawContainer as? ConcreteCoreModelContainer else {
+            // Handle the case where the container isn't the expected concrete type
+            throw PetalMLXServiceError.unexpectedModelContainerType
+        }
+        // --- CHANGE END ---
+        let result: MLXLMCommon.GenerateResult = try await container.generate(
             messages: formattedMessages,
             tools: tools,
             onProgress: { _ in }
-        )
-        
+        ) as! GenerateResult
+
         // Process tool calls if detected.
         let finalOutput = try await processToolCallsIfNeeded(result.output)
         return finalOutput
     }
-    
+
     /// Streams the conversation as an async sequence of output chunks.
-    public func streamConversation(model: ModelConfiguration,
-                                   messages: [ChatMessage]) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
+    public func streamConversation(
+        model: ModelConfiguration,
+        messages: [ChatMessage]
+    ) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
-                    let lastMessage = messages.last?.content ?? ""
+                    let lastMessage = messages.last?.message ?? ""
                     let useTools = shouldUseTools(for: lastMessage)
-                    let tools: [[String: any Sendable]]? = useTools ? await PetalToolRegistry.mlxTools() : nil
+                    let tools: [[String: any Sendable]]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
                     let formattedMessages = formatMessages(messages)
                     let container = modelService.provideModelContainer()
                     
-                    let result = try await container.generate(
+                    // --- CHANGE START ---
+                    // Get the container conforming to the protocol
+                    let rawContainer = modelService.provideModelContainer()
+
+                    // Explicitly cast to the concrete Sendable type before awaiting its method
+                    guard let container = rawContainer as? ConcreteCoreModelContainer else {
+                        // Handle the case where the container isn't the expected concrete type
+                        throw PetalMLXServiceError.unexpectedModelContainerType
+                    }
+                    // --- CHANGE END ---
+                    // if i dont do above: Non-sendable type 'Any' returned by implicitly asynchronous call to nonisolated function cannot cross actor boundary
+
+                    let result: MLXLMCommon.GenerateResult = try await container.generate(
                         messages: formattedMessages,
                         tools: tools,
                         onProgress: { progressText in
                             continuation.yield(PetalMessageStreamChunk(message: progressText, toolCallName: nil))
                         }
-                    )
-                    
+                    ) as! GenerateResult
+
                     let finalOutput = try await processToolCallsIfNeeded(result.output)
                     continuation.yield(PetalMessageStreamChunk(message: finalOutput, toolCallName: nil))
                     continuation.finish()
@@ -133,7 +127,7 @@ public class PetalMLXService {
             }
         }
     }
-    
+
     /// Processes tool calls in the generated output if any are detected.
     private func processToolCallsIfNeeded(_ output: String) async throws -> String {
         if let processed = try? await toolCallHandler.processLLMOutput(output) {

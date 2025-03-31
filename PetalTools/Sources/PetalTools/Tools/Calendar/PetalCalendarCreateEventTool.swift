@@ -5,19 +5,20 @@
 //  Created by Aadi Shiv Malhotra on 3/11/25.
 //
 
-import Foundation
-import SwiftUI
 import EventKit
+import Foundation
+import PetalCore
+import SwiftUI
 
 public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
-    
+
     public init() {}
-    
+
     // MARK: - Ollama Tool Definition
-    
+
     public func asOllamaTool() -> OllamaTool {
         // NOTE: Using a minimal approach here—no "items" or "properties" in OllamaFunctionProperty.
-        return OllamaTool(
+        OllamaTool(
             type: "function",
             function: OllamaFunction(
                 name: id,
@@ -75,9 +76,9 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
             )
         )
     }
-    
+
     // MARK: - OllamaCompatibleTool Protocol
-    
+
     public let uuid: UUID = .init()
     public var id: String { "petalCalendarCreateEventTool" }
     public var name: String { "Petal Calendar Create Event Tool" }
@@ -226,7 +227,7 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
         // Choose calendar
         if let calName = input.calendarName?.lowercased(),
            let foundCal = eventStore.calendars(for: .event)
-               .first(where: { $0.title.lowercased() == calName })
+           .first(where: { $0.title.lowercased() == calName })
         {
             event.calendar = foundCal
         } else if let defaultCal = eventStore.defaultCalendarForNewEvents {
@@ -293,10 +294,18 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
         case .authorized, .fullAccess:
             return
         case .writeOnly:
-            throw NSError(domain: "CalendarError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Write-only access is insufficient."])
+            throw NSError(
+                domain: "CalendarError",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Write-only access is insufficient."]
+            )
 
         @unknown default:
-            throw NSError(domain: "CalendarError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unknown authorization status"])
+            throw NSError(
+                domain: "CalendarError",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Unknown authorization status"]
+            )
         }
     }
 }

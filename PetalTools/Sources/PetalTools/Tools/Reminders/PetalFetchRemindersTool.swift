@@ -7,6 +7,7 @@
 
 import Foundation
 import EventKit
+import PetalCore
 
 public final class PetalFetchRemindersTool: OllamaCompatibleTool {
     

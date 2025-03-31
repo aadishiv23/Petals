@@ -7,6 +7,7 @@
 
 import Foundation
 import PetalTools
+import PetalCore
 
 /// A chat model that interfaces with the Ollama service for handling AI-generated responses.
 ///
@@ -50,12 +51,12 @@ class OllamaChatModel: AIChatModel {
     /// - Calls `OllamaService.streamConversation` to fetch a streaming response.
     /// - Yields each chunk of the response asynchronously.
     /// - Handles errors and ensures the stream is properly closed.
-    func sendMessageStream(_ text: String) -> AsyncStream<PetalMessageStreamChunk> {
+    func sendMessageStream(_ text: String) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
         print("OllamaChatModel: Starting stream with message: \(text.prefix(50))...")
         let messages = [OllamaChatMessage(role: "user", content: text, tool_calls: [])]
         var finalOutput = ""  // Move declaration outside Task scope
 
-        return AsyncStream { continuation in
+        return AsyncThrowingStream { continuation in
             Task {
                 do {
                     var chunkCount = 0

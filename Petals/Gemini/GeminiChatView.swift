@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import PetalCore
 
 /// The main chat interface view.
 struct GeminiChatView: View {
@@ -125,7 +126,7 @@ struct ModelToggle: View {
             HStack(spacing: 6) {
                 Image(systemName: isOn ? "desktopcomputer" : "cloud")
                     .font(.system(size: 12))
-                Text(isOn ? "Ollama" : "Gemini API")
+                Text(isOn ? "MLX" : "Gemini API")
                     .font(.system(size: 12, weight: .medium))
             }
         }
