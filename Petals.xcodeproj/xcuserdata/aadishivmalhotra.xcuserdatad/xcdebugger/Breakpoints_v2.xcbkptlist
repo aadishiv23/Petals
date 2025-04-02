@@ -206,8 +206,8 @@
             filePath = "PetalTools/Sources/PetalTools/Tools/Canvas/PetalFetchCanvasAssignmentTool.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "execute(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -257,38 +257,6 @@
             startingLineNumber = "39"
             endingLineNumber = "39"
             landmarkName = "sendMessageStream(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A10ED259-C4ED-4477-BB14-F442700566CA"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "streamConversation(model:messages:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5AF09C8E-59BE-49D1-9961-AFA442210521"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "streamConversation(model:messages:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
