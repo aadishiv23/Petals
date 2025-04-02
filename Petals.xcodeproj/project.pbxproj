@@ -11,6 +11,27 @@
 		AC3AA6682D80A67B004A1A2D /* Ollama in Frameworks */ = {isa = PBXBuildFile; productRef = AC3AA6672D80A67B004A1A2D /* Ollama */; };
 		AC3AA66A2D80A67B004A1A2D /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = AC3AA6692D80A67B004A1A2D /* GoogleGenerativeAI */; };
 		AC4382192D80DB90007F89B8 /* PetalTools in Frameworks */ = {isa = PBXBuildFile; productRef = AC4382182D80DB90007F89B8 /* PetalTools */; };
+		AC5F48982D9CEF0C008194A7 /* PetalCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48972D9CEF0C008194A7 /* PetalCore */; };
+		AC5F489A2D9CEF0C008194A7 /* PetalMLX in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48992D9CEF0C008194A7 /* PetalMLX */; };
+		AC5F489C2D9CEF0C008194A7 /* PetalTools in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F489B2D9CEF0C008194A7 /* PetalTools */; };
+		AC5F489E2D9CEF11008194A7 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F489D2D9CEF11008194A7 /* GoogleGenerativeAI */; };
+		AC5F48A02D9CEF11008194A7 /* MLXEmbedders in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F489F2D9CEF11008194A7 /* MLXEmbedders */; };
+		AC5F48A22D9CEF11008194A7 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48A12D9CEF11008194A7 /* MLXLLM */; };
+		AC5F48A42D9CEF11008194A7 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48A32D9CEF11008194A7 /* MLXLMCommon */; };
+		AC5F48A62D9CEF11008194A7 /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48A52D9CEF11008194A7 /* MLXMNIST */; };
+		AC5F48A82D9CEF11008194A7 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48A72D9CEF11008194A7 /* MLXVLM */; };
+		AC5F48AA2D9CEF11008194A7 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48A92D9CEF11008194A7 /* StableDiffusion */; };
+		AC5F48AC2D9CEFD8008194A7 /* PetalCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48AB2D9CEFD8008194A7 /* PetalCore */; };
+		AC5F48AE2D9CEFD8008194A7 /* PetalMLX in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48AD2D9CEFD8008194A7 /* PetalMLX */; };
+		AC5F48B02D9CEFD8008194A7 /* PetalTools in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48AF2D9CEFD8008194A7 /* PetalTools */; };
+		AC5F48B22D9CEFDC008194A7 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48B12D9CEFDC008194A7 /* GoogleGenerativeAI */; };
+		AC5F48B42D9CEFDC008194A7 /* MLXEmbedders in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48B32D9CEFDC008194A7 /* MLXEmbedders */; };
+		AC5F48B62D9CEFDC008194A7 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48B52D9CEFDC008194A7 /* MLXLLM */; };
+		AC5F48B82D9CEFDC008194A7 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48B72D9CEFDC008194A7 /* MLXLMCommon */; };
+		AC5F48BA2D9CEFDC008194A7 /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48B92D9CEFDC008194A7 /* MLXMNIST */; };
+		AC5F48BC2D9CEFDC008194A7 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48BB2D9CEFDC008194A7 /* MLXVLM */; };
+		AC5F48BE2D9CEFDC008194A7 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48BD2D9CEFDC008194A7 /* StableDiffusion */; };
+		AC5F48C02D9CF01D008194A7 /* Ollama in Frameworks */ = {isa = PBXBuildFile; productRef = AC5F48BF2D9CF01D008194A7 /* Ollama */; };
 		AC7A606A2D8F26D400A9A7E5 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A60692D8F26D400A9A7E5 /* MLXLLM */; };
 		AC7A606C2D8F26D400A9A7E5 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606B2D8F26D400A9A7E5 /* MLXLMCommon */; };
 		AC7A606E2D8F26D400A9A7E5 /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = AC7A606D2D8F26D400A9A7E5 /* MLXMNIST */; };
@@ -20,6 +41,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		AC5F487D2D9CEF04008194A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC9B1C7A2D5526B000F3525D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC5F486F2D9CEF00008194A7;
+			remoteInfo = PetalsiOS;
+		};
+		AC5F48872D9CEF04008194A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC9B1C7A2D5526B000F3525D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC5F486F2D9CEF00008194A7;
+			remoteInfo = PetalsiOS;
+		};
 		AC9B1C942D5526B300F3525D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AC9B1C7A2D5526B000F3525D /* Project object */;
@@ -37,6 +72,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AC5F48702D9CEF00008194A7 /* PetalsiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetalsiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC5F487C2D9CEF04008194A7 /* PetalsiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC5F48862D9CEF04008194A7 /* PetalsiOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetalsiOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC7A60672D8F262000A9A7E5 /* PetalMLX */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PetalMLX; sourceTree = "<group>"; };
 		AC8689CD2D9509EA001698D0 /* PetalCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PetalCore; sourceTree = "<group>"; };
 		AC9B1C822D5526B100F3525D /* Petals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Petals.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,6 +94,21 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		AC5F48712D9CEF00008194A7 /* PetalsiOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PetalsiOS;
+			sourceTree = "<group>";
+		};
+		AC5F487F2D9CEF04008194A7 /* PetalsiOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PetalsiOSTests;
+			sourceTree = "<group>";
+		};
+		AC5F48892D9CEF04008194A7 /* PetalsiOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PetalsiOSUITests;
+			sourceTree = "<group>";
+		};
 		AC9B1C842D5526B100F3525D /* Petals */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -77,6 +130,48 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AC5F486D2D9CEF00008194A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC5F48B62D9CEFDC008194A7 /* MLXLLM in Frameworks */,
+				AC5F48AC2D9CEFD8008194A7 /* PetalCore in Frameworks */,
+				AC5F48C02D9CF01D008194A7 /* Ollama in Frameworks */,
+				AC5F48B02D9CEFD8008194A7 /* PetalTools in Frameworks */,
+				AC5F48AE2D9CEFD8008194A7 /* PetalMLX in Frameworks */,
+				AC5F48BA2D9CEFDC008194A7 /* MLXMNIST in Frameworks */,
+				AC5F48BC2D9CEFDC008194A7 /* MLXVLM in Frameworks */,
+				AC5F48B22D9CEFDC008194A7 /* GoogleGenerativeAI in Frameworks */,
+				AC5F48B42D9CEFDC008194A7 /* MLXEmbedders in Frameworks */,
+				AC5F48B82D9CEFDC008194A7 /* MLXLMCommon in Frameworks */,
+				AC5F48BE2D9CEFDC008194A7 /* StableDiffusion in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC5F48792D9CEF04008194A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC5F48832D9CEF04008194A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC5F48A22D9CEF11008194A7 /* MLXLLM in Frameworks */,
+				AC5F48982D9CEF0C008194A7 /* PetalCore in Frameworks */,
+				AC5F489C2D9CEF0C008194A7 /* PetalTools in Frameworks */,
+				AC5F489A2D9CEF0C008194A7 /* PetalMLX in Frameworks */,
+				AC5F48A62D9CEF11008194A7 /* MLXMNIST in Frameworks */,
+				AC5F48A82D9CEF11008194A7 /* MLXVLM in Frameworks */,
+				AC5F489E2D9CEF11008194A7 /* GoogleGenerativeAI in Frameworks */,
+				AC5F48A02D9CEF11008194A7 /* MLXEmbedders in Frameworks */,
+				AC5F48A42D9CEF11008194A7 /* MLXLMCommon in Frameworks */,
+				AC5F48AA2D9CEF11008194A7 /* StableDiffusion in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC9B1C7F2D5526B100F3525D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -120,6 +215,9 @@
 				AC9B1C842D5526B100F3525D /* Petals */,
 				AC9B1C962D5526B300F3525D /* PetalsTests */,
 				AC9B1CA02D5526B300F3525D /* PetalsUITests */,
+				AC5F48712D9CEF00008194A7 /* PetalsiOS */,
+				AC5F487F2D9CEF04008194A7 /* PetalsiOSTests */,
+				AC5F48892D9CEF04008194A7 /* PetalsiOSUITests */,
 				ACD98BE62D809D5D00985964 /* Frameworks */,
 				AC9B1C832D5526B100F3525D /* Products */,
 			);
@@ -131,6 +229,9 @@
 				AC9B1C822D5526B100F3525D /* Petals.app */,
 				AC9B1C932D5526B300F3525D /* PetalsTests.xctest */,
 				AC9B1C9D2D5526B300F3525D /* PetalsUITests.xctest */,
+				AC5F48702D9CEF00008194A7 /* PetalsiOS.app */,
+				AC5F487C2D9CEF04008194A7 /* PetalsiOSTests.xctest */,
+				AC5F48862D9CEF04008194A7 /* PetalsiOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -145,6 +246,95 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AC5F486F2D9CEF00008194A7 /* PetalsiOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC5F48942D9CEF04008194A7 /* Build configuration list for PBXNativeTarget "PetalsiOS" */;
+			buildPhases = (
+				AC5F486C2D9CEF00008194A7 /* Sources */,
+				AC5F486D2D9CEF00008194A7 /* Frameworks */,
+				AC5F486E2D9CEF00008194A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AC5F48712D9CEF00008194A7 /* PetalsiOS */,
+			);
+			name = PetalsiOS;
+			packageProductDependencies = (
+				AC5F48AB2D9CEFD8008194A7 /* PetalCore */,
+				AC5F48AD2D9CEFD8008194A7 /* PetalMLX */,
+				AC5F48AF2D9CEFD8008194A7 /* PetalTools */,
+				AC5F48B12D9CEFDC008194A7 /* GoogleGenerativeAI */,
+				AC5F48B32D9CEFDC008194A7 /* MLXEmbedders */,
+				AC5F48B52D9CEFDC008194A7 /* MLXLLM */,
+				AC5F48B72D9CEFDC008194A7 /* MLXLMCommon */,
+				AC5F48B92D9CEFDC008194A7 /* MLXMNIST */,
+				AC5F48BB2D9CEFDC008194A7 /* MLXVLM */,
+				AC5F48BD2D9CEFDC008194A7 /* StableDiffusion */,
+				AC5F48BF2D9CF01D008194A7 /* Ollama */,
+			);
+			productName = PetalsiOS;
+			productReference = AC5F48702D9CEF00008194A7 /* PetalsiOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AC5F487B2D9CEF04008194A7 /* PetalsiOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC5F48952D9CEF04008194A7 /* Build configuration list for PBXNativeTarget "PetalsiOSTests" */;
+			buildPhases = (
+				AC5F48782D9CEF04008194A7 /* Sources */,
+				AC5F48792D9CEF04008194A7 /* Frameworks */,
+				AC5F487A2D9CEF04008194A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC5F487E2D9CEF04008194A7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AC5F487F2D9CEF04008194A7 /* PetalsiOSTests */,
+			);
+			name = PetalsiOSTests;
+			packageProductDependencies = (
+			);
+			productName = PetalsiOSTests;
+			productReference = AC5F487C2D9CEF04008194A7 /* PetalsiOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AC5F48852D9CEF04008194A7 /* PetalsiOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC5F48962D9CEF04008194A7 /* Build configuration list for PBXNativeTarget "PetalsiOSUITests" */;
+			buildPhases = (
+				AC5F48822D9CEF04008194A7 /* Sources */,
+				AC5F48832D9CEF04008194A7 /* Frameworks */,
+				AC5F48842D9CEF04008194A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC5F48882D9CEF04008194A7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AC5F48892D9CEF04008194A7 /* PetalsiOSUITests */,
+			);
+			name = PetalsiOSUITests;
+			packageProductDependencies = (
+				AC5F48972D9CEF0C008194A7 /* PetalCore */,
+				AC5F48992D9CEF0C008194A7 /* PetalMLX */,
+				AC5F489B2D9CEF0C008194A7 /* PetalTools */,
+				AC5F489D2D9CEF11008194A7 /* GoogleGenerativeAI */,
+				AC5F489F2D9CEF11008194A7 /* MLXEmbedders */,
+				AC5F48A12D9CEF11008194A7 /* MLXLLM */,
+				AC5F48A32D9CEF11008194A7 /* MLXLMCommon */,
+				AC5F48A52D9CEF11008194A7 /* MLXMNIST */,
+				AC5F48A72D9CEF11008194A7 /* MLXVLM */,
+				AC5F48A92D9CEF11008194A7 /* StableDiffusion */,
+			);
+			productName = PetalsiOSUITests;
+			productReference = AC5F48862D9CEF04008194A7 /* PetalsiOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		AC9B1C812D5526B100F3525D /* Petals */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC9B1CA72D5526B300F3525D /* Build configuration list for PBXNativeTarget "Petals" */;
@@ -230,9 +420,20 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					AC5F486F2D9CEF00008194A7 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					AC5F487B2D9CEF04008194A7 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = AC5F486F2D9CEF00008194A7;
+					};
+					AC5F48852D9CEF04008194A7 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = AC5F486F2D9CEF00008194A7;
+					};
 					AC9B1C812D5526B100F3525D = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -268,11 +469,35 @@
 				AC9B1C812D5526B100F3525D /* Petals */,
 				AC9B1C922D5526B300F3525D /* PetalsTests */,
 				AC9B1C9C2D5526B300F3525D /* PetalsUITests */,
+				AC5F486F2D9CEF00008194A7 /* PetalsiOS */,
+				AC5F487B2D9CEF04008194A7 /* PetalsiOSTests */,
+				AC5F48852D9CEF04008194A7 /* PetalsiOSUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AC5F486E2D9CEF00008194A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC5F487A2D9CEF04008194A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC5F48842D9CEF04008194A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC9B1C802D5526B100F3525D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -297,6 +522,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AC5F486C2D9CEF00008194A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC5F48782D9CEF04008194A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC5F48822D9CEF04008194A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC9B1C7E2D5526B100F3525D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -321,6 +567,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AC5F487E2D9CEF04008194A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC5F486F2D9CEF00008194A7 /* PetalsiOS */;
+			targetProxy = AC5F487D2D9CEF04008194A7 /* PBXContainerItemProxy */;
+		};
+		AC5F48882D9CEF04008194A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC5F486F2D9CEF00008194A7 /* PetalsiOS */;
+			targetProxy = AC5F48872D9CEF04008194A7 /* PBXContainerItemProxy */;
+		};
 		AC9B1C952D5526B300F3525D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AC9B1C812D5526B100F3525D /* Petals */;
@@ -334,6 +590,147 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AC5F488E2D9CEF04008194A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsiOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC5F488F2D9CEF04008194A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsiOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AC5F48902D9CEF04008194A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsiOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PetalsiOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PetalsiOS";
+			};
+			name = Debug;
+		};
+		AC5F48912D9CEF04008194A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsiOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PetalsiOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PetalsiOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AC5F48922D9CEF04008194A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsiOSUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PetalsiOS;
+			};
+			name = Debug;
+		};
+		AC5F48932D9CEF04008194A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8VNWQXUY4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = aadishivmalhotra.PetalsiOSUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PetalsiOS;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		AC9B1CA52D5526B300F3525D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -589,6 +986,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AC5F48942D9CEF04008194A7 /* Build configuration list for PBXNativeTarget "PetalsiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC5F488E2D9CEF04008194A7 /* Debug */,
+				AC5F488F2D9CEF04008194A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC5F48952D9CEF04008194A7 /* Build configuration list for PBXNativeTarget "PetalsiOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC5F48902D9CEF04008194A7 /* Debug */,
+				AC5F48912D9CEF04008194A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC5F48962D9CEF04008194A7 /* Build configuration list for PBXNativeTarget "PetalsiOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC5F48922D9CEF04008194A7 /* Debug */,
+				AC5F48932D9CEF04008194A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AC9B1C7D2D5526B000F3525D /* Build configuration list for PBXProject "Petals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -672,6 +1096,105 @@
 		AC4382182D80DB90007F89B8 /* PetalTools */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PetalTools;
+		};
+		AC5F48972D9CEF0C008194A7 /* PetalCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalCore;
+		};
+		AC5F48992D9CEF0C008194A7 /* PetalMLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalMLX;
+		};
+		AC5F489B2D9CEF0C008194A7 /* PetalTools */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalTools;
+		};
+		AC5F489D2D9CEF11008194A7 /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC3AA61F2D80A65C004A1A2D /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+		AC5F489F2D9CEF11008194A7 /* MLXEmbedders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXEmbedders;
+		};
+		AC5F48A12D9CEF11008194A7 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		AC5F48A32D9CEF11008194A7 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		AC5F48A52D9CEF11008194A7 /* MLXMNIST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXMNIST;
+		};
+		AC5F48A72D9CEF11008194A7 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXVLM;
+		};
+		AC5F48A92D9CEF11008194A7 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = StableDiffusion;
+		};
+		AC5F48AB2D9CEFD8008194A7 /* PetalCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalCore;
+		};
+		AC5F48AD2D9CEFD8008194A7 /* PetalMLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalMLX;
+		};
+		AC5F48AF2D9CEFD8008194A7 /* PetalTools */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PetalTools;
+		};
+		AC5F48B12D9CEFDC008194A7 /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC3AA61F2D80A65C004A1A2D /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+		AC5F48B32D9CEFDC008194A7 /* MLXEmbedders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXEmbedders;
+		};
+		AC5F48B52D9CEFDC008194A7 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		AC5F48B72D9CEFDC008194A7 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		AC5F48B92D9CEFDC008194A7 /* MLXMNIST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXMNIST;
+		};
+		AC5F48BB2D9CEFDC008194A7 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXVLM;
+		};
+		AC5F48BD2D9CEFDC008194A7 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC7A60682D8F26D400A9A7E5 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = StableDiffusion;
+		};
+		AC5F48BF2D9CF01D008194A7 /* Ollama */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC3AA61E2D80A64F004A1A2D /* XCRemoteSwiftPackageReference "ollama-swift" */;
+			productName = Ollama;
 		};
 		AC7A60692D8F26D400A9A7E5 /* MLXLLM */ = {
 			isa = XCSwiftPackageProductDependency;

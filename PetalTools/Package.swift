@@ -17,7 +17,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/google-gemini/generative-ai-swift", from: "0.5.6"),
+        .package(url: "https://github.com/google/generative-ai-swift", from: "0.5.6"),
+        .package(url: "github.com/mattt/ollama-swift", from: "1.2.0"),
         .package(path: "../PetalCore")
     ],
     targets: [
