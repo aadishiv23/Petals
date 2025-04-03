@@ -40,7 +40,7 @@ import SwiftUI
 struct MobileHomeView: View {
     @ObservedObject var conversationVM: ConversationViewModel
     @State private var selectedTab = 0
-    
+
     var body: some View {
         TabView(selection: $selectedTab) {
             // Home tab
@@ -49,14 +49,14 @@ struct MobileHomeView: View {
                     Label("Home", systemImage: "house.fill")
                 }
                 .tag(0)
-            
+
             // Chat tab
             MobileGeminiChatView(conversationVM: conversationVM)
                 .tabItem {
                     Label("Chat", systemImage: "message.fill")
                 }
                 .tag(1)
-            
+
             // Settings tab
             settingsContent
                 .tabItem {
@@ -66,8 +66,8 @@ struct MobileHomeView: View {
         }
         .accentColor(Color(hex: "5E5CE6"))
     }
-    
-    // Home content
+
+    /// Home content
     var homeContent: some View {
         VStack(spacing: 24) {
             // Header
@@ -75,22 +75,22 @@ struct MobileHomeView: View {
                 Text("Petals")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundColor(Color(hex: "5E5CE6"))
-                
+
                 Text("Your AI assistant")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
             .padding(.top, 48)
-            
+
             Spacer(minLength: 20)
-            
+
             // Quick action cards
             VStack(spacing: 16) {
                 Text("Quick Actions")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
                         actionCard(title: "New Chat", icon: "plus.bubble", action: newChat)
@@ -100,36 +100,36 @@ struct MobileHomeView: View {
                     .padding(.horizontal)
                 }
             }
-            
+
             Spacer(minLength: 20)
-            
+
             // Recent chats section
             VStack(spacing: 16) {
                 Text("Recent Chats")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
-                
+
                 if conversationVM.chatHistory.isEmpty {
                     emptyChatsView
                 } else {
                     recentChatsListView
                 }
             }
-            
+
             Spacer()
         }
         .padding()
     }
-    
-    // Settings content
+
+    /// Settings content
     var settingsContent: some View {
         VStack(spacing: 20) {
             Text("Settings")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.top, 20)
-            
+
             Form {
                 Section(header: Text("Model Selection")) {
                     Toggle(isOn: $conversationVM.useOllama) {
@@ -140,7 +140,7 @@ struct MobileHomeView: View {
                     }
                     .toggleStyle(SwitchToggleStyle(tint: Color(hex: "5E5CE6")))
                 }
-                
+
                 Section(header: Text("About")) {
                     HStack {
                         Text("Version")
@@ -148,7 +148,7 @@ struct MobileHomeView: View {
                         Text("1.0.0")
                             .foregroundColor(.secondary)
                     }
-                    
+
                     HStack {
                         Text("Developer")
                         Spacer()
@@ -159,15 +159,15 @@ struct MobileHomeView: View {
             }
         }
     }
-    
-    // Action card component
+
+    /// Action card component
     private func actionCard(title: String, icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: 28))
                     .foregroundColor(Color(hex: "5E5CE6"))
-                
+
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.primary)
@@ -179,18 +179,18 @@ struct MobileHomeView: View {
             )
         }
     }
-    
-    // Empty chats view
+
+    /// Empty chats view
     private var emptyChatsView: some View {
         VStack(spacing: 16) {
             Image(systemName: "bubble.left.and.bubble.right")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
-            
+
             Text("No recent chats")
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.secondary)
-            
+
             Button(action: newChat) {
                 Text("Start a new chat")
                     .font(.system(size: 14, weight: .medium))
@@ -206,8 +206,8 @@ struct MobileHomeView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
     }
-    
-    // Recent chats list
+
+    /// Recent chats list
     private var recentChatsListView: some View {
         VStack(spacing: 12) {
             ForEach(conversationVM.chatHistory.prefix(3)) { chat in
@@ -219,12 +219,12 @@ struct MobileHomeView: View {
                     HStack {
                         Image(systemName: "message")
                             .foregroundColor(Color(hex: "5E5CE6"))
-                        
+
                         VStack(alignment: .leading, spacing: 4) {
                             Text(chat.title)
                                 .font(.headline)
                                 .lineLimit(1)
-                            
+
                             if let lastMessage = chat.lastMessage {
                                 Text(lastMessage)
                                     .font(.subheadline)
@@ -232,9 +232,9 @@ struct MobileHomeView: View {
                                     .lineLimit(1)
                             }
                         }
-                        
+
                         Spacer()
-                        
+
                         if let lastActivity = chat.lastActivityDate {
                             Text(formatDate(lastActivity))
                                 .font(.caption)
@@ -249,7 +249,7 @@ struct MobileHomeView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            
+
             if conversationVM.chatHistory.count > 3 {
                 NavigationLink(destination: MobileChatListView(
                     chatHistory: conversationVM.chatHistory,
@@ -269,13 +269,13 @@ struct MobileHomeView: View {
             }
         }
     }
-    
-    // Helper functions
+
+    /// Helper functions
     private func newChat() {
         conversationVM.startNewChat()
         selectedTab = 1
     }
-    
+
     private func lastChat() {
         if let firstChat = conversationVM.chatHistory.first {
             conversationVM.selectChat(firstChat.id)
@@ -284,11 +284,11 @@ struct MobileHomeView: View {
             newChat()
         }
     }
-    
+
     private func help() {
         // Implement help functionality
     }
-    
+
     private func formatDate(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
@@ -352,8 +352,6 @@ struct MobileHomeContent: View {
 //
 
 import Foundation
-
-
 
 //  MobileChatListView.swift
 //  Petals
@@ -446,101 +444,360 @@ struct MobileChatListView: View {
 import PetalCore
 import SwiftUI
 
-//  MobileGeminiChatView.swift
-//  Petals
-//
-//  Created for iOS target
-
-import SwiftUI
-import PetalCore
 
 struct MobileGeminiChatView: View {
     @ObservedObject var conversationVM: ConversationViewModel
     @State private var userInput: String = ""
     @FocusState private var inputIsFocused: Bool
+    @State private var showModelPicker = false
+    @Namespace private var bottomID
+    
+    let platformBackgroundColor = Color(UIColor.secondarySystemBackground)
+    
+    var isUserInputEmpty: Bool {
+        userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text(conversationVM.currentChatTitle)
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .lineLimit(1)
-                
-                Spacer()
-                
-                MobileModelToggle(isOn: $conversationVM.useOllama)
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-            .background(Color(UIColor.systemBackground))
-            .shadow(color: Color.black.opacity(0.1), radius: 1, y: 1)
-            
-            // Chat messages
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 16) {
-                        ForEach(conversationVM.messages, id: \.self) { msg in
-                            if msg.pending, conversationVM.isProcessingTool {
-                                withAnimation {
-                                    toolLoadingView(for: msg)
+        NavigationStack {
+            VStack(spacing: 0) {
+                // Chat messages
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(conversationVM.messages, id: \.self) { msg in
+                                if msg.pending, conversationVM.isProcessingTool {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        toolLoadingView(for: msg)
+                                            .transition(.asymmetric(
+                                                insertion: .opacity.combined(with: .scale(scale: 0.95)),
+                                                removal: .opacity.combined(with: .scale(scale: 0.95))
+                                            ))
+                                            .id(msg)
+                                    }
+                                } else if let content = msg.message, !content.isEmpty {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        MobileChatBubbleView(message: msg)
+                                            .transition(.asymmetric(
+                                                insertion: .opacity.combined(with: .scale(scale: 0.95)),
+                                                removal: .opacity.combined(with: .scale(scale: 0.95))
+                                            ))
+                                            .id(msg)
+                                    }
                                 }
-                            } else {
-                                withAnimation {
-                                    MobileChatBubbleView(message: msg)
-                                        .id(msg)
+                            }
+                            
+                            // Invisible spacer for scrolling
+                            Color.clear
+                                .frame(height: 1)
+                                .id(bottomID)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 20)
+                    }
+                    // Scroll when message count changes
+                    .onChange(of: conversationVM.messages.count) { _ in
+                        scrollToBottom(proxy: proxy)
+                    }
+                    // Also scroll when the content of the last message changes (for streaming)
+                    .onChange(of: conversationVM.messages.last?.message) { _ in
+                        scrollToBottom(proxy: proxy)
+                    }
+                    // Add this to prevent duplicate content after streaming completes
+                    .onChange(of: conversationVM.busy) { isBusy in
+                        if !isBusy && conversationVM.messages.last?.pending == true {
+                            // When streaming ends, mark the message as not pending
+                            // but don't add the complete text again
+                            if let lastIndex = conversationVM.messages.indices.last {
+                                conversationVM.messages[lastIndex].pending = false
+                            }
+                        }
+                        scrollToBottom(proxy: proxy)
+                    }
+                    // Initial scroll when view appears
+                    .onAppear {
+                        scrollToBottom(proxy: proxy)
+                    }
+                }
+                
+                // Input bar (enhanced)
+                HStack(alignment: .bottom, spacing: 0) {
+                    // Model picker button
+                    modelPickerButton
+                    
+                    // Text input field
+                    chatInput
+                }
+                .padding()
+            }
+            .navigationTitle(conversationVM.currentChatTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showModelPicker) {
+                NavigationStack {
+                    ModelPickerView(useOllama: $conversationVM.useOllama)
+                        .presentationDragIndicator(.visible)
+                        .presentationDetents([.fraction(0.4)])
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(action: { showModelPicker.toggle() }) {
+                                    Image(systemName: "xmark")
                                 }
                             }
                         }
-                        
-                        // Invisible spacer for scrolling
-                        Color.clear
-                            .frame(height: 1)
-                            .id("bottomScrollAnchor")
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 20)
-                }
-                // Scroll when message count changes
-                .onChange(of: conversationVM.messages.count) { _ in
-                    scrollToBottom(proxy: proxy)
-                }
-                // Also scroll when the content of the last message changes (for streaming)
-                .onChange(of: conversationVM.messages.last?.message) { _ in
-                    scrollToBottom(proxy: proxy)
-                }
-                // Initial scroll when view appears
-                .onAppear {
-                    scrollToBottom(proxy: proxy)
-                }
-            }
-            
-            // Input bar
-            MobileChatInputBar(userInput: $userInput, isFocused: _inputIsFocused) { message in
-                Task {
-                    await conversationVM.sendMessage(message, streaming: true)
                 }
             }
         }
     }
+    
+    // MARK: - Components
+    
+    var modelPickerButton: some View {
+        Button {
+            // Add haptic feedback if available in your app
+            showModelPicker.toggle()
+        } label: {
+            Image(systemName: "chevron.up")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 16)
+                .tint(.primary)
+                .frame(width: 48, height: 48)
+                .background(
+                    Circle()
+                        .fill(platformBackgroundColor)
+                )
+        }
+    }
+    
+    var chatInput: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            TextField("Message", text: $userInput, axis: .vertical)
+                .focused($inputIsFocused)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .frame(minHeight: 48)
+                .onSubmit {
+                    inputIsFocused = true
+                    sendMessage()
+                }
+            
+            if conversationVM.busy {
+                stopButton
+            } else {
+                sendButton
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(platformBackgroundColor)
+        )
+    }
+    
+    var sendButton: some View {
+        Button {
+            sendMessage()
+        } label: {
+            Image(systemName: "arrow.up.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 24, height: 24)
+                .foregroundColor(isUserInputEmpty ? .gray.opacity(0.5) : Color(hex: "5E5CE6"))
+        }
+        .disabled(isUserInputEmpty)
+        .padding(.trailing, 12)
+        .padding(.bottom, 12)
+    }
+    
+    var stopButton: some View {
+        Button {
+            // Implement stop functionality if needed
+            conversationVM.stop()
+        } label: {
+            Image(systemName: "stop.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 24, height: 24)
+                .foregroundColor(Color.red.opacity(0.8))
+        }
+        .padding(.trailing, 12)
+        .padding(.bottom, 12)
+    }
+    
+    // MARK: - Helper Methods
     
     private func toolLoadingView(for msg: ChatMessage) -> some View {
         HStack(alignment: .top, spacing: 8) {
             MobileAvatar(participant: .llm)
                 .offset(y: 2)
-            MobileToolProcessingView()
-                .id(msg)
+            
+            // Enhanced loading animation
+            HStack(spacing: 4) {
+                ForEach(0..<3, id: \.self) { index in
+                    Circle()
+                        .fill(Color(hex: "5E5CE6").opacity(0.7))
+                        .frame(width: 8, height: 8)
+                        .offset(y: sin(Double(index) * 0.3) * 4)
+                        .animation(
+                            Animation.easeInOut(duration: 0.5)
+                                .repeatForever()
+                                .delay(Double(index) * 0.15),
+                            value: index
+                        )
+                }
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(UIColor.secondarySystemBackground))
+            )
+            
             Spacer()
         }
     }
     
     private func scrollToBottom(proxy: ScrollViewProxy) {
-        withAnimation(.smooth(duration: 0.3)) {
-            proxy.scrollTo("bottomScrollAnchor", anchor: .bottom)
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            proxy.scrollTo(bottomID, anchor: .bottom)
+        }
+    }
+    
+    private func sendMessage() {
+        if !isUserInputEmpty {
+            Task {
+                let message = userInput
+                userInput = ""
+                inputIsFocused = true
+                await conversationVM.sendMessage(message, streaming: true)
+            }
         }
     }
 }
 
+// MARK: - Model Picker View
+struct ModelPickerView: View {
+    @Binding var useOllama: Bool
+    
+    var body: some View {
+        List {
+            Section(header: Text("Select Model")) {
+                Button(action: { useOllama = false }) {
+                    HStack {
+                        Image(systemName: "cloud")
+                            .foregroundColor(Color(hex: "5E5CE6"))
+                        Text("Gemini API (Cloud)")
+                        Spacer()
+                        if !useOllama {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(Color(hex: "5E5CE6"))
+                        }
+                    }
+                }
+                
+                Button(action: { useOllama = true }) {
+                    HStack {
+                        Image(systemName: "desktopcomputer")
+                            .foregroundColor(Color(hex: "5E5CE6"))
+                        Text("MLX (Local)")
+                        Spacer()
+                        if useOllama {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(Color(hex: "5E5CE6"))
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Model Selection")
+    }
+}
+
+// MARK: - Enhanced Chat Bubble View
+
+struct MobileChatBubbleView: View {
+    let message: ChatMessage
+    @State private var showingOptions = false
+
+    var body: some View {
+        HStack(alignment: .top) {
+            // Avatar
+            if message.participant == .llm {
+                MobileAvatar(participant: .llm)
+                    .padding(.top, 4)
+            }
+
+            // Message bubble
+            VStack(alignment: message.participant == .user ? .trailing : .leading, spacing: 4) {
+                // Message content
+                Text(message.message)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(
+                                message.participant == .user
+                                    ? Color(hex: "5E5CE6")
+                                    : Color(UIColor.secondarySystemBackground)
+                            )
+                    )
+                    .foregroundColor(
+                        message.participant == .user
+                            ? .white
+                            : Color.primary
+                    )
+                    .contextMenu {
+                        Button(action: {
+                            UIPasteboard.general.string = message.message
+                        }) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+
+                        if message.participant == .user {
+                            Button(action: {
+                                // Implement edit action if needed
+                            }) {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                        }
+                    }
+            }
+            .frame(
+                maxWidth: UIScreen.main.bounds.width * 0.75,
+                alignment: message.participant == .user ? .trailing : .leading
+            )
+
+            // User avatar (at the end for user messages)
+            if message.participant == .user {
+                MobileAvatar(participant: .user)
+                    .padding(.top, 4)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: message.participant == .user ? .trailing : .leading)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: message)
+    }
+}
+
+/// Enhanced Mobile Avatar View
+struct MobileAvatar: View {
+    let participant: ChatMessage.Participant
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    participant == .user
+                        ? Color.blue.opacity(0.1)
+                        : Color(hex: "5E5CE6").opacity(0.1)
+                )
+                .frame(width: 32, height: 32)
+
+            Image(systemName: participant == .user ? "person.circle.fill" : "brain.head.profile")
+                .font(.system(size: 16))
+                .foregroundColor(participant == .user ? Color.blue : Color(hex: "5E5CE6"))
+        }
+    }
+}
 
 /// Mobile-friendly toggle for model selection
 struct MobileModelToggle: View {
@@ -601,7 +858,7 @@ struct MobileChatInputBar: View {
                         .foregroundColor(
                             userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                                 ? Color.gray
-                            : Color(hex: "5E5CE6")
+                                : Color(hex: "5E5CE6")
                         )
                 }
                 .disabled(userInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -617,64 +874,6 @@ struct MobileChatInputBar: View {
 //  Petals
 //
 //  Created for iOS target
-
-import PetalCore
-import SwiftUI
-
-struct MobileChatBubbleView: View {
-    let message: ChatMessage
-
-    var body: some View {
-        HStack(alignment: .top) {
-            // Avatar
-            if message.participant == .llm {
-                MobileAvatar(participant: .llm)
-                    .padding(.top, 4)
-            }
-
-            // Message bubble
-            VStack(alignment: message.participant == .user ? .trailing : .leading, spacing: 4) {
-                // Message content
-                Text(message.message)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(
-                        message.participant == .user
-                        ? Color(hex: "5E5CE6")
-                            : Color(UIColor.secondarySystemBackground)
-                    )
-                    .foregroundColor(
-                        message.participant == .user
-                            ? .white
-                            : Color.primary
-                    )
-                    .cornerRadius(16)
-            }
-            .frame(
-                maxWidth: UIScreen.main.bounds.width * 0.75,
-                alignment: message.participant == .user ? .trailing : .leading
-            )
-
-            // User avatar (at the end for user messages)
-            if message.participant == .user {
-                MobileAvatar(participant: .user)
-                    .padding(.top, 4)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: message.participant == .user ? .trailing : .leading)
-    }
-}
-
-/// Mobile avatar view
-struct MobileAvatar: View {
-    let participant: ChatMessage.Participant
-
-    var body: some View {
-        Image(systemName: participant == .user ? "person.circle.fill" : "brain.head.profile")
-            .font(.system(size: 24))
-            .foregroundColor(participant == .user ? Color.blue : Color(hex: "5E5CE6"))
-    }
-}
 
 /// Tool processing view for mobile
 struct MobileToolProcessingView: View {
@@ -829,18 +1028,34 @@ class ConversationViewModel: ObservableObject {
         isProcessingTool = needsTool
 
         messages.append(ChatMessage(message: text, participant: .user))
-        messages.append(ChatMessage.pending(participant: .system))
+        // For tool calls, start with an empty message but mark it as pending
+        let pendingMessage = ChatMessage.pending(participant: .llm)
+        messages.append(pendingMessage)
 
         do {
             if streaming {
                 let stream = chatModel.sendMessageStream(text)
+                
+                // Process the stream
                 for try await chunk in stream {
-                    messages[messages.count - 1].message += chunk.message
-                    if let toolName = chunk.toolCallName {
-                        messages[messages.count - 1].toolCallName = toolName
+                    // If this is a tool call, don't update the message content until we have the final result
+                    if isProcessingTool {
+                        // Only update if we actually get content back (which would be the final processed result)
+                        if !chunk.message.isEmpty {
+                            messages[messages.count - 1].message = chunk.message
+                        }
+                        
+                        if let toolName = chunk.toolCallName {
+                            messages[messages.count - 1].toolCallName = toolName
+                        }
+                    } else {
+                        // For regular messages, append each chunk
+                        messages[messages.count - 1].message += chunk.message
                     }
-                    messages[messages.count - 1].pending = false
                 }
+                
+                // After stream completes, mark as not pending
+                messages[messages.count - 1].pending = false
             } else {
                 let response = try await chatModel.sendMessage(text)
                 messages[messages.count - 1].message = response
@@ -850,6 +1065,7 @@ class ConversationViewModel: ObservableObject {
             self.error = error
             messages.removeLast()
         }
+        
         busy = false
         isProcessingTool = false
     }
@@ -918,14 +1134,16 @@ class ConversationViewModel: ObservableObject {
         }
         return false
     }
-    
+
     // Add these properties to ConversationViewModel
     @Published var chatHistory: [ChatHistory] = []
     @Published var currentChatTitle: String = "New Chat"
 
-    // Add these methods to ConversationViewModel
+    /// Add these methods to ConversationViewModel
     func selectChat(_ id: UUID) {
-        guard let index = chatHistory.firstIndex(where: { $0.id == id }) else { return }
+        guard let index = chatHistory.firstIndex(where: { $0.id == id }) else {
+            return
+        }
         // Load this chat
         // Implementation details depend on how you store chat content
         currentChatTitle = chatHistory[index].title
@@ -1072,8 +1290,8 @@ struct ToolTriggerEvaluator {
 
 import Foundation
 import GoogleGenerativeAI
-import PetalTools
 import PetalCore
+import PetalTools
 
 class GeminiChatModel: AIChatModel {
     private var model: GenerativeModel
@@ -1085,7 +1303,7 @@ class GeminiChatModel: AIChatModel {
     }
 
     func sendMessageStream(_ text: String) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
-        return AsyncThrowingStream { continuation in
+        AsyncThrowingStream { continuation in
             Task {
                 do {
                     for try await response in chat.sendMessageStream(text) {
@@ -1101,7 +1319,6 @@ class GeminiChatModel: AIChatModel {
             }
         }
     }
-
 
     func sendMessage(_ text: String) async throws -> String {
         let response = try await chat.sendMessage(text)
@@ -1138,22 +1355,22 @@ extension Color {
 }
 
 enum APIKey {
-  /// Fetch the API key from `GenerativeAI-Info.plist`
-  /// This is just *one* way how you can retrieve the API key for your app.
-  static var `default`: String {
-    guard let filePath = Bundle.main.path(forResource: "Petals-GenerativeAI-Info", ofType: "plist")
-    else {
-      fatalError("Couldn't find file 'Petals-GenerativeAI-Info.plist'.")
+    /// Fetch the API key from `GenerativeAI-Info.plist`
+    /// This is just *one* way how you can retrieve the API key for your app.
+    static var `default`: String {
+        guard let filePath = Bundle.main.path(forResource: "Petals-GenerativeAI-Info", ofType: "plist")
+        else {
+            fatalError("Couldn't find file 'Petals-GenerativeAI-Info.plist'.")
+        }
+        let plist = NSDictionary(contentsOfFile: filePath)
+        guard let value = plist?.object(forKey: "API_KEY") as? String else {
+            fatalError("Couldn't find key 'API_KEY' in 'GenerativeAI-Info.plist'.")
+        }
+        if value.starts(with: "_") || value.isEmpty {
+            fatalError(
+                "Follow the instructions at https://ai.google.dev/tutorials/setup to get an API key."
+            )
+        }
+        return value
     }
-    let plist = NSDictionary(contentsOfFile: filePath)
-    guard let value = plist?.object(forKey: "API_KEY") as? String else {
-      fatalError("Couldn't find key 'API_KEY' in 'GenerativeAI-Info.plist'.")
-    }
-    if value.starts(with: "_") || value.isEmpty {
-      fatalError(
-        "Follow the instructions at https://ai.google.dev/tutorials/setup to get an API key."
-      )
-    }
-    return value
-  }
 }

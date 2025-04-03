@@ -9,11 +9,11 @@ import Foundation
 
 public struct MLXToolCall: Codable {
     public let name: MLXToolCallType
-    public let arguments: MLXToolCallArguments
+    public let parameters: MLXToolCallArguments
 
     enum CodingKeys: String, CodingKey {
         case name
-        case arguments = "parameters" // <- THIS is the fix
+        case parameters = "arguments" // <- THIS is the fix
     }
 }
 

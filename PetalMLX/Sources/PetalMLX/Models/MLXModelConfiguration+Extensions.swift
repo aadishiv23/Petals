@@ -42,7 +42,7 @@ extension ModelConfiguration: @retroactive Equatable {
     public static let llama_3_1_8b_4bit = ModelConfiguration(
         id: "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit"
     )
-    
+
     public static let deepseek_r1_distill_qwen_1_5b_4bit = ModelConfiguration(
         id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit"
     )
@@ -60,10 +60,7 @@ extension ModelConfiguration: @retroactive Equatable {
     ]
 
     public static var defaultModel: ModelConfiguration {
-        #if os(iOS)
-        return llama_3_2_3b_4bit
-        #endif
-        return llama_3_1_8b_4bit
+        llama_3_2_3b_4bit
     }
 
     public static func getModelByName(_ name: String) -> ModelConfiguration? {

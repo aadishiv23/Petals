@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import PetalCore
+import SwiftUI
 
 /// The main chat interface view.
 struct GeminiChatView: View {
@@ -72,6 +72,17 @@ struct GeminiChatView: View {
                 }
                 // Also scroll when the content of the last message changes (for streaming)
                 .onChange(of: conversationVM.messages.last?.message) { _ in
+                    scrollToBottom(proxy: proxy)
+                }
+                // Add this to prevent duplicate content after streaming completes
+                .onChange(of: conversationVM.busy) { isBusy in
+                    if !isBusy, conversationVM.messages.last?.pending == true {
+                        // When streaming ends, mark the message as not pending
+                        // but don't add the complete text again
+                        if let lastIndex = conversationVM.messages.indices.last {
+                            conversationVM.messages[lastIndex].pending = false
+                        }
+                    }
                     scrollToBottom(proxy: proxy)
                 }
                 // Initial scroll when view appears

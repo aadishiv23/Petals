@@ -136,18 +136,34 @@ class ConversationViewModel: ObservableObject {
         isProcessingTool = needsTool
 
         messages.append(ChatMessage(message: text, participant: .user))
-        messages.append(ChatMessage.pending(participant: .system))
+        // For tool calls, start with an empty message but mark it as pending
+        let pendingMessage = ChatMessage.pending(participant: .llm)
+        messages.append(pendingMessage)
 
         do {
             if streaming {
                 let stream = chatModel.sendMessageStream(text)
+                
+                // Process the stream
                 for try await chunk in stream {
-                    messages[messages.count - 1].message += chunk.message
-                    if let toolName = chunk.toolCallName {
-                        messages[messages.count - 1].toolCallName = toolName
+                    // If this is a tool call, don't update the message content until we have the final result
+                    if isProcessingTool {
+                        // Only update if we actually get content back (which would be the final processed result)
+                        if !chunk.message.isEmpty {
+                            messages[messages.count - 1].message = chunk.message
+                        }
+                        
+                        if let toolName = chunk.toolCallName {
+                            messages[messages.count - 1].toolCallName = toolName
+                        }
+                    } else {
+                        // For regular messages, append each chunk
+                        messages[messages.count - 1].message += chunk.message
                     }
-                    messages[messages.count - 1].pending = false
                 }
+                
+                // After stream completes, mark as not pending
+                messages[messages.count - 1].pending = false
             } else {
                 let response = try await chatModel.sendMessage(text)
                 messages[messages.count - 1].message = response
@@ -157,6 +173,7 @@ class ConversationViewModel: ObservableObject {
             self.error = error
             messages.removeLast()
         }
+        
         busy = false
         isProcessingTool = false
     }

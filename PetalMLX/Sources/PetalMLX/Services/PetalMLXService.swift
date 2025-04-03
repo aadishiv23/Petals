@@ -130,34 +130,167 @@ public class PetalMLXService {
                     let tools: [any MLXCompatibleTool]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
                     let formattedMessages = formatMessages(messages)
 
-                    // --- CHANGE START ---
                     let rawContainer = modelService.provideModelContainer()
                     guard let container = rawContainer as? ConcreteCoreModelContainer else {
                         throw PetalMLXServiceError.unexpectedModelContainerType
                     }
-                    // --- CHANGE END ---
 
                     // Convert each MLXCompatibleTool to a dictionary using its MLXToolDefinition.
                     let toolDefinitions: [[String: any Sendable]]? = tools?.map { tool in
                         tool.asMLXToolDefinition().toDictionary()
                     }
 
+                    // Create an actor to safely store and access the complete output
+                    actor OutputStore {
+                        private(set) var completeOutput: String = ""
+                        private(set) var isToolCall: Bool = false
+
+                        func update(with text: String) {
+                            completeOutput = text
+                            // Check if this contains a tool call marker
+                            isToolCall = text.contains("<|python_tag|>") ||
+                                text.contains("<tool_call>") ||
+                                text.contains("\"function_call\"") ||
+                                text.contains("\"type\": \"function\"")
+                        }
+
+                        func getCurrentOutput() -> String {
+                            completeOutput
+                        }
+
+                        func getIsToolCall() -> Bool {
+                            isToolCall
+                        }
+                    }
+
+                    let outputStore = OutputStore()
+
+                    // Yield a placeholder to indicate tool processing is starting
+                    if useTools {
+                        // Don't yield any real content yet, just set the toolCallName
+                        // This will make the UI show the loading state
+                        let potentialToolName = detectPotentialToolName(from: lastMessage)
+                        continuation.yield(PetalMessageStreamChunk(
+                            message: "",
+                            toolCallName: potentialToolName
+                        ))
+                    }
+
                     let result = try await container.generate(
                         messages: formattedMessages,
-                        tools: toolDefinitions, // Pass the converted tool definitions here
+                        tools: toolDefinitions,
                         onProgress: { progressText in
-                           // continuation.yield(PetalMessageStreamChunk(message: progressText, toolCallName: nil))
-                        }
-                    )
+                            // Safely update the complete output through the actor
+                            Task {
+                                await outputStore.update(with: progressText)
+                                let isToolCall = await outputStore.getIsToolCall()
 
-                    let finalOutput = try await processToolCallsIfNeeded(result)
-                    continuation.yield(PetalMessageStreamChunk(message: finalOutput, toolCallName: nil))
+                                // Only stream the content if it's NOT a tool call
+                                if !isToolCall, !useTools {
+                                    continuation.yield(PetalMessageStreamChunk(
+                                        message: progressText,
+                                        toolCallName: nil
+                                    ))
+                                }
+                                // Otherwise we don't yield during streaming for tool calls
+                            }
+                        }
+                    ) as! GenerateResult
+
+                    // Get the final state
+                    let finalOutput = await outputStore.getCurrentOutput()
+                    let isToolCall = await outputStore.getIsToolCall()
+
+                    // If it was a tool call, process it
+                    if isToolCall || useTools {
+                        let processedResult = try await processToolCallsIfNeeded(result)
+                        let toolName = extractToolName(from: finalOutput)
+
+                        // Yield the final processed result for the tool call
+                        continuation.yield(PetalMessageStreamChunk(
+                            message: processedResult,
+                            toolCallName: toolName
+                        ))
+                    } else if !useTools {
+                        // If we didn't stream any content and it wasn't a tool call,
+                        // make sure we yield the final output
+                        continuation.yield(PetalMessageStreamChunk(
+                            message: finalOutput,
+                            toolCallName: nil
+                        ))
+                    }
+
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
                 }
             }
         }
+    }
+
+    /// Try to predict potential tool name from the message to improve UX
+    private func detectPotentialToolName(from message: String) -> String? {
+        let lowercasedMessage = message.lowercased()
+
+        if lowercasedMessage.contains("canvas") &&
+            (lowercasedMessage.contains("course") || lowercasedMessage.contains("class"))
+        {
+            return "petalGenericCanvasCoursesTool"
+        } else if lowercasedMessage.contains("calendar") || lowercasedMessage.contains("event") {
+            return "petalCalendarFetchEventsTool"
+        } else if lowercasedMessage.contains("reminder") || lowercasedMessage.contains("task") {
+            return "petalFetchRemindersTool"
+        } else if lowercasedMessage.contains("assignment") {
+            return "petalFetchCanvasAssignmentsTool"
+        } else if lowercasedMessage.contains("grade") {
+            return "petalFetchCanvasGradesTool"
+        }
+
+        return nil
+    }
+
+    /// Helper method to extract tool name from output if present
+    private func extractToolName(from output: String) -> String? {
+        // Check if the output contains a JSON string with a tool name
+        if output.contains("\"name\":") || output.contains("\"name\": ") {
+            // Try to find the name pattern in the Llama format JSON string
+            if let range = output.range(of: "\"name\"\\s*:\\s*\"([^\"]+)\"", options: .regularExpression) {
+                let matched = output[range]
+                let namePattern = "\"([^\"]+)\"$"
+                if let nameRange = matched.range(of: namePattern, options: .regularExpression) {
+                    let nameWithQuotes = matched[nameRange]
+                    // Remove the quotes around the name
+                    return String(nameWithQuotes.dropFirst().dropLast())
+                }
+            }
+
+            // Alternative approach for JSON that might be differently formatted
+            do {
+                // Extract JSON string if it's within a larger text
+                var jsonString = output
+                if let jsonStart = output.range(of: "{", options: .backwards),
+                   let jsonEnd = output.range(of: "}", options: .backwards)
+                {
+                    let startIndex = jsonStart.lowerBound
+                    let endIndex = jsonEnd.upperBound
+                    if startIndex < endIndex {
+                        jsonString = String(output[startIndex..<endIndex])
+                    }
+                }
+
+                // Try to parse as JSON
+                if let data = jsonString.data(using: .utf8),
+                   let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let name = json["name"] as? String
+                {
+                    return name
+                }
+            } catch {
+                print("Error parsing JSON: \(error)")
+            }
+        }
+
+        return nil
     }
 
     /// If a tool call is detected in the generated result, process it and then format the response.
