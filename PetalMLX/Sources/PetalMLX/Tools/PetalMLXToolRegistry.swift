@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import PetalTools
+import PetalCore
 
 /// A simple registry to hold tool handlers.
 public class PetalMLXToolRegistry {
@@ -26,16 +28,9 @@ public class PetalMLXToolRegistry {
         return handlers[toolName]
     }
     
-    /// Returns a list of MLX tool definitions.
-    /// (Custom/hybrid implementation)
-    /// TODO: Better description and name.
-    public static func mlxTools() async -> [[String: any Sendable]] {
-        return [
-            ["name": "calendarTool", "description": "Fetch or create calendar events"],
-            ["name": "canvasCoursesTool", "description": "Retrieve Canvas courses"],
-            ["name": "canvasAssignmentsTool", "description": "Retrieve Canvas assignments"],
-            ["name": "canvasGradesTool", "description": "Retrieve Canvas grades"],
-            ["name": "remindersTool", "description": "Retrieve reminders"]
-        ]
+    /// Returns a list of MLX-compatible tool definitions (i.e. the actual tool objects).
+    public static func mlxTools() async -> [any MLXCompatibleTool] {
+        // For now, we only have one tool; add more as needed.
+        return [PetalGenericFetchCanvasCoursesTool()]
     }
 }
