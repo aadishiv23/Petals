@@ -353,20 +353,7 @@ struct MobileHomeContent: View {
 
 import Foundation
 
-/// Represents a single saved chat in the sidebar
-struct ChatHistory: Identifiable {
-    let id: UUID
-    var title: String
-    var lastMessage: String?
-    var lastActivityDate: Date?
-    
-    init(id: UUID = UUID(), title: String, lastMessage: String? = nil, lastActivityDate: Date? = Date()) {
-        self.id = id
-        self.title = title
-        self.lastMessage = lastMessage
-        self.lastActivityDate = lastActivityDate
-    }
-}
+
 
 //  MobileChatListView.swift
 //  Petals

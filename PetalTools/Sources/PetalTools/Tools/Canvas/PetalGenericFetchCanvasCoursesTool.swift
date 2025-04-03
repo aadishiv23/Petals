@@ -6,11 +6,11 @@
 //
 
 import Foundation
-import SwiftUI
 import PetalCore
+import SwiftUI
 
-public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
-    
+public final class PetalGenericFetchCanvasCoursesTool: MLXCompatibleTool, OllamaCompatibleTool {
+
     // TODO: Need beter way to DI this and not leak keuys
     private let canvasBaseURL = "https://umich.instructure.com/api/v1/"
     private let canvasAPIKey =
@@ -45,7 +45,7 @@ public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
         let completed: Bool?
     }
 
-    public struct Output: Codable {
+    public struct Output: Codable, Sendable {
         public let courses: String
     }
 
@@ -56,7 +56,7 @@ public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
     }
 
     public func asOllamaTool() -> OllamaTool {
-        return OllamaTool(
+        OllamaTool(
             type: "function",
             function: OllamaFunction(
                 name: "petalGenericCanvasCoursesTool",
@@ -65,6 +65,28 @@ public final class PetalGenericFetchCanvasCoursesTool: OllamaCompatibleTool {
                     type: "object",
                     properties: [
                         "completed": OllamaFunctionProperty(
+                            type: "boolean",
+                            description: "Whether to include completed courses."
+                        )
+                    ],
+                    required: []
+                )
+            )
+        )
+    }
+
+    // MARK: - MLX-Compatible
+
+    public func asMLXToolDefinition() -> MLXToolDefinition {
+        MLXToolDefinition(
+            type: "function",
+            function: MLXFunctionDefinition(
+                name: "petalGenericCanvasCoursesTool",
+                description: "Fetches user's Canvas courses.",
+                parameters: MLXParametersDefinition(
+                    type: "object",
+                    properties: [
+                        "completed": MLXParameterProperty(
                             type: "boolean",
                             description: "Whether to include completed courses."
                         )

@@ -9,9 +9,9 @@ import Foundation
 import MLXLLM
 import MLXLMCommon
 import PetalCore
+import PetalTools
 import SwiftUI
 
-/// Define a simple error for the cast failure
 enum PetalMLXServiceError: Error {
     case unexpectedModelContainerType
 }
@@ -24,19 +24,50 @@ public class PetalMLXService {
     /// Determines whether the message should trigger tool usage.
     private func shouldUseTools(for message: String) -> Bool {
         let toolExemplars: [String: [String]] = [
-            "calendarTool": [
-                "create a calendar event",
-                "schedule an event",
-                "book a meeting"
+            "petalCalendarFetchEventsTool": [
+                "Fetch calendar events for me",
+                "Show calendar events",
+                "List my events",
+                "Get events from my calendar",
+                "Retrieve calendar events"
             ],
-            "canvasCoursesTool": [
-                "show me my courses",
-                "list my classes",
-                "display my canvas courses"
+            "petalCalendarCreateEventTool": [
+                "Create a calendar event on [date]",
+                "Schedule a new calendar event",
+                "Add a calendar event to my schedule",
+                "Book an event on my calendar",
+                "Set up a calendar event"
+            ],
+            "petalFetchRemindersTool": [
+                "Show me my reminders",
+                "List my tasks for today",
+                "Fetch completed reminders",
+                "Get all my pending reminders",
+                "Find reminders containing 'doctor'"
+            ],
+            "petalGenericCanvasCoursesTool": [
+                "Show me my Canvas courses",
+                "List my classes on Canvas",
+                "Display my Canvas courses",
+                "What courses am I enrolled in?",
+                "Fetch my Canvas classes"
+            ],
+            "petalFetchCanvasAssignmentsTool": [
+                "Fetch assignments for my course",
+                "Show my Canvas assignments",
+                "Get assignments for my class",
+                "Retrieve course assignments from Canvas",
+                "List assignments for my course"
+            ],
+            "petalFetchCanvasGradesTool": [
+                "Show me my grades",
+                "Get my Canvas grades",
+                "Fetch my course grades",
+                "Display grades for my class",
+                "Retrieve my grades from Canvas"
             ]
-            // Add additional tool exemplars as needed.
         ]
-        
+
         for (_, exemplars) in toolExemplars {
             for exemplar in exemplars {
                 if message.lowercased().contains(exemplar.lowercased()) {
@@ -59,28 +90,30 @@ public class PetalMLXService {
     ) async throws -> String {
         let lastMessage = messages.last?.message ?? ""
         let useTools = shouldUseTools(for: lastMessage)
-        let tools: [[String: any Sendable]]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
+        // Get the MLX-compatible tool objects if needed.
+        let tools: [any MLXCompatibleTool]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
 
         let formattedMessages = formatMessages(messages)
 
         // --- CHANGE START ---
-        // Get the container conforming to the protocol
         let rawContainer = modelService.provideModelContainer()
-
-        // Explicitly cast to the concrete Sendable type before awaiting its method
         guard let container = rawContainer as? ConcreteCoreModelContainer else {
-            // Handle the case where the container isn't the expected concrete type
             throw PetalMLXServiceError.unexpectedModelContainerType
         }
         // --- CHANGE END ---
-        let result: MLXLMCommon.GenerateResult = try await container.generate(
+
+        let toolDefinitions: [[String: any Sendable]]? = tools?.map { tool in
+            tool.asMLXToolDefinition().toDictionary()
+        }
+
+        let result = try await container.generate(
             messages: formattedMessages,
-            tools: tools,
+            tools: toolDefinitions,
             onProgress: { _ in }
         ) as! GenerateResult
 
-        // Process tool calls if detected.
-        let finalOutput = try await processToolCallsIfNeeded(result.output)
+        // Process the result for potential tool calls.
+        let finalOutput = try await processToolCallsIfNeeded(result)
         return finalOutput
     }
 
@@ -94,31 +127,30 @@ public class PetalMLXService {
                 do {
                     let lastMessage = messages.last?.message ?? ""
                     let useTools = shouldUseTools(for: lastMessage)
-                    let tools: [[String: any Sendable]]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
+                    let tools: [any MLXCompatibleTool]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
                     let formattedMessages = formatMessages(messages)
-                    let container = modelService.provideModelContainer()
-                    
-                    // --- CHANGE START ---
-                    // Get the container conforming to the protocol
-                    let rawContainer = modelService.provideModelContainer()
 
-                    // Explicitly cast to the concrete Sendable type before awaiting its method
+                    // --- CHANGE START ---
+                    let rawContainer = modelService.provideModelContainer()
                     guard let container = rawContainer as? ConcreteCoreModelContainer else {
-                        // Handle the case where the container isn't the expected concrete type
                         throw PetalMLXServiceError.unexpectedModelContainerType
                     }
                     // --- CHANGE END ---
-                    // if i dont do above: Non-sendable type 'Any' returned by implicitly asynchronous call to nonisolated function cannot cross actor boundary
 
-                    let result: MLXLMCommon.GenerateResult = try await container.generate(
+                    // Convert each MLXCompatibleTool to a dictionary using its MLXToolDefinition.
+                    let toolDefinitions: [[String: any Sendable]]? = tools?.map { tool in
+                        tool.asMLXToolDefinition().toDictionary()
+                    }
+
+                    let result = try await container.generate(
                         messages: formattedMessages,
-                        tools: tools,
+                        tools: toolDefinitions, // Pass the converted tool definitions here
                         onProgress: { progressText in
-                            continuation.yield(PetalMessageStreamChunk(message: progressText, toolCallName: nil))
+                           // continuation.yield(PetalMessageStreamChunk(message: progressText, toolCallName: nil))
                         }
-                    ) as! GenerateResult
+                    )
 
-                    let finalOutput = try await processToolCallsIfNeeded(result.output)
+                    let finalOutput = try await processToolCallsIfNeeded(result)
                     continuation.yield(PetalMessageStreamChunk(message: finalOutput, toolCallName: nil))
                     continuation.finish()
                 } catch {
@@ -128,11 +160,44 @@ public class PetalMLXService {
         }
     }
 
-    /// Processes tool calls in the generated output if any are detected.
-    private func processToolCallsIfNeeded(_ output: String) async throws -> String {
-        if let processed = try? await toolCallHandler.processLLMOutput(output) {
-            return processed
+    /// If a tool call is detected in the generated result, process it and then format the response.
+    private func processToolCallsIfNeeded(_ result: GenerateResult) async throws -> String {
+        let processed = try await toolCallHandler.processLLMOutput(result)
+        if processed.toolCalled, let toolName = processed.toolName {
+            return try await formatToolResponse(toolName: toolName, raw: processed.processedOutput)
         }
-        return output
+        return processed.processedOutput
     }
+
+    /// Formats the raw result from a tool call into a user-friendly message.
+    private func formatToolResponse(toolName: String, raw: String) async throws -> String {
+        // Use the model to rephrase the raw result into something natural
+        let refinementPrompt = """
+        The tool returned the following raw output:
+
+        \(raw)
+
+        Please summarize this result in a friendly, helpful way as if you're explaining it to a user.
+        """
+
+        // We'll send this to the model without tools enabled (so it doesn't recurse into another tool call)
+        let summaryMessages = [
+            ["role": "system", "content": "You are a helpful assistant that summarizes tool results."],
+            ["role": "user", "content": refinementPrompt]
+        ]
+
+        let container = modelService.provideModelContainer()
+        guard let container = container as? ConcreteCoreModelContainer else {
+            throw PetalMLXServiceError.unexpectedModelContainerType
+        }
+
+        let summaryResult = try await container.generate(
+            messages: summaryMessages,
+            tools: nil,
+            onProgress: { _ in }
+        ) as! GenerateResult
+
+        return summaryResult.output
+    }
+
 }
