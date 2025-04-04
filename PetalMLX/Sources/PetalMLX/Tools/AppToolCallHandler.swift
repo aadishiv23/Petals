@@ -214,6 +214,88 @@ public class AppToolCallHandler {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
+            
+        case let (tool as PetalFetchCanvasAssignmentsTool, .canvasAssignments(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalFetchCanvasAssignmentsTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                return output.assignments
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
+        case let (tool as PetalFetchCanvasGradesTool, .canvasGrades(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalFetchCanvasGradesTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                return output.grades
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
+        case let (tool as PetalCalendarCreateEventTool, .calendarCreateEvent(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalCalendarCreateEventTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                return output.event
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
+        case let (tool as PetalCalendarFetchEventsTool, .calendarFetchEvents(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalCalendarFetchEventsTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                return output.events
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
+        case let (tool as PetalFetchRemindersTool, .reminders(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalFetchRemindersTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                
+                // Convert the array of reminders to a formatted string
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .short
+                dateFormatter.timeStyle = .short
+                
+                let reminderStrings = output.reminders.map { reminder in
+                    let status = reminder.completed ? "[✓]" : "[ ]"
+                    let dueString = reminder.dueDate != nil ? " (Due: \(reminder.dueDate!))" : ""
+                    return "\(status) \(reminder.title)\(dueString)"
+                }
+                
+                let result = reminderStrings.isEmpty ? 
+                    "No reminders found." : 
+                    reminderStrings.joined(separator: "\n")
+                
+                return result
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
         default:
             let argumentTypeDescription = String(describing: type(of: argument))
             logger.error("Unhandled argument type for tool \(name.rawValue): \(argumentTypeDescription)")

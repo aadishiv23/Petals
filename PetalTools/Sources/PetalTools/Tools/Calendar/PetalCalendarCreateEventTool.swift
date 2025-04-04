@@ -10,7 +10,7 @@ import Foundation
 import PetalCore
 import SwiftUI
 
-public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
+public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompatibleTool {
 
     public init() {}
 
@@ -198,7 +198,7 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
         public let occurrences: Int?
     }
 
-    public struct Output: Codable {
+    public struct Output: Codable, Sendable {
         public let event: String
     }
 
@@ -307,6 +307,48 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool {
                 userInfo: [NSLocalizedDescriptionKey: "Unknown authorization status"]
             )
         }
+    }
+
+    // MARK: - MLX-Compatible
+    
+    public func asMLXToolDefinition() -> MLXToolDefinition {
+        return MLXToolDefinition(
+            type: "function",
+            function: MLXFunctionDefinition(
+                name: "petalCalendarCreateEventTool",
+                description: "Creates a calendar event with flexible options.",
+                parameters: MLXParametersDefinition(
+                    type: "object",
+                    properties: [
+                        "title": MLXParameterProperty(
+                            type: "string",
+                            description: "The title of the event."
+                        ),
+                        "startDate": MLXParameterProperty(
+                            type: "string",
+                            description: "ISO date string for the event start time."
+                        ),
+                        "endDate": MLXParameterProperty(
+                            type: "string",
+                            description: "ISO date string for the event end time."
+                        ),
+                        "calendarName": MLXParameterProperty(
+                            type: "string",
+                            description: "Name of the calendar to create the event in."
+                        ),
+                        "location": MLXParameterProperty(
+                            type: "string",
+                            description: "Location of the event."
+                        ),
+                        "notes": MLXParameterProperty(
+                            type: "string",
+                            description: "Notes or description for the event."
+                        )
+                    ],
+                    required: ["title", "startDate", "endDate"]
+                )
+            )
+        )
     }
 }
 

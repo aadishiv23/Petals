@@ -9,7 +9,7 @@ import Foundation
 import EventKit
 import PetalCore
 
-public final class PetalFetchRemindersTool: OllamaCompatibleTool {
+public final class PetalFetchRemindersTool: OllamaCompatibleTool, MLXCompatibleTool {
     
     public init() {}
     
@@ -189,6 +189,36 @@ public final class PetalFetchRemindersTool: OllamaCompatibleTool {
 
         // Now just wrap in your Output struct
         return Output(reminders: outputReminders)
+    }
+
+    // MARK: - MLX-Compatible
+    
+    public func asMLXToolDefinition() -> MLXToolDefinition {
+        return MLXToolDefinition(
+            type: "function",
+            function: MLXFunctionDefinition(
+                name: "petalFetchRemindersTool",
+                description: "Fetches reminders from the Reminders app with optional filtering.",
+                parameters: MLXParametersDefinition(
+                    type: "object",
+                    properties: [
+                        "includeCompleted": MLXParameterProperty(
+                            type: "boolean",
+                            description: "If true, fetch completed reminders. If false, fetch incomplete reminders. If omitted, fetch all reminders."
+                        ),
+                        "listName": MLXParameterProperty(
+                            type: "string",
+                            description: "Optional name of the reminder list to fetch from."
+                        ),
+                        "search": MLXParameterProperty(
+                            type: "string",
+                            description: "Optional search query to match reminders by title."
+                        )
+                    ],
+                    required: []
+                )
+            )
+        )
     }
 
 }

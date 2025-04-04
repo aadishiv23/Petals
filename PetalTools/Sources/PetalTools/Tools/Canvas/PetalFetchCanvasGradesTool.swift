@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import PetalCore
 
-public final class PetalFetchCanvasGradesTool: OllamaCompatibleTool {
+public final class PetalFetchCanvasGradesTool: OllamaCompatibleTool, MLXCompatibleTool {
     
     private let canvasBaseURL = "https://umich.instructure.com/api/v1/"
     private let canvasAPIKey = "1770~ZDxrEf7eVyeHkYL3wQXvYXKDRkGm8UN9ZhBQDUkGJUAf7mPRZmJX34JLeR7AUByD"
@@ -42,8 +42,8 @@ public final class PetalFetchCanvasGradesTool: OllamaCompatibleTool {
         let courseName: String
     }
 
-    public struct Output: Codable {
-        let grades: String
+    public struct Output: Codable, Sendable {
+        public let grades: String
     }
     
     public func asOllamaTool() -> OllamaTool {
@@ -66,6 +66,27 @@ public final class PetalFetchCanvasGradesTool: OllamaCompatibleTool {
         )
     }
 
+    // MARK: - MLX-Compatible
+    
+    public func asMLXToolDefinition() -> MLXToolDefinition {
+        return MLXToolDefinition(
+            type: "function",
+            function: MLXFunctionDefinition(
+                name: "petalFetchCanvasGradesTool",
+                description: "Fetches grades for a specific Canvas course.",
+                parameters: MLXParametersDefinition(
+                    type: "object",
+                    properties: [
+                        "courseName": MLXParameterProperty(
+                            type: "string",
+                            description: "Name of the course to fetch grades for."
+                        )
+                    ],
+                    required: ["courseName"]
+                )
+            )
+        )
+    }
 
     public func execute(_ input: Input) async throws -> Output {
         let courseId = try await getCourseId(for: input.courseName)

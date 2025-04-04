@@ -176,7 +176,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "73"
             endingLineNumber = "73"
-            landmarkName = "execute(_:)"
+            landmarkName = "asMLXToolDefinition()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

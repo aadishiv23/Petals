@@ -11,7 +11,7 @@ import EventKit
 import PetalCore
 
 /// A tool to fetch calendar events with flexible filtering options.
-public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool {
+public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool, MLXCompatibleTool {
     
     public init() {}
     
@@ -107,7 +107,7 @@ public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool {
     }
     
     /// Output containing a formatted list of events.
-    public struct Output: Codable {
+    public struct Output: Codable, Sendable {
         public let events: String
     }
     
@@ -235,6 +235,60 @@ public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool {
                             description: "Filter for events that have alarms/reminders set."
                         ),
                         "isRecurring": OllamaFunctionProperty(
+                            type: "boolean",
+                            description: "Filter for recurring events."
+                        )
+                    ],
+                    required: []
+                )
+            )
+        )
+    }
+    
+    // MARK: - MLX-Compatible
+    
+    public func asMLXToolDefinition() -> MLXToolDefinition {
+        return MLXToolDefinition(
+            type: "function",
+            function: MLXFunctionDefinition(
+                name: "petalCalendarFetchEventsTool",
+                description: "Fetches calendar events with flexible filtering options.",
+                parameters: MLXParametersDefinition(
+                    type: "object",
+                    properties: [
+                        "startDate": MLXParameterProperty(
+                            type: "string",
+                            description: "ISO date string for the start of the date range."
+                        ),
+                        "endDate": MLXParameterProperty(
+                            type: "string",
+                            description: "ISO date string for the end of the date range."
+                        ),
+                        "calendarNames": MLXParameterProperty(
+                            type: "array",
+                            description: "List of calendar names to fetch events from."
+                        ),
+                        "searchText": MLXParameterProperty(
+                            type: "string",
+                            description: "Text to search in event titles and locations."
+                        ),
+                        "includeAllDay": MLXParameterProperty(
+                            type: "boolean",
+                            description: "Whether to include all-day events."
+                        ),
+                        "status": MLXParameterProperty(
+                            type: "string",
+                            description: "Filter by event status (none, tentative, confirmed, canceled)."
+                        ),
+                        "availability": MLXParameterProperty(
+                            type: "string",
+                            description: "Filter by availability status (busy, free, tentative, unavailable)."
+                        ),
+                        "hasAlarms": MLXParameterProperty(
+                            type: "boolean",
+                            description: "Filter for events that have alarms/reminders set."
+                        ),
+                        "isRecurring": MLXParameterProperty(
                             type: "boolean",
                             description: "Filter for recurring events."
                         )
