@@ -296,9 +296,9 @@ public class PetalMLXService {
     /// If a tool call is detected in the generated result, process it and then format the response.
     private func processToolCallsIfNeeded(_ result: GenerateResult) async throws -> String {
         let processed = try await toolCallHandler.processLLMOutput(result)
-        if processed.toolCalled, let toolName = processed.toolName {
-            return try await formatToolResponse(toolName: toolName, raw: processed.processedOutput)
-        }
+//        if processed.toolCalled, let toolName = processed.toolName {
+//            return try await formatToolResponse(toolName: toolName, raw: processed.processedOutput)
+//        }
         return processed.processedOutput
     }
 
