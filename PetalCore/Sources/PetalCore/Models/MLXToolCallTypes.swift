@@ -74,6 +74,7 @@ public enum MLXToolCallType: String, Codable {
     case petalCalendarFetchEventsTool
     case petalFetchRemindersTool
     case petalNotesTool
+    case petalRemindersTool
 }
 
 public enum MLXToolCallArguments: Codable {
@@ -84,6 +85,7 @@ public enum MLXToolCallArguments: Codable {
     case calendarFetchEvents(CalendarFetchEventsArguments)
     case reminders(RemindersArguments)
     case notes(NotesArguments)
+    case remindersTools(RemindersToolArguments)
     case unknown
 
     enum CodingKeys: String, CodingKey {
@@ -108,6 +110,9 @@ public enum MLXToolCallArguments: Codable {
         case action
         case body
         case folderName
+        case listId
+        case name
+        case dueDate
     }
 
     public init(from decoder: Decoder) throws {
@@ -115,6 +120,33 @@ public enum MLXToolCallArguments: Codable {
         
         // Check for Notes tool
         if let action = try container.decodeIfPresent(String.self, forKey: .action) {
+            // Check if it's RemindersTools by checking for uniquely reminders-related fields
+            let listId = try container.decodeIfPresent(String.self, forKey: .listId)
+            let name = try container.decodeIfPresent(String.self, forKey: .name)
+            let dueDate = try container.decodeIfPresent(String.self, forKey: .dueDate)
+            
+            // If any of these fields are present, it's likely the reminders tool
+            if listId != nil || name != nil || dueDate != nil || 
+               (action == "getAllLists" || action == "getAllReminders" || action == "searchReminders" || 
+                action == "createReminder" || action == "openReminder" || action == "getRemindersFromListById") {
+                
+                let searchText = try container.decodeIfPresent(String.self, forKey: .searchText)
+                let listName = try container.decodeIfPresent(String.self, forKey: .listName)
+                let notes = try container.decodeIfPresent(String.self, forKey: .notes)
+                
+                self = .remindersTools(RemindersToolArguments(
+                    action: action,
+                    searchText: searchText,
+                    listId: listId,
+                    listName: listName,
+                    name: name,
+                    notes: notes,
+                    dueDate: dueDate
+                ))
+                return
+            }
+            
+            // Otherwise assume it's the Notes tool
             let searchText = try container.decodeIfPresent(String.self, forKey: .searchText)
             let title = try container.decodeIfPresent(String.self, forKey: .title)
             let body = try container.decodeIfPresent(String.self, forKey: .body)
@@ -288,6 +320,26 @@ public enum MLXToolCallArguments: Codable {
             if let folderName = args.folderName {
                 try container.encode(folderName, forKey: .folderName)
             }
+        case let .remindersTools(args):
+            try container.encode(args.action, forKey: .action)
+            if let searchText = args.searchText {
+                try container.encode(searchText, forKey: .searchText)
+            }
+            if let listId = args.listId {
+                try container.encode(listId, forKey: .listId)
+            }
+            if let listName = args.listName {
+                try container.encode(listName, forKey: .listName)
+            }
+            if let name = args.name {
+                try container.encode(name, forKey: .name)
+            }
+            if let notes = args.notes {
+                try container.encode(notes, forKey: .notes)
+            }
+            if let dueDate = args.dueDate {
+                try container.encode(dueDate, forKey: .dueDate)
+            }
         case .unknown:
             break
         }
@@ -339,4 +391,14 @@ public struct NotesArguments: Codable {
     public let title: String?
     public let body: String?
     public let folderName: String?
+}
+
+public struct RemindersToolArguments: Codable {
+    public let action: String
+    public let searchText: String?
+    public let listId: String?
+    public let listName: String?
+    public let name: String?
+    public let notes: String?
+    public let dueDate: String?
 }

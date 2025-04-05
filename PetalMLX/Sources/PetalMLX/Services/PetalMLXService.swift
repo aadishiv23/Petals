@@ -75,6 +75,16 @@ public class PetalMLXService {
                 "Make a note about [topic]",
                 "Search my notes for [query]",
                 "   Create a new note titled Meeting with Sam with content # Discussion Points -Project timeline -Budget concerns -Next steps"
+            ],
+            "petalRemindersTool": [
+                "Create a reminder to [task]",
+                "Add a task to my reminders",
+                "Show me all reminder lists",
+                "Find reminders about [topic]",
+                "Create a reminder for [date]",
+                "Open reminder about [task]",
+                "Create a new reminder in list [list]",
+                "Get all reminders"
             ]
         ]
 
@@ -249,11 +259,22 @@ public class PetalMLXService {
         } else if lowercasedMessage.contains("calendar") || lowercasedMessage.contains("event") {
             return "petalCalendarFetchEventsTool"
         } else if lowercasedMessage.contains("reminder") || lowercasedMessage.contains("task") {
-            return "petalFetchRemindersTool"
+            // Check for advanced reminders features
+            if lowercasedMessage.contains("list") || 
+               lowercasedMessage.contains("create") || 
+               lowercasedMessage.contains("add") ||
+               lowercasedMessage.contains("due") ||
+               lowercasedMessage.contains("open") {
+                return "petalRemindersTool"
+            } else {
+                return "petalFetchRemindersTool"
+            }
         } else if lowercasedMessage.contains("assignment") {
             return "petalFetchCanvasAssignmentsTool"
         } else if lowercasedMessage.contains("grade") {
             return "petalFetchCanvasGradesTool"
+        } else if lowercasedMessage.contains("note") {
+            return "petalNotesTool"
         }
 
         return nil

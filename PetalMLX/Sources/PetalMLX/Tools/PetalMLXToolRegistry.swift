@@ -38,6 +38,7 @@ public class PetalMLXToolRegistry {
         let calendarFetchEventsTool = PetalCalendarFetchEventsTool()
         let remindersTool = PetalFetchRemindersTool()
         let notesTool = PetalNotesTool()
+        let remindersToolAdvanced = PetalRemindersTool()
         
         return [
             canvasCoursesTool,
@@ -46,7 +47,8 @@ public class PetalMLXToolRegistry {
             calendarCreateEventTool,
             calendarFetchEventsTool,
             remindersTool,
-            notesTool
+            notesTool,
+            remindersToolAdvanced
         ]
     }
 }

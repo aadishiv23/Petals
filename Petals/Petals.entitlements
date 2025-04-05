@@ -12,6 +12,12 @@
 			<string>notes</string>
 			<string>folders</string>
 		</array>
+		<key>com.apple.reminders</key>
+		<array>
+			<string>app</string>
+			<string>lists</string>
+			<string>reminders</string>
+		</array>
 	</dict>
 </dict>
 </plist>

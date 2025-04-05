@@ -416,7 +416,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "169"
             endingLineNumber = "169"
-            landmarkName = "getCurrentOutput()"
+            landmarkName = "update(with:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -448,8 +448,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "140"
             endingLineNumber = "140"
-            landmarkName = "streamConversation(model:messages:)"
-            landmarkType = "7">
+            landmarkName = "PetalMLXService"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -496,8 +496,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "139"
             endingLineNumber = "139"
-            landmarkName = "streamConversation(model:messages:)"
-            landmarkType = "7">
+            landmarkName = "PetalMLXService"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -530,50 +530,6 @@
             endingLineNumber = "171"
             landmarkName = "execute(_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B020692C-B642-4BB0-B798-066CB7A84FC5 - 8ce7b9a8db855a73"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(8) suspend resume partial function for PetalTools.PetalNotesTool.execute(PetalTools.PetalNotesTool.Input) async throws -&gt; PetalTools.PetalNotesTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "171"
-                  endingLineNumber = "171">
-               </Location>
-               <Location
-                  uuid = "B020692C-B642-4BB0-B798-066CB7A84FC5 - 2f70a0aa0eb20472"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(9) suspend resume partial function for PetalTools.PetalNotesTool.execute(PetalTools.PetalNotesTool.Input) async throws -&gt; PetalTools.PetalNotesTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "171"
-                  endingLineNumber = "171">
-               </Location>
-               <Location
-                  uuid = "B020692C-B642-4BB0-B798-066CB7A84FC5 - 6760aa5bd98832a5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(10) suspend resume partial function for PetalTools.PetalNotesTool.execute(PetalTools.PetalNotesTool.Input) async throws -&gt; PetalTools.PetalNotesTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "171"
-                  endingLineNumber = "171">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -590,36 +546,6 @@
             endingLineNumber = "506"
             landmarkName = "processToolCallArgument(with:argument:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "4B934514-99AF-44DC-B635-B41F3909651A - 28013c20e9d39e4b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for PetalMLX.AppToolCallHandler.processToolCallArgument(with: PetalCore.MLXToolCallType, argument: PetalCore.MLXToolCallArguments) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "506"
-                  endingLineNumber = "506">
-               </Location>
-               <Location
-                  uuid = "4B934514-99AF-44DC-B635-B41F3909651A - fb68fdef2c3a1de3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(24) suspend resume partial function for PetalMLX.AppToolCallHandler.processToolCallArgument(with: PetalCore.MLXToolCallType, argument: PetalCore.MLXToolCallArguments) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "506"
-                  endingLineNumber = "506">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -652,50 +578,6 @@
             endingLineNumber = "332"
             landmarkName = "createNote(title:body:folderName:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "26F6D179-97FD-42D6-964E-DBF8E8314B7A - f1016dd5a8895f7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalTools.PetalNotesTool.createNote(title: Swift.String, body: Swift.String, folderName: Swift.String) async throws -&gt; PetalTools.PetalNotesTool.CreateNoteResult"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "332"
-                  endingLineNumber = "332">
-               </Location>
-               <Location
-                  uuid = "26F6D179-97FD-42D6-964E-DBF8E8314B7A - fa476f4b26f3ca"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for PetalTools.PetalNotesTool.createNote(title: Swift.String, body: Swift.String, folderName: Swift.String) async throws -&gt; PetalTools.PetalNotesTool.CreateNoteResult"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "332"
-                  endingLineNumber = "332">
-               </Location>
-               <Location
-                  uuid = "26F6D179-97FD-42D6-964E-DBF8E8314B7A - fa476f4b26f3ca"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for PetalTools.PetalNotesTool.createNote(title: Swift.String, body: Swift.String, folderName: Swift.String) async throws -&gt; PetalTools.PetalNotesTool.CreateNoteResult"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "332"
-                  endingLineNumber = "332">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -728,36 +610,6 @@
             endingLineNumber = "399"
             landmarkName = "runAppleScript(_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "6FD464CC-F0CC-4805-A934-2795634C7CC7 - 2e858941fe432658"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.CheckedContinuation&lt;Swift.String, Swift.Error&gt;) -&gt; () in PetalTools.PetalNotesTool.runAppleScript(Swift.String) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "400"
-                  endingLineNumber = "400">
-               </Location>
-               <Location
-                  uuid = "6FD464CC-F0CC-4805-A934-2795634C7CC7 - afae21ffae485ef4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor @Sendable () -&gt; () in closure #1 (Swift.CheckedContinuation&lt;Swift.String, Swift.Error&gt;) -&gt; () in PetalTools.PetalNotesTool.runAppleScript(Swift.String) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "397"
-                  endingLineNumber = "397">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

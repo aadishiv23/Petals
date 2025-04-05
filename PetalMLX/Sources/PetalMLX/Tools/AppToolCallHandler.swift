@@ -511,6 +511,19 @@ public class AppToolCallHandler {
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
             
+        case let (tool as PetalRemindersTool, .remindersTools(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalRemindersTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                return output.result
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
         default:
             let argumentTypeDescription = String(describing: type(of: argument))
             logger.error("Unhandled argument type for tool \(name.rawValue): \(argumentTypeDescription)")
