@@ -4,5 +4,7 @@
 <dict>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Petals requires full access to your calendar to manage events.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Petals needs access to control other apps via AppleScript.</string>
 </dict>
 </plist>

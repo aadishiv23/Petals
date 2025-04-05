@@ -20,6 +20,8 @@ enum PetalMLXServiceError: Error {
 public class PetalMLXService {
     private let modelService = CoreModelService()
     private let toolCallHandler = AppToolCallHandler.shared
+    private let evaluator = ToolTriggerEvaluator()
+
 
     /// Determines whether the message should trigger tool usage.
     private func shouldUseTools(for message: String) -> Bool {
@@ -65,12 +67,20 @@ public class PetalMLXService {
                 "Fetch my course grades",
                 "Display grades for my class",
                 "Retrieve my grades from Canvas"
+            ],
+            "petalNotesTool": [
+                "Find my notes about [topic]",
+                "Create a new note with [content]",
+                "Show all my notes",
+                "Make a note about [topic]",
+                "Search my notes for [query]",
+                "   Create a new note titled Meeting with Sam with content # Discussion Points -Project timeline -Budget concerns -Next steps"
             ]
         ]
 
         for (_, exemplars) in toolExemplars {
-            for exemplar in exemplars {
-                if message.lowercased().contains(exemplar.lowercased()) {
+            if let prototype = evaluator.prototype(for: exemplars) {
+                if evaluator.shouldTriggerTool(for: message, exemplarPrototype: prototype) {
                     return true
                 }
             }
