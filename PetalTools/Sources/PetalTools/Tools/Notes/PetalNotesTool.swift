@@ -475,6 +475,14 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                 folderName: folderName,
                 usedDefaultFolder: usedDefaultFolder
             )
+        } else if result == "" {
+            return CreateNoteResult(
+                success: true,
+                note: NoteInfo(name: title, content: body),
+                message: "Created message with title: \(title) and body: \(body).",
+                folderName: nil,
+                usedDefaultFolder: nil
+            )
         } else {
             return CreateNoteResult(
                 success: false,
