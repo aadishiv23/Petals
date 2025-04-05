@@ -13,7 +13,56 @@ public struct MLXToolCall: Codable {
 
     enum CodingKeys: String, CodingKey {
         case name
-        case parameters = "arguments" // <- THIS is the fix
+        case function // Alternative key for name in some LLM formats
+        case parameters
+        case arguments // Alternative key for parameters
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Handle both name and function fields for flexibility
+        let nameString: String
+        if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
+            nameString = name
+        } else if let function = try? container.decodeIfPresent(String.self, forKey: .function) {
+            nameString = function
+        } else {
+            throw DecodingError.keyNotFound(
+                CodingKeys.name,
+                DecodingError.Context(
+                    codingPath: container.codingPath,
+                    debugDescription: "Neither 'name' nor 'function' field found in tool call"
+                )
+            )
+        }
+        
+        // Convert string to MLXToolCallType
+        if let toolType = MLXToolCallType(rawValue: nameString) {
+            self.name = toolType
+        } else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .name,
+                in: container,
+                debugDescription: "Invalid tool name: \(nameString)"
+            )
+        }
+        
+        // Handle both parameters and arguments fields
+        if let parameters = try? container.decodeIfPresent(MLXToolCallArguments.self, forKey: .parameters) {
+            self.parameters = parameters
+        } else if let arguments = try? container.decodeIfPresent(MLXToolCallArguments.self, forKey: .arguments) {
+            self.parameters = arguments
+        } else {
+            // Default to unknown if no parameters provided
+            self.parameters = .unknown
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name.rawValue, forKey: .name)
+        try container.encode(parameters, forKey: .arguments)
     }
 }
 
@@ -24,6 +73,7 @@ public enum MLXToolCallType: String, Codable {
     case petalCalendarCreateEventTool
     case petalCalendarFetchEventsTool
     case petalFetchRemindersTool
+    case petalNotesTool
 }
 
 public enum MLXToolCallArguments: Codable {
@@ -33,6 +83,7 @@ public enum MLXToolCallArguments: Codable {
     case calendarCreateEvent(CalendarCreateEventArguments)
     case calendarFetchEvents(CalendarFetchEventsArguments)
     case reminders(RemindersArguments)
+    case notes(NotesArguments)
     case unknown
 
     enum CodingKeys: String, CodingKey {
@@ -54,10 +105,30 @@ public enum MLXToolCallArguments: Codable {
         case includeCompleted
         case listName
         case search
+        case action
+        case body
+        case folderName
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Check for Notes tool
+        if let action = try container.decodeIfPresent(String.self, forKey: .action) {
+            let searchText = try container.decodeIfPresent(String.self, forKey: .searchText)
+            let title = try container.decodeIfPresent(String.self, forKey: .title)
+            let body = try container.decodeIfPresent(String.self, forKey: .body)
+            let folderName = try container.decodeIfPresent(String.self, forKey: .folderName)
+            
+            self = .notes(NotesArguments(
+                action: action,
+                searchText: searchText,
+                title: title,
+                body: body,
+                folderName: folderName
+            ))
+            return
+        }
         
         // Check for Canvas Courses arguments
         if let completed = try container.decodeIfPresent(Bool.self, forKey: .completed) {
@@ -203,6 +274,20 @@ public enum MLXToolCallArguments: Codable {
             if let search = args.search {
                 try container.encode(search, forKey: .search)
             }
+        case let .notes(args):
+            try container.encode(args.action, forKey: .action)
+            if let searchText = args.searchText {
+                try container.encode(searchText, forKey: .searchText)
+            }
+            if let title = args.title {
+                try container.encode(title, forKey: .title)
+            }
+            if let body = args.body {
+                try container.encode(body, forKey: .body)
+            }
+            if let folderName = args.folderName {
+                try container.encode(folderName, forKey: .folderName)
+            }
         case .unknown:
             break
         }
@@ -246,4 +331,12 @@ public struct RemindersArguments: Codable {
     public let includeCompleted: Bool?
     public let listName: String?
     public let search: String?
+}
+
+public struct NotesArguments: Codable {
+    public let action: String
+    public let searchText: String?
+    public let title: String?
+    public let body: String?
+    public let folderName: String?
 }

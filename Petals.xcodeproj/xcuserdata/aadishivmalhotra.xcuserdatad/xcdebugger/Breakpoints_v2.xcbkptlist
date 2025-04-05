@@ -274,36 +274,6 @@
             endingLineNumber = "44"
             landmarkName = "processLLMOutput(_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "2AA97C09-71E2-454C-98ED-B1D696A7CB8D - 5caa30eff2f2f7a6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalMLX.AppToolCallHandler.processLLMOutput(MLXLMCommon.GenerateResult) async throws -&gt; (processedOutput: Swift.String, toolCalled: Swift.Bool, toolName: Swift.Optional&lt;Swift.String&gt;)"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "44"
-                  endingLineNumber = "44">
-               </Location>
-               <Location
-                  uuid = "2AA97C09-71E2-454C-98ED-B1D696A7CB8D - 82152f98af3d43ac"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(6) suspend resume partial function for PetalMLX.AppToolCallHandler.processLLMOutput(MLXLMCommon.GenerateResult) async throws -&gt; (processedOutput: Swift.String, toolCalled: Swift.Bool, toolName: Swift.Optional&lt;Swift.String&gt;)"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "44"
-                  endingLineNumber = "44">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -318,7 +288,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "194"
             endingLineNumber = "194"
-            landmarkName = "processToolCallArgument(with:argument:)"
+            landmarkName = "handleLlamaFormat(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -334,7 +304,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "83"
             endingLineNumber = "83"
-            landmarkName = "handleLlamaFormat(_:)"
+            landmarkName = "processLLMOutput(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -348,40 +318,10 @@
             filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
-            landmarkName = "processToolCallsIfNeeded(_:)"
+            startingLineNumber = "300"
+            endingLineNumber = "300"
+            landmarkName = "extractToolName(from:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "77C13615-62B6-48B3-9248-4543A31779C3 - a73ac5af79609d9f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PetalMLX.PetalMLXService.processToolCallsIfNeeded(MLXLMCommon.GenerateResult) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "297"
-                  endingLineNumber = "297">
-               </Location>
-               <Location
-                  uuid = "77C13615-62B6-48B3-9248-4543A31779C3 - 1dc64839f81fa2ff"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalMLX.PetalMLXService.processToolCallsIfNeeded(MLXLMCommon.GenerateResult) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "297"
-                  endingLineNumber = "297">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -394,54 +334,10 @@
             filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "processToolCallsIfNeeded(_:)"
+            startingLineNumber = "301"
+            endingLineNumber = "301"
+            landmarkName = "extractToolName(from:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "92E6ED51-6DFD-4B5B-B9A3-CF122789E82E - 1dc64839f81fa2d8"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalMLX.PetalMLXService.processToolCallsIfNeeded(MLXLMCommon.GenerateResult) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "298"
-                  endingLineNumber = "298">
-               </Location>
-               <Location
-                  uuid = "92E6ED51-6DFD-4B5B-B9A3-CF122789E82E - 388023064b6188e7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for PetalMLX.PetalMLXService.processToolCallsIfNeeded(MLXLMCommon.GenerateResult) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "298"
-                  endingLineNumber = "298">
-               </Location>
-               <Location
-                  uuid = "92E6ED51-6DFD-4B5B-B9A3-CF122789E82E - 388023064b6188e7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for PetalMLX.PetalMLXService.processToolCallsIfNeeded(MLXLMCommon.GenerateResult) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "298"
-                  endingLineNumber = "298">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -456,7 +352,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "206"
             endingLineNumber = "206"
-            landmarkName = "processToolCallArgument(with:argument:)"
+            landmarkName = "handleLlamaFormat(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -472,7 +368,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "208"
             endingLineNumber = "208"
-            landmarkName = "processToolCallArgument(with:argument:)"
+            landmarkName = "handleLlamaFormat(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -488,84 +384,24 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "170"
             endingLineNumber = "170"
-            landmarkName = "decodeAndExecuteToolCall(_:)"
+            landmarkName = "handleLlamaFormat(_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "00A723F3-39CC-4FBF-9CF4-471C3F664774 - fc81d7010e566548"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalMLX.AppToolCallHandler.decodeAndExecuteToolCall(Swift.String) async throws -&gt; (executionResult: Swift.String, toolName: Swift.String)"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "170"
-                  endingLineNumber = "170">
-               </Location>
-               <Location
-                  uuid = "00A723F3-39CC-4FBF-9CF4-471C3F664774 - 99c7bc279f1c7f4b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for PetalMLX.AppToolCallHandler.decodeAndExecuteToolCall(Swift.String) async throws -&gt; (executionResult: Swift.String, toolName: Swift.String)"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "170"
-                  endingLineNumber = "170">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E28D65EE-30E3-4207-A998-6313D8C4A732"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
             landmarkName = "streamConversation(model:messages:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E28D65EE-30E3-4207-A998-6313D8C4A732 - 4ac871008837847a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(7) suspend resume partial function for closure #1 () async -&gt; () in closure #1 (Swift.AsyncThrowingStream&lt;PetalCore.PetalMessageStreamChunk, Swift.Error&gt;.Continuation) -&gt; () in PetalMLX.PetalMLXService.streamConversation(model: MLXLMCommon.ModelConfiguration, messages: Swift.Array&lt;PetalCore.ChatMessage&gt;) -&gt; Swift.AsyncThrowingStream&lt;PetalCore.PetalMessageStreamChunk, Swift.Error&gt;"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "206"
-                  endingLineNumber = "206">
-               </Location>
-               <Location
-                  uuid = "E28D65EE-30E3-4207-A998-6313D8C4A732 - 6f91aebfd27504ba"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(11) suspend resume partial function for closure #1 () async -&gt; () in closure #1 (Swift.AsyncThrowingStream&lt;PetalCore.PetalMessageStreamChunk, Swift.Error&gt;.Continuation) -&gt; () in PetalMLX.PetalMLXService.streamConversation(model: MLXLMCommon.ModelConfiguration, messages: Swift.Array&lt;PetalCore.ChatMessage&gt;) -&gt; Swift.AsyncThrowingStream&lt;PetalCore.PetalMessageStreamChunk, Swift.Error&gt;"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "206"
-                  endingLineNumber = "206">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -578,9 +414,9 @@
             filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
-            landmarkName = "streamConversation(model:messages:)"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
+            landmarkName = "getCurrentOutput()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -596,7 +432,103 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "84"
             endingLineNumber = "84"
+            landmarkName = "processLLMOutput(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "287D926B-11E8-4039-94D8-F267D8394E4F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "streamConversation(model:messages:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8B0CC514-5538-413C-BD9A-A08690686C38"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "streamConversation(model:messages:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C425A5E-C21C-4093-937F-98934D0A1931"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
+            landmarkName = "streamConversation(model:messages:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FEB64533-1E98-426F-B7FF-FE400E9DF37C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "streamConversation(model:messages:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "286164BC-3EEF-47FD-835C-91787E4C1752"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
             landmarkName = "handleLlamaFormat(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B020692C-B642-4BB0-B798-066CB7A84FC5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalTools/Sources/PetalTools/Tools/Notes/PetalNotesTool.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
+            landmarkName = "execute(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

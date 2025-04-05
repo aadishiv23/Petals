@@ -36,24 +36,35 @@ public class AppToolCallHandler {
     public func processLLMOutput(
         _ result: GenerateResult
     ) async throws -> (processedOutput: String, toolCalled: Bool, toolName: String?) {
-        logger.debug("Processing LLM output: \(result.output.prefix(500))...")
+        logger.debug("Processing LLM output: \(result.output.prefix(100))...")
         let text = result.output
 
         // FIRST: Try Llama-style format (<|python_tag|> ... <|eom_id|>)
         do {
+            logger.debug("Attempting to handle Llama format...")
             let (executionResult, toolName) = try await handleLlamaFormat(text)
             logger.info("Llama format tool call '\(toolName)' processed successfully.")
             return (processedOutput: executionResult, toolCalled: true, toolName: toolName)
         } catch let error as ToolCallError where error == .formatError("Llama tags not found") {
-            logger.debug("Llama format not detected.")
+            logger.debug("Llama format not detected - continuing to other formats.")
         } catch {
             logger.error("Error processing Llama format: \(error)")
-            throw error
+            
+            // If the error occurs in JSON processing but we're sure it's a tool call format, 
+            // log more details and return a user-friendly error
+            if text.contains("<|python_tag|>") && text.contains("<|eom_id|>") {
+                logger.error("This appears to be a Llama tool call format but failed to process: \(error)")
+                return (processedOutput: "I tried to use a tool, but encountered an error: \(error.localizedDescription)", 
+                        toolCalled: false, 
+                        toolName: nil)
+            }
+            
+            // Otherwise continue to next format
         }
 
         // SECOND: Try generic format (e.g. <tool_call>...</tool_call>)
         if text.contains("<tool_call>") {
-            logger.debug("Attempting to handle generic tool_call format")
+            logger.debug("Attempting to handle generic tool_call format...")
             if let startRange = text.range(of: "<tool_call>"),
                let endRange = text.range(of: "</tool_call>"),
                endRange.lowerBound > startRange.upperBound
@@ -67,15 +78,66 @@ public class AppToolCallHandler {
                     return (processedOutput: executionResult, toolCalled: true, toolName: toolName)
                 } catch {
                     logger.error("Failed to handle generic tool call: \(error.localizedDescription)")
-                    throw error
+                    return (processedOutput: "I tried to use a tool, but encountered an error: \(error.localizedDescription)", 
+                            toolCalled: false, 
+                            toolName: nil)
                 }
             } else {
                 logger.warning("Found <tool_call> but not a complete tag pair; treating as regular text.")
             }
         }
+        
+        // THIRD: Try to detect JSON directly at the beginning of the text
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).starts(with: "{") {
+            logger.debug("Text starts with '{', attempting raw JSON parse...")
+            var braceBalance = 0
+            var jsonEndIndex: String.Index? = nil
+
+            for (index, char) in text.enumerated() {
+                if char == "{" {
+                    braceBalance += 1
+                } else if char == "}" {
+                    braceBalance -= 1
+                    if braceBalance == 0 {
+                        // Found the end of the top-level JSON object
+                        jsonEndIndex = text.index(text.startIndex, offsetBy: index)
+                        break
+                    }
+                } else if braceBalance <= 0 && index > 0 { 
+                    // If brace balance drops below 1 before finding a match, it's not valid top-level JSON
+                    break
+                }
+            }
+
+            if let endIndex = jsonEndIndex {
+                let potentialJson = String(text[text.startIndex...endIndex])
+                logger.debug("Potential raw JSON found: \(potentialJson)")
+
+                // Basic validation: check if it contains likely tool call keys
+                if potentialJson.contains("\"name\":") || potentialJson.contains("\"function\":") {
+                    do {
+                        let (executionResult, toolName) = try await handleGenericToolCall(potentialJson)
+                        logger.info("Raw JSON tool call '\(toolName)' processed successfully.")
+                        return (processedOutput: executionResult, toolCalled: true, toolName: toolName)
+                    } catch {
+                        logger.error("Failed to handle potential raw JSON: \(error)")
+                        // Fall through to treat as regular text
+                    }
+                } else {
+                     logger.debug("Potential raw JSON does not contain 'name' or 'function' keys.")
+                }
+            } else {
+                 logger.debug("Could not find balanced closing brace for initial '{'.")
+            }
+        } 
+        // Original Regex check removed as the procedural check above is more robust for start-of-string JSON
+//        catch {
+//            logger.debug("No valid JSON object found in output.")
+//            // Continue to treat as regular text
+//        }
 
         // No tool call detected; return the original text.
-        logger.debug("No tool call format detected.")
+        logger.debug("No tool call format detected - returning original text.")
         return (processedOutput: text, toolCalled: false, toolName: nil)
     }
 
@@ -97,8 +159,90 @@ public class AppToolCallHandler {
             logger.error("Empty JSON in Llama format")
             throw ToolCallError.invalidJSON()
         }
-
-        return try await decodeAndExecuteToolCall(jsonString)
+        
+        // Validate and sanitize the JSON string
+        var sanitizedJson = jsonString
+        
+        // Check if the JSON is potentially missing a closing brace
+        let openBraces = sanitizedJson.filter { $0 == "{" }.count
+        let closeBraces = sanitizedJson.filter { $0 == "}" }.count
+        
+        if openBraces > closeBraces {
+            logger.debug("Detected missing closing braces, attempting to fix: \(openBraces) open vs \(closeBraces) close")
+            for _ in 0..<(openBraces - closeBraces) {
+                sanitizedJson += "}"
+            }
+        }
+        
+        // Parse the JSON to handle Llama format which may have nested structure
+        guard let data = sanitizedJson.data(using: .utf8) else {
+            logger.error("Failed to convert JSON string to data.")
+            throw ToolCallError.invalidJSON()
+        }
+        
+        do {
+            // Try to parse the JSON to ensure it's valid
+            guard let jsonObj = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                logger.error("JSON is not a dictionary after sanitization")
+                throw ToolCallError.invalidJSON()
+            }
+            
+            // Extract tool name and parameters based on the JSON structure
+            var toolName: String
+            var parametersDict: [String: Any] = [:]
+            
+            // Case 1: Simple format { "type": "function", "function": "toolName", "parameters": {...} }
+            if let functionName = jsonObj["function"] as? String {
+                toolName = functionName
+                if let params = jsonObj["parameters"] as? [String: Any] {
+                    parametersDict = params
+                }
+            } 
+            // Case 2: Nested format { "type": "function", "function": { "name": "toolName", "parameters": {...} } }
+            else if let functionObj = jsonObj["function"] as? [String: Any], 
+                    let functionName = functionObj["name"] as? String {
+                toolName = functionName
+                if let params = functionObj["parameters"] as? [String: Any] {
+                    parametersDict = params
+                }
+            }
+            // Case 3: Standard format { "name": "toolName", "arguments": {...} }
+            else if let name = jsonObj["name"] as? String {
+                toolName = name
+                if let args = jsonObj["arguments"] as? [String: Any] {
+                    parametersDict = args
+                } else if let params = jsonObj["parameters"] as? [String: Any] {
+                    parametersDict = params
+                }
+            }
+            else {
+                logger.error("Could not find tool name in JSON structure")
+                throw ToolCallError.invalidJSON()
+            }
+            
+            // Check for nested "properties" within parameters/arguments
+            if parametersDict.count == 1, let nestedProperties = parametersDict["properties"] as? [String: Any] {
+                logger.debug("Found nested 'properties' key inside arguments, flattening...")
+                parametersDict = nestedProperties
+            }
+            
+            // Normalize to the standard format expected by decodeAndExecuteToolCall
+            let normalizedDict: [String: Any] = [
+                "name": toolName,
+                "arguments": parametersDict
+            ]
+            
+            // Convert normalized dictionary back to JSON
+            let normalizedData = try JSONSerialization.data(withJSONObject: normalizedDict)
+            let normalizedJson = String(data: normalizedData, encoding: .utf8) ?? ""
+            
+            logger.debug("Normalized JSON: \(normalizedJson)")
+            
+            return try await decodeAndExecuteToolCall(normalizedJson)
+        } catch {
+            logger.error("JSON processing or decoding error: \(error.localizedDescription)")
+            throw ToolCallError.invalidJSON(error)
+        }
     }
 
     /// Handles generic tool call format.
@@ -110,7 +254,99 @@ public class AppToolCallHandler {
             logger.error("Empty JSON string for generic tool call.")
             throw ToolCallError.invalidJSON()
         }
-        return try await decodeAndExecuteToolCall(jsonString)
+        
+        // Validate and sanitize JSON
+        var sanitizedJson = jsonString
+        
+        // Check if JSON might be missing closing braces
+        let openBraces = sanitizedJson.filter { $0 == "{" }.count
+        let closeBraces = sanitizedJson.filter { $0 == "}" }.count
+        
+        if openBraces > closeBraces {
+            logger.debug("Detected missing closing braces, attempting to fix: \(openBraces) open vs \(closeBraces) close")
+            for _ in 0..<(openBraces - closeBraces) {
+                sanitizedJson += "}"
+            }
+        }
+        
+        // Parse JSON to normalize format
+        guard let data = sanitizedJson.data(using: .utf8) else {
+            logger.error("Failed to convert JSON string to data.")
+            throw ToolCallError.invalidJSON()
+        }
+        
+        do {
+            // Try to parse the JSON to ensure it's valid
+            guard let jsonObj = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                logger.error("JSON is not a dictionary after sanitization")
+                throw ToolCallError.invalidJSON()
+            }
+            
+            // Extract tool name and parameters based on the JSON structure
+            var toolName: String
+            var parametersDict: [String: Any] = [:]
+            
+            // Case 1: Simple format { "type": "function", "function": "toolName", "parameters": {...} }
+            if let functionName = jsonObj["function"] as? String {
+                toolName = functionName
+                if let params = jsonObj["parameters"] as? [String: Any] {
+                    parametersDict = params
+                }
+            } 
+            // Case 2: Nested format { "type": "function", "function": { "name": "toolName", "parameters": {...} } }
+            else if let functionObj = jsonObj["function"] as? [String: Any], 
+                    let functionName = functionObj["name"] as? String {
+                toolName = functionName
+                if let params = functionObj["parameters"] as? [String: Any] {
+                    parametersDict = params
+                }
+            }
+            // Case 3: Standard format { "name": "toolName", "arguments": {...} }
+            else if let name = jsonObj["name"] as? String {
+                toolName = name
+                if let args = jsonObj["arguments"] as? [String: Any] {
+                    parametersDict = args
+                } else if let params = jsonObj["parameters"] as? [String: Any] {
+                    parametersDict = params
+                }
+            }
+            else {
+                logger.error("Could not find tool name in JSON structure")
+                throw ToolCallError.invalidJSON()
+            }
+            
+            // Check for nested "properties" within parameters/arguments
+            if parametersDict.count == 1, let nestedProperties = parametersDict["properties"] as? [String: Any] {
+                logger.debug("Found nested 'properties' key inside arguments, flattening...")
+                parametersDict = nestedProperties
+            }
+            
+            // Convert string "true"/"false" values to booleans
+            for (key, value) in parametersDict {
+                if let stringValue = value as? String,
+                   stringValue.lowercased() == "true" || stringValue.lowercased() == "false"
+                {
+                    parametersDict[key] = stringValue.lowercased() == "true"
+                }
+            }
+            
+            // Normalize to the standard format expected by decodeAndExecuteToolCall
+            let normalizedDict: [String: Any] = [
+                "name": toolName,
+                "arguments": parametersDict
+            ]
+            
+            // Convert normalized dictionary back to JSON
+            let normalizedData = try JSONSerialization.data(withJSONObject: normalizedDict)
+            let normalizedJson = String(data: normalizedData, encoding: .utf8) ?? ""
+            
+            logger.debug("Normalized JSON: \(normalizedJson)")
+            
+            return try await decodeAndExecuteToolCall(normalizedJson)
+        } catch {
+            logger.error("JSON processing error: \(error.localizedDescription)")
+            throw ToolCallError.invalidJSON(error)
+        }
     }
 
     /// Decodes the JSON into a MLXToolCall and dispatches execution.
@@ -122,55 +358,21 @@ public class AppToolCallHandler {
             throw ToolCallError.invalidJSON()
         }
 
-        // Try to parse JSON to dictionary first
         do {
-            let jsonObj = try JSONSerialization.jsonObject(with: data)
-            guard var dict = jsonObj as? [String: Any] else {
-                logger.error("JSON is not a dictionary")
-                throw ToolCallError.invalidJSON()
-            }
-
-            // Extract the tool name
-            guard let name = dict["name"] as? String else {
-                logger.error("Missing 'name' field in tool call JSON")
-                throw ToolCallError.invalidJSON()
-            }
-
-            // Check if parameters exists and rename to arguments
-            var parametersDict: [String: Any] = [:]
-            if let params = dict["parameters"] as? [String: Any] {
-                parametersDict = params
-            } else if let args = dict["arguments"] as? [String: Any] {
-                parametersDict = args
-            }
-
-            // Convert string "true"/"false" to boolean values if needed
-            for (key, value) in parametersDict {
-                if let stringValue = value as? String,
-                   stringValue.lowercased() == "true" || stringValue.lowercased() == "false"
-                {
-                    parametersDict[key] = stringValue.lowercased() == "true"
-                }
-            }
-
-            // Create a properly formatted dictionary with the proper types
-            dict["arguments"] = parametersDict
-            if dict["parameters"] != nil {
-                dict.removeValue(forKey: "parameters")
-            }
-
-            // Convert back to JSON data with the correct key and proper boolean values
-            let correctedData = try JSONSerialization.data(withJSONObject: dict)
-
-            let decodedCall = try decoder.decode(MLXToolCall.self, from: correctedData)
-
+            // At this point, the JSON should be normalized to the standard format expected by MLXToolCall
+            let decodedCall = try decoder.decode(MLXToolCall.self, from: data)
+            
             let toolName = decodedCall.name.rawValue
             logger.info("Decoded tool call for tool: \(toolName)")
-
+            
             let result = try await processToolCallArgument(with: decodedCall.name, argument: decodedCall.parameters)
             return (executionResult: result, toolName: toolName)
         } catch {
-            logger.error("JSON processing or decoding error: \(error.localizedDescription)")
+            // If there's an issue with decoding, log the contents for debugging
+            logger.error("Error decoding tool call: \(error)")
+            if let jsonString = String(data: data, encoding: .utf8) {
+                logger.error("Problem JSON content: \(jsonString)")
+            }
             throw ToolCallError.invalidJSON(error)
         }
     }
@@ -291,6 +493,19 @@ public class AppToolCallHandler {
                     reminderStrings.joined(separator: "\n")
                 
                 return result
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+            
+        case let (tool as PetalNotesTool, .notes(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalNotesTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                return output.result
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
