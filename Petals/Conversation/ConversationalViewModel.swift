@@ -49,6 +49,9 @@ class ConversationViewModel: ObservableObject {
             switchModel()
         }
     }
+    
+    private let evaluator = ToolTriggerEvaluator()
+
 
 
     // MARK: Private Properties
@@ -158,6 +161,7 @@ class ConversationViewModel: ObservableObject {
                         }
                     } else {
                         // For regular messages, append each chunk
+                        print(chunk.message)
                         messages[messages.count - 1].message += chunk.message
                     }
                 }
@@ -195,51 +199,6 @@ class ConversationViewModel: ObservableObject {
     // MARK: Tool Trigger Evaluation (Using `ToolTriggerEvaluator`)
 
     private func messageRequiresTool(_ text: String) -> Bool {
-        let toolExemplars: [String: [String]] = [
-            "petalCalendarFetchEventsTool": [
-                "Fetch calendar events for me",
-                "Show calendar events",
-                "List my events",
-                "Get events from my calendar",
-                "Retrieve calendar events"
-            ],
-            "petalCalendarCreateEventTool": [
-                "Create a calendar event on [date]",
-                "Schedule a new calendar event",
-                "Add a calendar event to my schedule",
-                "Book an event on my calendar",
-                "Set up a calendar event"
-            ],
-            "petalFetchRemindersTool": [
-                "Show me my reminders",
-                "List my tasks for today",
-                "Fetch completed reminders",
-                "Get all my pending reminders",
-                "Find reminders containing 'doctor'"
-            ],
-            "petalFetchCanvasAssignmentsTool": [
-                "Fetch assignments for my course",
-                "Show my Canvas assignments",
-                "Get assignments for my class",
-                "Retrieve course assignments from Canvas",
-                "List assignments for my course"
-            ],
-            "petalFetchCanvasGradesTool": [
-                "Show me my grades",
-                "Get my Canvas grades",
-                "Fetch my course grades",
-                "Display grades for my class",
-                "Retrieve my grades from Canvas"
-            ]
-        ]
-
-        for (_, exemplars) in toolExemplars {
-            if let prototype = toolEvaluator.prototype(for: exemplars) {
-                if toolEvaluator.shouldTriggerTool(for: text, exemplarPrototype: prototype) {
-                    return true
-                }
-            }
-        }
-        return false
+        return ExemplarProvider.shared.shouldUseTools(for: text)
     }
 }

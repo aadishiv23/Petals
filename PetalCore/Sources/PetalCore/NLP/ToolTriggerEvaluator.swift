@@ -1,27 +1,27 @@
 //
 //  ToolTriggerEvaluator.swift
-//  Petals
+//  PetalCore
 //
-//  Created by Aadi Shiv Malhotra on 3/17/25.
+//  Created by Aadi Shiv Malhotra on 4/2/25.
 //
 
 import Foundation
 import NaturalLanguage
 
-/// Eveluates whether a tool should be triggered based on semantic similarity.
-struct ToolTriggerEvaluator {
-    let embedding: NLEmbedding
+/// Evaluates whether a tool should be triggered based on semantic similarity.
+public struct ToolTriggerEvaluator {
+    public let embedding: NLEmbedding
 
-    init() {
+    public init() {
         guard let embedding = NLEmbedding.wordEmbedding(for: .english) else {
-            fatalError("English Embedding not availalble")
+            fatalError("English Embedding not available")
         }
         self.embedding = embedding
     }
     
     /// Returns a vector for the given text. First, attempts to retrieve the vector directly.
     /// If that fails, splits the text into words and averages their vectors.
-    func vector(for text: String) -> [Double]? {
+    public func vector(for text: String) -> [Double]? {
         // Try the full string first.
         if let fullVector = embedding.vector(for: text.lowercased()) {
             return fullVector
@@ -52,7 +52,7 @@ struct ToolTriggerEvaluator {
     /// Computes the centroid (prototype) vector for a set of exemplar phrases.
     /// - Parameter exemplars: An array of exemplar trigger phrases for a tool.
     /// - Returns: A vector representing the averaged (centroid) embedding, or nil if none could be computed.
-    func prototype(for exemplars: [String]) -> [Double]? {
+    public func prototype(for exemplars: [String]) -> [Double]? {
         var sum: [Double] = []
         var count = 0
         
@@ -73,7 +73,7 @@ struct ToolTriggerEvaluator {
     }
     
     /// Computes the cosine similarity between two vectors.
-    func cosineSimilarity(_ vectorA: [Double], _ vectorB: [Double]) -> Double {
+    public func cosineSimilarity(_ vectorA: [Double], _ vectorB: [Double]) -> Double {
         let dotProduct = zip(vectorA, vectorB).reduce(0.0) { $0 + $1.0 * $1.1 }
         let magnitudeA = sqrt(vectorA.reduce(0.0) { $0 + $1 * $1 })
         let magnitudeB = sqrt(vectorB.reduce(0.0) { $0 + $1 * $1 })
@@ -87,32 +87,9 @@ struct ToolTriggerEvaluator {
     ///   - exemplarPrototype: The prototype embedding computed from exemplar phrases.
     ///   - threshold: The similarity threshold (0 to 1) for a match.
     /// - Returns: True if the message's similarity to the prototype is at least the threshold.
-    func shouldTriggerTool(for message: String, exemplarPrototype: [Double], threshold: Double = 0.75) -> Bool {
+    public func shouldTriggerTool(for message: String, exemplarPrototype: [Double], threshold: Double = 0.85) -> Bool {
         guard let messageVector = self.vector(for: message) else { return false }
         let similarity = cosineSimilarity(messageVector, exemplarPrototype)
         return similarity >= threshold
     }
-
-//
-//    /// Checks if any keywords in `toolKeywords` is semantically close to the message.
-//    /// - Parameters:
-//    ///     - `message`: The user's message to the LLM.
-//    ///     - `toolKeywords`:  An array of keywords that are trigger words for our given tool.
-//    ///     - `threshold`:  A similarity threshold from 0 to 1, where 1 is a perfect match.
-//    /// - Returns:
-//    ///     - True if tool should be trigger, false if not.
-//    func shouldTriggerTool(for message: String, toolKeywords: [String], threshold: Float = 0.6) -> Bool {
-//        // Normalize and sanitize the message
-//        let lowercasedMessage = message.lowercased()
-//
-//        for keyword in toolKeywords {
-//            if let distance = embedding.distance(between: lowercasedMessage, and: keyword.lowercased()) {
-//                if distance < (1.0 - threshold) {
-//                    return true
-//                }
-//            }
-//        }
-//
-//        return false
-//    }
-}
+} 

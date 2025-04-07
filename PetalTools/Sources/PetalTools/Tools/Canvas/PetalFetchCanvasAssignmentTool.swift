@@ -130,10 +130,30 @@ public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool, MLXCom
         }
 
         let assignments = try JSONDecoder().decode([CanvasAssignment].self, from: data)
-        if assignments.isEmpty { return "No assignments found." }
+        if assignments.isEmpty {
+            return "No assignments found."
+        }
 
-        return assignments.map { "• \($0.name) (Due: \($0.dueAt ?? "No due date"))" }.joined(separator: "\n")
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
+
+        let formatted = assignments.map { assignment in
+            let dueDate = assignment.dueAt.flatMap { formatter.date(from: $0)?.formatted(date: .abbreviated, time: .shortened) } ?? "No due date"
+            let points = assignment.pointsPossible != nil ? "\(assignment.pointsPossible!) pts" : "No point value"
+            let descriptionPreview = assignment.description?.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression).prefix(140) ?? "No description"
+            return """
+            • \(assignment.name)
+              - Due: \(dueDate)
+              - Points: \(points)
+              - Types: \(assignment.submissionTypes.joined(separator: ", "))
+              - Description: \(descriptionPreview)...
+              - Link: \(assignment.htmlURL ?? "N/A")
+            """
+        }
+
+        return formatted.joined(separator: "\n\n")
     }
+
 
     public init() {}
 }

@@ -364,30 +364,31 @@ class PetalOllamaService {
 
     /// Fetches assignments for a given course.
     private func fetchCanvasAssignments(courseName: String) async throws -> String {
-        guard let courseId = try await getCanvasCourseId(for: courseName) else {
-            return "Course not found."
-        }
-
-        let urlString = "\(canvasBaseURL)courses/\(courseId)/assignments"
-        guard let url = URL(string: urlString) else {
-            return "Invalid Canvas API URL"
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(canvasAPIKey)", forHTTPHeaderField: "Authorization")
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            return "Failed to fetch assignments."
-        }
-
-        let assignments = try JSONDecoder().decode([CanvasAssignment].self, from: data)
-        if assignments.isEmpty {
-            return "No assignments found."
-        }
-
-        return assignments.map { "• \($0.name) (Due: \($0.dueAt ?? "No due date"))" }.joined(separator: "\n")
+//        guard let courseId = try await getCanvasCourseId(for: courseName) else {
+//            return "Course not found."
+//        }
+//
+//        let urlString = "\(canvasBaseURL)courses/\(courseId)/assignments"
+//        guard let url = URL(string: urlString) else {
+//            return "Invalid Canvas API URL"
+//        }
+//
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "GET"
+//        request.setValue("Bearer \(canvasAPIKey)", forHTTPHeaderField: "Authorization")
+//
+//        let (data, response) = try await URLSession.shared.data(for: request)
+//        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+//            return "Failed to fetch assignments."
+//        }
+//
+//        let assignments = try JSONDecoder().decode([CanvasAssignment].self, from: data)
+//        if assignments.isEmpty {
+//            return "No assignments found."
+//        }
+//
+//        return assignments.map { "• \($0.name) (Due: \($0.dueAt ?? "No due date"))" }.joined(separator: "\n")
+        return "Canvas Fetch Assignment currently taken down for Ollama"
     }
 
     /// Fetches grades for a given course.

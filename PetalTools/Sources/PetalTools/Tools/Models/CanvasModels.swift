@@ -24,17 +24,24 @@ public struct CanvasCourse: Decodable {
     }
 }
 
-public struct CanvasAssignment: Decodable {
-    public let id: Int
-    public let name: String
-    public let dueAt: String?
+struct CanvasAssignment: Codable {
+    let id: Int
+    let name: String
+    let description: String?
+    let dueAt: String?
+    let pointsPossible: Double?
+    let submissionTypes: [String]
+    let htmlURL: String?
 
-    public enum CodingKeys: String, CodingKey {
-        case id
-        case name
+    enum CodingKeys: String, CodingKey {
+        case id, name, description
         case dueAt = "due_at"
+        case pointsPossible = "points_possible"
+        case submissionTypes = "submission_types"
+        case htmlURL = "html_url"
     }
 }
+
 
 public struct CanvasSubmission: Decodable {
     public let assignmentId: Int
