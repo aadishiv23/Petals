@@ -10,7 +10,7 @@ import PetalCore
 import SwiftUI
 
 struct TextMessageView: View {
-    let message: ChatMessage
+    var message: ChatMessage
     let bubbleColor: Color
     let textColor: Color
 
@@ -21,7 +21,7 @@ struct TextMessageView: View {
             .foregroundColor(textColor)
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
-            .background(BubbleShape(isUser: message.participant == .user).fill(bubbleColor))
+            .background(BubbleShape(isUser: true).fill(bubbleColor))
             .contextMenu {
                 Button(action: {
                     NSPasteboard.general.clearContents()
@@ -30,8 +30,12 @@ struct TextMessageView: View {
                     Label("Copy", systemImage: "doc.on.doc")
                 }
             }
+            .onAppear {
+                print("🪵 Rendering TextMessageView: \(message.message)")
+            }
     }
-} 
+}
+
 
 // A specialized view for streaming text content
 struct StreamingTextMessageView: View {

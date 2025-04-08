@@ -51,7 +51,7 @@ struct GeminiChatView: View {
                                 withAnimation(.easeInOut(duration: 0.05)) {
                                     // Create a complex ID that changes whenever the message content changes
                                     ChatBubbleView(message: msg)
-                                        .id("msg-\(index)-\(msg.id)-\(msg.message.hashValue)")
+                                        .id(msg.id)
                                 }
                             }
                         }
@@ -67,7 +67,6 @@ struct GeminiChatView: View {
                 .padding(.vertical, 10)
                 .onChange(of: conversationVM.updateTrigger) { newTrigger in
                     scrollToBottom(proxy: proxy)
-                    print("🔄 UI update triggered: \(newTrigger)")
                 }
                 .onReceive(Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()) { _ in
                     if conversationVM.busy {

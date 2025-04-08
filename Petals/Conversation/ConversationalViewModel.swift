@@ -23,7 +23,6 @@ class ConversationViewModel: ObservableObject {
 
     @Published var updateTrigger = UUID()
 
-    
     /// An array of chat messages in the conversation.
     @Published var messages = [ChatMessage]()
 
@@ -131,64 +130,59 @@ class ConversationViewModel: ObservableObject {
     /// - Updates the conversation history with the AI's reply.
     ///
     /// If an error occurs, it is stored in `error`, and the pending message is removed.
-//    func sendMessage(_ text: String, streaming: Bool = true) async {
-//        error = nil
-//        busy = true
-//
-//        let needsTool = messageRequiresTool(text)
-//        isProcessingTool = needsTool
-//
-//        messages.append(ChatMessage(message: text, participant: .user))
-//        let pendingMessage = ChatMessage.pending(participant: .llm)
-//        messages.append(pendingMessage)
-//
-//        do {
-//            if streaming {
-//                let stream = chatModel.sendMessageStream(text)
-//                let lastIndex = messages.count - 1
-//
-//                for try await chunk in stream {
-//                    print("📝 \(Date().timeIntervalSince1970): Received chunk: \(chunk.message)")
-//
-//                    if isProcessingTool {
-//                        // Tool processing - unchanged
-//                        if !chunk.message.isEmpty {
-//                            messages[lastIndex].message = chunk.message
-//                        }
-//
-//                        if let toolName = chunk.toolCallName {
-//                            messages[lastIndex].toolCallName = toolName
-//                        }
-//                    } else {
-//                        // Regular message streaming - THIS IS THE FIX:
-//
-//                        // 1. Add the new chunk
-//                        messages[lastIndex].message += chunk.message
-//
-//                        // 2. Create a copy of the messages array (this is the critical part)
-//                        //    By making a new array reference, SwiftUI will detect the change
-//                        let messagesCopy = messages
-//                        messages = messagesCopy
-//
-//                        print("📱 UI should update with message length: \(messages[lastIndex].message.count)")
-//                    }
-//                }
-//
-//                messages[lastIndex].pending = false
-//            } else {
-//                // Non-streaming implementation - unchanged
-//                let response = try await chatModel.sendMessage(text)
-//                messages[messages.count - 1].message = response
-//                messages[messages.count - 1].pending = false
-//            }
-//        } catch {
-//            self.error = error
-//            messages.removeLast()
-//        }
-//
-//        busy = false
-//        isProcessingTool = false
-//    }
+    func sendMessage(_ text: String, streaming: Bool = true) async {
+        error = nil
+        busy = true
+
+        let needsTool = messageRequiresTool(text)
+        isProcessingTool = needsTool
+
+        messages.append(ChatMessage(message: text, participant: .user))
+        // For tool calls, start with an empty message but mark it as pending
+        let pendingMessage = ChatMessage.pending(participant: .llm)
+        messages.append(pendingMessage)
+
+        do {
+            if streaming {
+                let stream = chatModel.sendMessageStream(text)
+
+                // Process the stream
+                for try await chunk in stream {
+                    // If this is a tool call, don't update the message content until we have the final result
+                    if isProcessingTool {
+                        // Only update if we actually get content back (which would be the final processed result)
+                        if !chunk.message.isEmpty {
+                            messages[messages.count - 1].message = chunk.message
+                        }
+
+                        if let toolName = chunk.toolCallName {
+                            messages[messages.count - 1].toolCallName = toolName
+                        }
+                    } else {
+                        // For regular messages, append each chunk
+                        print(chunk.message)
+                        if messages[messages.count - 1].pending == true {
+                            messages[messages.count - 1].pending = false
+                        }
+                        messages[messages.count - 1].message += chunk.message
+                    }
+                }
+
+                // After stream completes, mark as not pending
+                messages[messages.count - 1].pending = false
+            } else {
+                let response = try await chatModel.sendMessage(text)
+                messages[messages.count - 1].message = response
+                messages[messages.count - 1].pending = false
+            }
+        } catch {
+            self.error = error
+            messages.removeLast()
+        }
+
+        busy = false
+        isProcessingTool = false
+    }
 
 //    private func messageRequiresTool(_ text: String) -> Bool {
 //        // Define criteria for triggering tools (dates, explicit phrases, etc.)
@@ -211,105 +205,111 @@ class ConversationViewModel: ObservableObject {
     }
 }
 
-// Global notification name for streaming updates
+/// Global notification name for streaming updates
 extension Notification.Name {
     static let streamingMessageUpdate = Notification.Name("streamingMessageUpdate")
 }
 
-extension ConversationViewModel {
-    // Replace your existing sendMessage method with this one
-    func sendMessage(_ text: String, streaming: Bool = true) async {
-        error = nil
-        busy = true
-
-        let needsTool = messageRequiresTool(text)
-        isProcessingTool = needsTool
-
-        // Add user message
-        await MainActor.run {
-            messages.append(ChatMessage(message: text, participant: .user))
-            let pendingMessage = ChatMessage.pending(participant: .llm)
-            messages.append(pendingMessage)
-        }
-        
-        // Store index for response message
-        let responseIndex = messages.count - 1
-
-        do {
-            if streaming {
-                let stream = chatModel.sendMessageStream(text)
-                
-                // Process the stream
-                for try await chunk in stream {
-                    await MainActor.run {
-                        if isProcessingTool {
-                            // Tool processing - handle as before
-                            if !chunk.message.isEmpty {
-                                messages[responseIndex].message = chunk.message
-                            }
-                            
-                            if let toolName = chunk.toolCallName {
-                                messages[responseIndex].toolCallName = toolName
-                            }
-                        } else {
-                            // For regular streaming, we need to force SwiftUI updates
-                            
-                            // 1. First append the chunk
-                            messages[responseIndex].message += chunk.message
-                            
-                            // 2. Force a UI update by creating a new messages array
-                            let messagesCopy = self.messages
-                            self.messages = messagesCopy
-                            
-                            self.updateTrigger = UUID()
-
-                            // 3. Post a notification for views to react
-                            NotificationCenter.default.post(
-                                name: .streamingMessageUpdate,
-                                object: nil,
-                                userInfo: [
-                                    "index": responseIndex,
-                                    "message": messages[responseIndex].message
-                                ]
-                            )
-
-                        }
-                    }
-                    
-                    // Small delay to ensure UI can keep up
-                    // Only needed if chunks are coming very rapidly
-                    if !isProcessingTool {
-                        try? await Task.sleep(nanoseconds: 10_000_000) // 10ms delay
-                    }
-                }
-                
-                // After stream completes, mark as not pending
-                await MainActor.run {
-                    messages[responseIndex].pending = false
-                    
-                    // Force final update
-                    let messagesCopy = self.messages
-                    self.messages = messagesCopy
-                }
-            } else {
-                // Non-streaming implementation
-                let response = try await chatModel.sendMessage(text)
-                
-                await MainActor.run {
-                    messages[responseIndex].message = response
-                    messages[responseIndex].pending = false
-                }
-            }
-        } catch {
-            await MainActor.run {
-                self.error = error
-                messages.removeLast()
-            }
-        }
-        
-        await MainActor.run {
-            busy = false
-            isProcessingTool = false
-        }
-    }
-}
+//
+// extension ConversationViewModel {
+//    // Replace your existing sendMessage method with this one
+//    func sendMessage(_ text: String, streaming: Bool = true) async {
+//        error = nil
+//        busy = true
+//
+//        let needsTool = messageRequiresTool(text)
+//        isProcessingTool = needsTool
+//
+//        // Add user message
+//        await MainActor.run {
+//            messages.append(ChatMessage(message: text, participant: .user))
+//            let pendingMessage = ChatMessage.pending(participant: .llm)
+//            messages.append(pendingMessage)
+//        }
+//
+//        // Store index for response message
+//        let responseIndex = messages.count - 1
+//
+//        do {
+//            if streaming {
+//                let stream = chatModel.sendMessageStream(text)
+//
+//                // Process the stream
+//                for try await chunk in stream {
+//                    print("🧩 Got chunk: '\(chunk.message)'")
+//                    await MainActor.run {
+//                        if isProcessingTool {
+//                            // Tool processing - handle as before
+//                            if !chunk.message.isEmpty {
+//                                messages[responseIndex].message = chunk.message
+//                            }
+//
+//                            if let toolName = chunk.toolCallName {
+//                                messages[responseIndex].toolCallName = toolName
+//                            }
+//                        } else {
+//                            // For regular streaming, we need to force SwiftUI updates
+//
+//                            // 1. First append the chunk
+//                            messages[responseIndex].message += chunk.message
+//
+//                            // 2. Force a UI update by creating a new messages array
+//                            let messagesCopy = self.messages
+//                            self.messages = messagesCopy
+//
+//                            DispatchQueue.main.async {
+//                                self.objectWillChange.send()
+//                            }
+//
+//                            self.updateTrigger = UUID()
+//
+//                            // 3. Post a notification for views to react
+//                            NotificationCenter.default.post(
+//                                name: .streamingMessageUpdate,
+//                                object: nil,
+//                                userInfo: [
+//                                    "index": responseIndex,
+//                                    "message": messages[responseIndex].message
+//                                ]
+//                            )
+//
+//                        }
+//                    }
+//
+//                    // Small delay to ensure UI can keep up
+//                    // Only needed if chunks are coming very rapidly
+//                    if !isProcessingTool {
+//                        try? await Task.sleep(nanoseconds: 10_000_000) // 10ms delay
+//                    }
+//                }
+//
+//                // After stream completes, mark as not pending
+//                await MainActor.run {
+//                    messages[responseIndex].pending = false
+//
+//                    // Force final update
+//                    let messagesCopy = self.messages
+//                    self.messages = messagesCopy
+//                }
+//            } else {
+//                // Non-streaming implementation
+//                let response = try await chatModel.sendMessage(text)
+//
+//                await MainActor.run {
+//                    messages[responseIndex].message = response
+//                    messages[responseIndex].pending = false
+//                }
+//            }
+//        } catch {
+//            await MainActor.run {
+//                self.error = error
+//                messages.removeLast()
+//            }
+//        }
+//
+//        await MainActor.run {
+//            busy = false
+//            isProcessingTool = false
+//        }
+//    }
+// }

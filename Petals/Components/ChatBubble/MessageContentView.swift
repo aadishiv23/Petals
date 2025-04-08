@@ -21,10 +21,20 @@ struct MessageContentView: View {
                     .padding(.vertical, 6)
                     .padding(.horizontal, 12)
                     .background(Capsule().fill(bubbleColor))
+                    .onAppear {
+                        print("\(message.participant.stringValue)")
+                        print("🩸 typing indicator appeared")
+                    }
             } else if let toolName = message.toolCallName {
                 ToolMessageView(message: message, bubbleColor: bubbleColor, toolName: toolName)
+                    .onAppear {
+                        print("🙅‍♂️ tool message view appeared")
+                    }
             } else {
                 TextMessageView(message: message, bubbleColor: bubbleColor, textColor: textColor)
+                    .onAppear {
+                        print("💀 text msg view appeared")
+                    }
             }
 
             if !message.pending {
