@@ -170,6 +170,8 @@ class ConversationViewModel: ObservableObject {
 
                 // After stream completes, mark as not pending
                 messages[messages.count - 1].pending = false
+                print("cvm: msg is: ")
+                print(messages[messages.count - 1].message)
             } else {
                 let response = try await chatModel.sendMessage(text)
                 messages[messages.count - 1].message = response

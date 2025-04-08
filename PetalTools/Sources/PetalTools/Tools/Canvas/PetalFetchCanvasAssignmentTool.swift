@@ -140,13 +140,14 @@ public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool, MLXCom
         let formatted = assignments.map { assignment in
             let dueDate = assignment.dueAt.flatMap { formatter.date(from: $0)?.formatted(date: .abbreviated, time: .shortened) } ?? "No due date"
             let points = assignment.pointsPossible != nil ? "\(assignment.pointsPossible!) pts" : "No point value"
-            let descriptionPreview = assignment.description?.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression).prefix(140) ?? "No description"
+            let fullDescription = assignment.description?
+                .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression) ?? "No description"
             return """
             • \(assignment.name)
               - Due: \(dueDate)
               - Points: \(points)
               - Types: \(assignment.submissionTypes.joined(separator: ", "))
-              - Description: \(descriptionPreview)...
+              - Description: \(fullDescription)...
               - Link: \(assignment.htmlURL ?? "N/A")
             """
         }
