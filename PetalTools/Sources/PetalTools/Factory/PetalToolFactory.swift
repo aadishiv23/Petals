@@ -56,10 +56,12 @@ public class PetalToolFactory {
         return remindersTool
     }
     
+    #if os(macOS)
     public static func createNotesTool() async -> any PetalTool {
         let notesTool = PetalNotesTool()
         await PetalToolRegistry.shared.registerTool(notesTool)
         return notesTool
     }
+    #endif
 }
 

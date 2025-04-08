@@ -424,6 +424,7 @@ public class AppToolCallHandler {
 
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
+                print(output.assignments)
                 return output.assignments
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
@@ -498,6 +499,7 @@ public class AppToolCallHandler {
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
             
+        #if os(macOS)
         case let (tool as PetalNotesTool, .notes(args)):
             do {
                 let jsonData = try JSONEncoder().encode(args)
@@ -510,6 +512,7 @@ public class AppToolCallHandler {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
+        #endif
             
         default:
             let argumentTypeDescription = String(describing: type(of: argument))

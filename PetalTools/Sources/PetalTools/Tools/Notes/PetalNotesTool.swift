@@ -4,7 +4,7 @@
 //
 //  Created by Aadi Shiv Malhotra
 //
-
+#if os(macOS)
 import AppKit
 import Foundation
 import PetalCore
@@ -585,7 +585,7 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
         )
     }
 }
-
+#endif
 /*
  Show me all my notes
  Find my notes about project ideas

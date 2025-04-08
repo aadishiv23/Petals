@@ -30,23 +30,28 @@ public class PetalMLXToolRegistry {
     
     /// Returns a list of MLX-compatible tool definitions (i.e. the actual tool objects).
     public static func mlxTools() async -> [any MLXCompatibleTool] {
-        // For now, we only have one tool; add more as needed.
         let canvasCoursesTool = PetalGenericFetchCanvasCoursesTool()
         let canvasAssignmentsTool = PetalFetchCanvasAssignmentsTool()
         let canvasGradesTool = PetalFetchCanvasGradesTool()
         let calendarCreateEventTool = PetalCalendarCreateEventTool()
         let calendarFetchEventsTool = PetalCalendarFetchEventsTool()
         let remindersTool = PetalFetchRemindersTool()
-        let notesTool = PetalNotesTool()
-        
-        return [
+
+        var tools: [any MLXCompatibleTool] = [
             canvasCoursesTool,
             canvasAssignmentsTool,
             canvasGradesTool,
             calendarCreateEventTool,
             calendarFetchEventsTool,
-            remindersTool,
-            notesTool
+            remindersTool
         ]
+
+        #if os(macOS)
+        let notesTool = PetalNotesTool()
+        tools.append(notesTool)
+        #endif
+
+        return tools
     }
+
 }

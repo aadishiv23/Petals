@@ -9,7 +9,7 @@ import SwiftUI
 import PetalCore
 
 struct MobileAvatar: View {
-    let participant: ChatParticipant
+    let participant: ChatMessage.Participant
     
     var body: some View {
         ZStack {

@@ -95,31 +95,33 @@ struct MobileHomeView: View {
 
     /// Settings content
     var settingsContent: some View {
-        VStack(spacing: 20) {
-            Text("Settings")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top, 20)
+        ScrollView {
+            VStack(spacing: 20) {
+                Text("Settings")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top, 20)
 
-            Form {
-                Section(header: Text("Model Selection")) {
-                    Toggle(isOn: $conversationVM.useOllama) {
+                VStack(spacing: 16) {
+                    Toggle(isOn: $conversationVM.useMLX) {
                         HStack {
-                            Image(systemName: conversationVM.useOllama ? "desktopcomputer" : "cloud")
-                            Text(conversationVM.useOllama ? "MLX (Local)" : "Gemini API (Cloud)")
+                            Image(systemName: conversationVM.useMLX ? "desktopcomputer" : "cloud")
+                            Text(conversationVM.useMLX ? "MLX (Local)" : "Gemini API (Cloud)")
                         }
                     }
                     .toggleStyle(SwitchToggleStyle(tint: Color(hex: "5E5CE6")))
                 }
+                .padding()
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                Section(header: Text("About")) {
+                VStack(spacing: 8) {
                     HStack {
                         Text("Version")
                         Spacer()
                         Text("1.0.0")
                             .foregroundColor(.secondary)
                     }
-
                     HStack {
                         Text("Developer")
                         Spacer()
@@ -127,9 +129,15 @@ struct MobileHomeView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .padding()
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .padding()
         }
     }
+
+
 
     /// Action card component
     private func actionCard(title: String, icon: String, action: @escaping () -> Void) -> some View {
