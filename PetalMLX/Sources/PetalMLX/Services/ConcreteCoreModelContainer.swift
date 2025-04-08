@@ -47,6 +47,21 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
     /// - Returns: A `ModelContainer` object containing the loaded model.
     func load() async throws -> ModelContainer {
         // Set a memory limit for the GPU buffer cache to manage resource usage.
+        print("Model ID: \(modelConfiguration.id)")
+        print("Model Name: \(modelConfiguration.name)")
+        
+        // Most importantly, this will show the file path
+        switch modelConfiguration.id {
+        case .id(let stringID):
+            print("Model ID (from string): \(stringID)")
+        case .directory(let url):
+            print("Model Directory (from URL): \(url.path)")
+        }
+
+        print("Resolved Local Directory: \(modelConfiguration.modelDirectory().path)")
+
+        print("Model Directory: \(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.path ?? "")/MLX/\(modelConfiguration.id)")
+        
         MLX.GPU.set(memoryLimit: 20 * 1024 * 1024)
 
         // Load the model container using the provided configuration, updating the progress as needed.
@@ -182,3 +197,92 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
         }
     }
 }
+
+
+/*
+ 
+ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unchecked Sendable, ObservableObject {
+     // Add these properties
+     private var cachedModelContainer: ModelContainer?
+     private var lastModelUseTime: Date?
+     private let modelCacheTimeout: TimeInterval = 300 // 5 minutes timeout
+     
+     // Add a cleanup timer
+     private var inactivityTimer: Timer?
+     
+     // Rest of your existing properties...
+     
+     // Add model unloading method
+     private func startInactivityTimer() {
+         // Cancel any existing timer
+         inactivityTimer?.invalidate()
+         
+         // Create a new timer
+         inactivityTimer = Timer.scheduledTimer(withTimeInterval: modelCacheTimeout, repeats: false) { [weak self] _ in
+             Task { @MainActor in
+                 print("Model unloaded due to inactivity")
+                 self?.cachedModelContainer = nil
+             }
+         }
+     }
+     
+     // Modified load method
+     func load() async throws -> ModelContainer {
+         // Check if we have a cached model that's still valid
+         if let cachedModel = cachedModelContainer,
+            let lastUse = lastModelUseTime,
+            Date().timeIntervalSince(lastUse) < modelCacheTimeout {
+             
+             print("Using cached model - last used \(Int(Date().timeIntervalSince(lastUse))) seconds ago")
+             lastModelUseTime = Date() // Update the last use time
+             startInactivityTimer() // Reset the timer
+             return cachedModel
+         }
+         
+         print("Loading model from disk...")
+         
+         // Original load code
+         MLX.GPU.set(memoryLimit: 20 * 1024 * 1024)
+         
+         let modelContainer = try await LLMModelFactory.shared.loadContainer(
+             configuration: modelConfiguration
+         ) { progress in
+             Task { @MainActor in
+                 print("Download \(self.modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%")
+             }
+         }
+         
+         // Rest of your loading code...
+         
+         // Cache the loaded model
+         cachedModelContainer = modelContainer
+         lastModelUseTime = Date()
+         
+         // Start the inactivity timer
+         await MainActor.run {
+             startInactivityTimer()
+         }
+         
+         return modelContainer
+     }
+     
+     // Keep the generate method but remove the immediate load
+     public func generate(
+         messages: [[String: String]],
+         tools: [Tool]?,
+         onProgress: @escaping OnProgress
+     ) async throws -> GenerateResult {
+         // Use the cached model or load if needed
+         let modelContainer = try await load()
+         MLXRandom.seed(UInt64(Date.timeIntervalBetween1970AndReferenceDate * 100))
+         
+         // Rest of your generate code...
+     }
+     
+     // Add this to clean up when the container is deallocated
+     deinit {
+         inactivityTimer?.invalidate()
+     }
+ }
+ 
+ */

@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
+import PetalCore
 
 @main
 struct PetalsiOSApp: App {
-
     @StateObject private var conversationVM = ConversationViewModel()
 
     var body: some Scene {

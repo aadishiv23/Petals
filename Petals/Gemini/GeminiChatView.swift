@@ -41,15 +41,17 @@ struct GeminiChatView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(conversationVM.messages, id: \.self) { msg in
+                        ForEach(Array(conversationVM.messages.enumerated()), id: \.element.id) { index, msg in
                             if msg.pending, conversationVM.isProcessingTool {
                                 withAnimation {
                                     toolLoadingView(for: msg)
+                                        .id("tool-\(index)-\(msg.id)")
                                 }
                             } else {
-                                withAnimation {
+                                withAnimation(.easeInOut(duration: 0.05)) {
+                                    // Create a complex ID that changes whenever the message content changes
                                     ChatBubbleView(message: msg)
-                                        .id(msg)
+                                        .id("msg-\(index)-\(msg.id)-\(msg.message.hashValue)")
                                 }
                             }
                         }
@@ -63,6 +65,20 @@ struct GeminiChatView: View {
                     .padding(.vertical, 20)
                 }
                 .padding(.vertical, 10)
+                .onChange(of: conversationVM.updateTrigger) { newTrigger in
+                    scrollToBottom(proxy: proxy)
+                    print("🔄 UI update triggered: \(newTrigger)")
+                }
+                .onReceive(Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()) { _ in
+                    if conversationVM.busy {
+                        // Force scroll on each timer tick during streaming
+                        scrollToBottom(proxy: proxy)
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .streamingMessageUpdate)) { _ in
+                    // Force scroll when we get a streaming update notification
+                    scrollToBottom(proxy: proxy)
+                }
                 .background(
                     VisualEffectView(material: .headerView, blendingMode: .behindWindow)
                 )

@@ -60,7 +60,7 @@ extension ModelConfiguration: @retroactive Equatable {
     ]
 
     public static var defaultModel: ModelConfiguration {
-        llama_3_2_3b_4bit
+        llama_3_1_8b_4bit
     }
 
     public static func getModelByName(_ name: String) -> ModelConfiguration? {
