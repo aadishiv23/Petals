@@ -11,7 +11,6 @@ import PetalCore
 
 public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool, MLXCompatibleTool {
     
-    
     private let canvasBaseURL = "https://umich.instructure.com/api/v1/"
     private let canvasAPIKey = "1770~ZDxrEf7eVyeHkYL3wQXvYXKDRkGm8UN9ZhBQDUkGJUAf7mPRZmJX34JLeR7AUByD"
 
@@ -90,71 +89,99 @@ public final class PetalFetchCanvasAssignmentsTool: OllamaCompatibleTool, MLXCom
     }
 
     public func execute(_ input: Input) async throws -> Output {
-//        let courseId = try await getCourseId(for: input.courseName)
-//        guard let courseId = courseId else {
-//            return Output(assignments: "Course not found.")
-//        }
+        // Get the course ID based on the course name provided by the user
+        let (courseId, courseName) = try await getCourseIdAndName(for: input.courseName)
+        
+        // Handle case where no matching course was found
+        guard let courseId = courseId, let courseName = courseName else {
+            return Output(assignments: "Course '\(input.courseName)' not found. Please check the course name and try again.")
+        }
 
-        let result = try await fetchAssignments(courseId: 720596)
+        // Fetch assignments for the found course
+        let result = try await fetchAssignments(courseId: courseId, courseName: courseName)
         return Output(assignments: result)
     }
 
-    private func getCourseId(for courseName: String) async throws -> Int? {
-        let urlString = "\(canvasBaseURL)courses"
-        guard let url = URL(string: urlString) else { return nil }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(canvasAPIKey)", forHTTPHeaderField: "Authorization")
-
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let courses = try JSONDecoder().decode([CanvasCourse].self, from: data)
-
-        return courses.first { $0.name.localizedCaseInsensitiveContains(courseName) }?.id
-    }
-
-    private func fetchAssignments(courseId: Int) async throws -> String {
-        let urlString = "\(canvasBaseURL)courses/\(courseId)/assignments"
+    private func getCourseIdAndName(for courseName: String) async throws -> (Int?, String?) {
+        // Create the API URL
+        let urlString = "\(canvasBaseURL)courses?enrollment_state=active"
         guard let url = URL(string: urlString) else {
-            return "Invalid Canvas API URL"
+            throw NSError(domain: "PetalTools", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid Canvas API URL"])
         }
 
+        // Create the request
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(canvasAPIKey)", forHTTPHeaderField: "Authorization")
 
+        // Make the request
         let (data, response) = try await URLSession.shared.data(for: request)
 
+        // Check for a valid response
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            return "Failed to fetch assignments."
+            throw NSError(domain: "PetalTools", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch Canvas courses"])
         }
 
-        let assignments = try JSONDecoder().decode([CanvasAssignment].self, from: data)
-        if assignments.isEmpty {
-            return "No assignments found."
+        // Parse the response
+        let decoder = JSONDecoder()
+        let courses = try decoder.decode([CanvasCourse].self, from: data)
+        
+        // Find the course that matches the user's input (case insensitive)
+        if let matchedCourse = courses.first(where: { $0.name.localizedCaseInsensitiveContains(courseName) }) {
+            return (matchedCourse.id, matchedCourse.name)
         }
-
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-
-        let formatted = assignments.map { assignment in
-            let dueDate = assignment.dueAt.flatMap { formatter.date(from: $0)?.formatted(date: .abbreviated, time: .shortened) } ?? "No due date"
-            let points = assignment.pointsPossible != nil ? "\(assignment.pointsPossible!) pts" : "No point value"
-            let fullDescription = assignment.description?
-                .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression) ?? "No description"
-            return """
-            • \(assignment.name)
-              - Due: \(dueDate)
-              - Points: \(points)
-              - Types: \(assignment.submissionTypes.joined(separator: ", "))
-              - Description: \(fullDescription)...
-              - Link: \(assignment.htmlURL ?? "N/A")
-            """
-        }
-
-        return formatted.joined(separator: "\n\n")
+        
+        return (nil, nil)
     }
 
+    private func fetchAssignments(courseId: Int, courseName: String) async throws -> String {
+        let urlString = "\(canvasBaseURL)courses/\(courseId)/assignments"
+        guard let url = URL(string: urlString) else {
+            throw NSError(domain: "PetalTools", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid Canvas API URL"])
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(canvasAPIKey)", forHTTPHeaderField: "Authorization")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                return "Failed to fetch assignments. Please check your API key and try again."
+            }
+
+            let decoder = JSONDecoder()
+            let assignments = try decoder.decode([CanvasAssignment].self, from: data)
+            
+            if assignments.isEmpty {
+                return "Course: \(courseName)\n\nNo assignments found for this course."
+            }
+
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
+
+            let formatted = assignments.map { assignment in
+                let dueDate = assignment.dueAt.flatMap { formatter.date(from: $0)?.formatted(date: .abbreviated, time: .shortened) } ?? "No due date"
+                let points = assignment.pointsPossible != nil ? "\(assignment.pointsPossible!) pts" : "No point value"
+                let fullDescription = assignment.description?
+                    .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression) ?? "No description"
+                return """
+                • \(assignment.name)
+                  - Due: \(dueDate)
+                  - Points: \(points)
+                  - Types: \(assignment.submissionTypes.joined(separator: ", "))
+                  - Description: \(fullDescription)...
+                  - Link: \(assignment.htmlURL ?? "N/A")
+                """
+            }
+
+            // Prepend the course name to the output
+            return "Course: \(courseName)\n\n" + formatted.joined(separator: "\n\n")
+        } catch {
+            return "Error fetching assignments: \(error.localizedDescription)"
+        }
+    }
 
     public init() {}
 }
