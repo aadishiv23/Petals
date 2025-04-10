@@ -46,11 +46,12 @@ public actor PetalToolRegistry: PetalToolRegistering {
         let calendarCreateEventTool = await PetalToolFactory.createCalendarCreateEventTool()
         let calendarFetchEventTool = await PetalToolFactory.createCalendarFetchEventTool()
         let fetchRemindersTool = await PetalToolFactory.createFetchRemindersTool()
-        
+
         #if os(macOS)
         let notesTool = await PetalToolFactory.createNotesTool()
+        let remindersTool = await PetalToolFactory.createRemindersTool()
         #endif
-        
+
         await registerTool(calendarTool)
         await registerTool(getCanvasCoursesTool)
         await registerTool(fetchCanvasAssignmentsTool)
@@ -58,11 +59,12 @@ public actor PetalToolRegistry: PetalToolRegistering {
         await registerTool(calendarCreateEventTool)
         await registerTool(calendarFetchEventTool)
         await registerTool(fetchRemindersTool)
-        
+
         #if os(macOS)
         await registerTool(notesTool)
+        await registerTool(remindersTool)
         #endif
-        
+
         isInitialized = true
     }
 
@@ -77,7 +79,7 @@ public actor PetalToolRegistry: PetalToolRegistering {
         await ensureInitialized()
         return tools[id]
     }
-    
+
     /// Retrieves all registered tools matching given criteria.
     public func getTools(matching criteria: PetalToolFilterCriteria) async -> [any PetalTool] {
         var filteredTools = Array(tools.values)

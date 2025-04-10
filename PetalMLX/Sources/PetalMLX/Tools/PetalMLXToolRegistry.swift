@@ -6,28 +6,28 @@
 //
 
 import Foundation
-import PetalTools
 import PetalCore
+import PetalTools
 
 /// A simple registry to hold tool handlers.
 public class PetalMLXToolRegistry {
 
     @MainActor public static let shared = PetalMLXToolRegistry()
-    
+
     private var handlers: [String: any MLXToolHandling] = [:]
-    
-    public init() { }
-    
+
+    public init() {}
+
     /// Register a tool handler.
     public func registerHandler(toolName: String, handler: any MLXToolHandling) {
         handlers[toolName] = handler
     }
-    
+
     /// Retrieve a tool handler for a given tool name.
     public func handler(for toolName: String) -> (any MLXToolHandling)? {
-        return handlers[toolName]
+        handlers[toolName]
     }
-    
+
     /// Returns a list of MLX-compatible tool definitions (i.e. the actual tool objects).
     public static func mlxTools() async -> [any MLXCompatibleTool] {
         let canvasCoursesTool = PetalGenericFetchCanvasCoursesTool()
@@ -35,20 +35,22 @@ public class PetalMLXToolRegistry {
         let canvasGradesTool = PetalFetchCanvasGradesTool()
         let calendarCreateEventTool = PetalCalendarCreateEventTool()
         let calendarFetchEventsTool = PetalCalendarFetchEventsTool()
-        let remindersTool = PetalFetchRemindersTool()
+        // let remindersTool = PetalFetchRemindersTool()
 
         var tools: [any MLXCompatibleTool] = [
             canvasCoursesTool,
             canvasAssignmentsTool,
             canvasGradesTool,
             calendarCreateEventTool,
-            calendarFetchEventsTool,
-            remindersTool
+            calendarFetchEventsTool
+            // remindersTool
         ]
 
         #if os(macOS)
         let notesTool = PetalNotesTool()
+        let remindersTool = PetalRemindersTool()
         tools.append(notesTool)
+        tools.append(remindersTool)
         #endif
 
         return tools

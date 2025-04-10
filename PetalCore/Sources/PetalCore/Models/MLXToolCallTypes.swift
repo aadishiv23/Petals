@@ -17,10 +17,10 @@ public struct MLXToolCall: Codable {
         case parameters
         case arguments // Alternative key for parameters
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         // Handle both name and function fields for flexibility
         let nameString: String
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
@@ -36,7 +36,7 @@ public struct MLXToolCall: Codable {
                 )
             )
         }
-        
+
         // Convert string to MLXToolCallType
         if let toolType = MLXToolCallType(rawValue: nameString) {
             self.name = toolType
@@ -47,7 +47,7 @@ public struct MLXToolCall: Codable {
                 debugDescription: "Invalid tool name: \(nameString)"
             )
         }
-        
+
         // Handle both parameters and arguments fields
         if let parameters = try? container.decodeIfPresent(MLXToolCallArguments.self, forKey: .parameters) {
             self.parameters = parameters
@@ -58,7 +58,7 @@ public struct MLXToolCall: Codable {
             self.parameters = .unknown
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name.rawValue, forKey: .name)
@@ -72,8 +72,9 @@ public enum MLXToolCallType: String, Codable {
     case petalFetchCanvasGradesTool
     case petalCalendarCreateEventTool
     case petalCalendarFetchEventsTool
-    case petalFetchRemindersTool
+    // case petalFetchRemindersTool
     case petalNotesTool
+    case petalRemindersTool
 }
 
 public enum MLXToolCallArguments: Codable {
@@ -108,18 +109,20 @@ public enum MLXToolCallArguments: Codable {
         case action
         case body
         case folderName
+        case name
+        case dueDate
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         // Check for Notes tool
         if let action = try container.decodeIfPresent(String.self, forKey: .action) {
             let searchText = try container.decodeIfPresent(String.self, forKey: .searchText)
             let title = try container.decodeIfPresent(String.self, forKey: .title)
             let body = try container.decodeIfPresent(String.self, forKey: .body)
             let folderName = try container.decodeIfPresent(String.self, forKey: .folderName)
-            
+
             self = .notes(NotesArguments(
                 action: action,
                 searchText: searchText,
@@ -129,19 +132,19 @@ public enum MLXToolCallArguments: Codable {
             ))
             return
         }
-        
+
         // Check for Canvas Courses arguments
         if let completed = try container.decodeIfPresent(Bool.self, forKey: .completed) {
             self = .canvasCourses(CanvasCoursesArguments(completed: completed))
             return
         }
-        
+
         // Check for Canvas Assignments arguments
         if let courseName = try container.decodeIfPresent(String.self, forKey: .courseName) {
             self = .canvasAssignments(CanvasAssignmentsArguments(courseName: courseName))
             return
         }
-        
+
         // Check for Canvas Grades arguments
         if let courseName = try container.decodeIfPresent(String.self, forKey: .courseName) {
             if try container.contains(.title) == false {
@@ -150,16 +153,16 @@ public enum MLXToolCallArguments: Codable {
                 return
             }
         }
-        
+
         // Check for Calendar Create Event arguments
         if let title = try container.decodeIfPresent(String.self, forKey: .title),
            let startDate = try container.decodeIfPresent(String.self, forKey: .startDate),
-           let endDate = try container.decodeIfPresent(String.self, forKey: .endDate) {
-            
+           let endDate = try container.decodeIfPresent(String.self, forKey: .endDate)
+        {
             let calendarName = try container.decodeIfPresent(String.self, forKey: .calendarName)
             let location = try container.decodeIfPresent(String.self, forKey: .location)
             let notes = try container.decodeIfPresent(String.self, forKey: .notes)
-            
+
             self = .calendarCreateEvent(CalendarCreateEventArguments(
                 title: title,
                 startDate: startDate,
@@ -170,7 +173,7 @@ public enum MLXToolCallArguments: Codable {
             ))
             return
         }
-        
+
         // Check for Calendar Fetch Events arguments
         if try container.contains(.startDate) || container.contains(.endDate) || container.contains(.calendarNames) {
             let startDate = try container.decodeIfPresent(String.self, forKey: .startDate)
@@ -182,7 +185,7 @@ public enum MLXToolCallArguments: Codable {
             let availability = try container.decodeIfPresent(String.self, forKey: .availability)
             let hasAlarms = try container.decodeIfPresent(Bool.self, forKey: .hasAlarms)
             let isRecurring = try container.decodeIfPresent(Bool.self, forKey: .isRecurring)
-            
+
             self = .calendarFetchEvents(CalendarFetchEventsArguments(
                 startDate: startDate,
                 endDate: endDate,
@@ -196,21 +199,7 @@ public enum MLXToolCallArguments: Codable {
             ))
             return
         }
-        
-        // Check for Reminders arguments
-        if try container.contains(.includeCompleted) || container.contains(.listName) || container.contains(.search) {
-            let includeCompleted = try container.decodeIfPresent(Bool.self, forKey: .includeCompleted)
-            let listName = try container.decodeIfPresent(String.self, forKey: .listName)
-            let search = try container.decodeIfPresent(String.self, forKey: .search)
-            
-            self = .reminders(RemindersArguments(
-                includeCompleted: includeCompleted,
-                listName: listName,
-                search: search
-            ))
-            return
-        }
-        
+
         self = .unknown
     }
 
@@ -265,14 +254,24 @@ public enum MLXToolCallArguments: Codable {
                 try container.encode(isRecurring, forKey: .isRecurring)
             }
         case let .reminders(args):
-            if let includeCompleted = args.includeCompleted {
-                try container.encode(includeCompleted, forKey: .includeCompleted)
-            }
+            // Required field (non-optional)
+            try container.encode(args.action, forKey: .action)
+
+            // Optional fields
             if let listName = args.listName {
                 try container.encode(listName, forKey: .listName)
             }
-            if let search = args.search {
-                try container.encode(search, forKey: .search)
+            if let searchText = args.searchText {
+                try container.encode(searchText, forKey: .searchText)
+            }
+            if let name = args.name {
+                try container.encode(name, forKey: .name)
+            }
+            if let notes = args.notes {
+                try container.encode(notes, forKey: .notes)
+            }
+            if let dueDate = args.dueDate {
+                try container.encode(dueDate, forKey: .dueDate)
             }
         case let .notes(args):
             try container.encode(args.action, forKey: .action)
@@ -328,9 +327,12 @@ public struct CalendarFetchEventsArguments: Codable {
 }
 
 public struct RemindersArguments: Codable {
-    public let includeCompleted: Bool?
+    public let action: String
     public let listName: String?
-    public let search: String?
+    public let searchText: String?
+    public let name: String?
+    public let notes: String?
+    public let dueDate: String?
 }
 
 public struct NotesArguments: Codable {

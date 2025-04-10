@@ -189,7 +189,7 @@ public class PetalMLXService {
         } else if lowercasedMessage.contains("calendar") || lowercasedMessage.contains("event") {
             return "petalCalendarFetchEventsTool"
         } else if lowercasedMessage.contains("reminder") || lowercasedMessage.contains("task") {
-            return "petalFetchRemindersTool"
+            return "petalRemindersTool"
         } else if lowercasedMessage.contains("assignment") {
             return "petalFetchCanvasAssignmentsTool"
         } else if lowercasedMessage.contains("grade") {

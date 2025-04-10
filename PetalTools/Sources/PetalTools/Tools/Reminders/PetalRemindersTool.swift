@@ -60,7 +60,7 @@ public final class PetalRemindersTool: OllamaCompatibleTool, MLXCompatibleTool {
                 name: "name",
                 description: "Name for the new reminder when using createReminder action",
                 dataType: .string,
-                required: false,
+                required: true,
                 example: AnyCodable("Call John")
             ),
             PetalToolParameter(

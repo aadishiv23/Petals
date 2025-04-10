@@ -62,6 +62,13 @@ public class PetalToolFactory {
         await PetalToolRegistry.shared.registerTool(notesTool)
         return notesTool
     }
+    
+    public static func createRemindersTool() async -> any PetalTool {
+        let remindersTool = PetalRemindersTool()
+        await PetalToolRegistry.shared.registerTool(remindersTool)
+        return remindersTool
+    }
+    
     #endif
 }
 
