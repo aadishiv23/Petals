@@ -96,35 +96,64 @@ public class AppToolCallHandler {
         }
 
         // THIRD: Try to detect JSON directly at the beginning of the text
+        // THIRD: Try to detect JSON directly at the beginning of the text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).starts(with: "{") {
             logger.debug("Text starts with '{', attempting raw JSON parse...")
-            var braceBalance = 0
+
+            // First, check for any common completion markers
             var jsonEndIndex: String.Index?
 
-            for (index, char) in text.enumerated() {
-                if char == "{" {
-                    braceBalance += 1
-                } else if char == "}" {
-                    braceBalance -= 1
-                    if braceBalance == 0 {
-                        // Found the end of the top-level JSON object
-                        jsonEndIndex = text.index(text.startIndex, offsetBy: index)
-                        break
+            if let eomRange = text.range(of: "<|eom_id|>") {
+                jsonEndIndex = eomRange.lowerBound
+                logger.debug("Found <|eom_id|> marker to delimit JSON")
+            } else if let startHeaderRange = text.range(of: "<|start_header_id|>") {
+                jsonEndIndex = startHeaderRange.lowerBound
+                logger.debug("Found <|start_header_id|> marker to delimit JSON")
+            } else {
+                // If no marker found, use balanced brace approach as fallback
+                var braceBalance = 0
+                for (index, char) in text.enumerated() {
+                    if char == "{" {
+                        braceBalance += 1
+                    } else if char == "}" {
+                        braceBalance -= 1
+                        if braceBalance == 0 {
+                            // Found the end of the top-level JSON object
+                            jsonEndIndex = text.index(text.startIndex, offsetBy: index + 1) // Include the closing brace
+                            break
+                        }
                     }
-                } else if braceBalance <= 0, index > 0 {
-                    // If brace balance drops below 1 before finding a match, it's not valid top-level JSON
-                    break
                 }
             }
 
-            if let endIndex = jsonEndIndex {
-                let potentialJson = String(text[text.startIndex...endIndex])
+            if let endIndex = jsonEndIndex, endIndex > text.startIndex {
+                let potentialJson = String(text[text.startIndex..<endIndex])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+
                 logger.debug("Potential raw JSON found: \(potentialJson)")
 
-                // Basic validation: check if it contains likely tool call keys
-                if potentialJson.contains("\"name\":") || potentialJson.contains("\"function\":") {
+                // Look for key patterns that indicate a tool call
+                if potentialJson.contains("\"name\":") ||
+                    potentialJson.contains("\"function\":") ||
+                    (potentialJson.contains("\"type\":") && potentialJson.contains("\"function\""))
+                {
                     do {
-                        let (executionResult, toolName) = try await handleGenericToolCall(potentialJson)
+                        // Try to sanitize the JSON if needed
+                        var sanitizedJson = potentialJson
+                        if !sanitizedJson.hasSuffix("}") {
+                            // Add closing brace if missing
+                            let openBraces = sanitizedJson.filter { $0 == "{" }.count
+                            let closeBraces = sanitizedJson.filter { $0 == "}" }.count
+                            if openBraces > closeBraces {
+                                for _ in 0..<(openBraces - closeBraces) {
+                                    sanitizedJson += "}"
+                                }
+                                logger.debug("Added missing closing braces to JSON")
+                            }
+                        }
+
+                        logger.debug("Attempting to process sanitized JSON: \(sanitizedJson)")
+                        let (executionResult, toolName) = try await handleGenericToolCall(sanitizedJson)
                         logger.info("Raw JSON tool call '\(toolName)' processed successfully.")
                         return (processedOutput: executionResult, toolCalled: true, toolName: toolName)
                     } catch {
@@ -132,10 +161,10 @@ public class AppToolCallHandler {
                         // Fall through to treat as regular text
                     }
                 } else {
-                    logger.debug("Potential raw JSON does not contain 'name' or 'function' keys.")
+                    logger.debug("Potential raw JSON does not contain tool call indicators.")
                 }
             } else {
-                logger.debug("Could not find balanced closing brace for initial '{'.")
+                logger.debug("Could not find proper JSON ending.")
             }
         }
         // Original Regex check removed as the procedural check above is more robust for start-of-string JSON

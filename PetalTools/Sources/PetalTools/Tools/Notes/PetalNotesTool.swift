@@ -7,8 +7,8 @@
 #if os(macOS)
 import AppKit
 import Foundation
-import PetalCore
 import os
+import PetalCore
 
 /// A tool to interact with Apple Notes app.
 public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
@@ -141,8 +141,9 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                 let result = try await createNote(title: title, body: body, folderName: folderName)
 
                 if result.success {
-                    let message = "Note '\(title)' successfully created in folder '\(result.folderName ?? folderName)' " +
-                                  (result.usedDefaultFolder == true ? " (default folder was used)" : "")
+                    let message =
+                        "Note '\(title)' successfully created in folder '\(result.folderName ?? folderName)' " +
+                        (result.usedDefaultFolder == true ? " (default folder was used)" : "")
                     logger.debug("createNote successful: \(message)")
                     return Output(result: message)
                 } else {
@@ -152,23 +153,33 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
 
             default:
                 logger.warning("Invalid action requested: \(input.action)")
-                return Output(result: "Error: Invalid action '\(input.action)'. Use 'getAllNotes', 'findNote', or 'createNote'")
+                return Output(
+                    result: "Error: Invalid action '\(input.action)'. Use 'getAllNotes', 'findNote', or 'createNote'"
+                )
             }
         } catch let error as NSError {
-            logger.error("Error executing Notes tool: \(error.domain) - Code \(error.code) - \(error.localizedDescription)")
+            logger
+                .error(
+                    "Error executing Notes tool: \(error.domain) - Code \(error.code) - \(error.localizedDescription)"
+                )
             logger.error("Underlying Error Info: \(error.userInfo)")
 
             // Handle AppleScript errors specifically
             if error.domain == "AppleScriptError" {
                 if error.localizedDescription.contains("Application isn't running") || error.code == -600 {
                     logger.error("Detected specific error: Notes app not running or inaccessible (-600).")
-                    return Output(result: "Error: The Notes app is not running or could not be accessed. Please ensure it is open and try again.")
+                    return Output(
+                        result: "Error: The Notes app is not running or could not be accessed. Please ensure it is open and try again."
+                    )
                 }
                 if error.localizedDescription.contains("not authorized") || error.code == -1743 {
                     logger.error("Detected specific error: Automation permission denied (-1743).")
-                    return Output(result: "Error: This app doesn't have permission to control Notes. Please check System Settings > Privacy & Security > Automation and grant permission.")
+                    return Output(
+                        result: "Error: This app doesn't have permission to control Notes. Please check System Settings > Privacy & Security > Automation and grant permission."
+                    )
                 }
-                let shortError = error.localizedDescription.components(separatedBy: "NSAppleScriptError").first ?? error.localizedDescription
+                let shortError = error.localizedDescription.components(separatedBy: "NSAppleScriptError").first ?? error
+                    .localizedDescription
                 logger.error("Returning generic AppleScript error message: \(shortError)")
                 return Output(result: "Error accessing Notes: \(shortError)")
             }
@@ -185,72 +196,127 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
     // MARK: - AppleScript Functions
 
     private func getAllNotes() async throws -> [NoteInfo] {
-        // Create an AppleScript task to get all notes
+        // AppleScript to get all notes, formatting the output string with delimiters
         let script = """
+        on replaceText(theText, searchString, replaceString)
+            set AppleScript's text item delimiters to searchString
+            set theTextItems to text items of theText
+            set AppleScript's text item delimiters to replaceString
+            set theText to theTextItems as string
+            set AppleScript's text item delimiters to "" -- Reset
+            return theText
+        end replaceText
+
         tell application "System Events"
             if not (exists process "Notes") then
-                tell application "Notes" to activate
-                delay 2
+                try
+                    tell application "Notes" to activate
+                    delay 1 -- Shorter delay might be sufficient
+                on error errMsg number errorNum
+                     error "Notes Activation Failed: " & errMsg & " (" & errorNum & ")"
+                end try
             end if
         end tell
 
         tell application "Notes"
-            set allNotes to every note
-            set noteList to {}
+            set noteDataString to ""
+            try
+                set allNotes to every note
+            on error errMsg number errorNum
+                 error "Failed to get notes: " & errMsg & " (" & errorNum & ")"
+            end try
 
             repeat with currentNote in allNotes
-                set noteInfo to {name:name of currentNote, content:plaintext of currentNote}
-                set end of noteList to noteInfo
-            end repeat
+                try
+                    set noteName to name of currentNote
+                    set noteContent to plaintext of currentNote
 
-            return noteList
+                    -- Replace potential delimiters within the actual content
+                    set noteName to my replaceText(noteName, "~~~", "---")
+                    set noteName to my replaceText(noteName, "^^^", "---")
+                    set noteContent to my replaceText(noteContent, "~~~", "---")
+                    set noteContent to my replaceText(noteContent, "^^^", "---")
+
+                    if noteDataString is not "" then
+                        set noteDataString to noteDataString & "^^^" -- Note separator
+                    end if
+                    set noteDataString to noteDataString & noteName & "~~~" & noteContent -- Field separator
+                on error errMsg number errorNum
+                     log "Skipping note due to error: " & errMsg & " (" & errorNum & ")"
+                end try
+            end repeat
+            return noteDataString
         end tell
         """
 
         let result = try await runAppleScript(script)
-        return parseNotesResult(result)
+        logger.debug("getAllNotes raw result length: \(result.count)")
+        return parseNotesResult(result) // Use the updated parser
     }
 
     private func findNote(searchText: String) async throws -> [NoteInfo] {
-        // Create an AppleScript task to find notes matching search text
+        // AppleScript to find notes, formatting the output string with delimiters
         let script = """
+        on replaceText(theText, searchString, replaceString)
+            set AppleScript's text item delimiters to searchString
+            set theTextItems to text items of theText
+            set AppleScript's text item delimiters to replaceString
+            set theText to theTextItems as string
+            set AppleScript's text item delimiters to "" -- Reset
+            return theText
+        end replaceText
+
         tell application "System Events"
-            if not (exists process "Notes") then
-                tell application "Notes" to activate
-                delay 2
-            end if
-        end tell
+             if not (exists process "Notes") then
+                 try
+                     tell application "Notes" to activate
+                     delay 1
+                 on error errMsg number errorNum
+                      error "Notes Activation Failed: " & errMsg & " (" & errorNum & ")"
+                 end try
+             end if
+         end tell
 
         tell application "Notes"
-            set matchingNotes to notes where name contains "\(
-                escapeAppleScriptString(searchText)
-            )" or plaintext contains "\(escapeAppleScriptString(searchText))"
+            set noteDataString to ""
+            try
+                set matchingNotes to notes where name contains "\(
+                    escapeAppleScriptString(searchText)
+                )" or plaintext contains "\(escapeAppleScriptString(searchText))"
+            on error errMsg number errorNum
+                 error "Failed to search notes: " & errMsg & " (" & errorNum & ")"
+            end try
 
-            if length of matchingNotes is 0 then
-                return {}
-            end if
-
-            set noteList to {}
             repeat with currentNote in matchingNotes
-                set noteInfo to {name:name of currentNote, content:plaintext of currentNote}
-                set end of noteList to noteInfo
-            end repeat
+                 try
+                    set noteName to name of currentNote
+                    set noteContent to plaintext of currentNote
 
-            return noteList
+                    -- Replace potential delimiters within the actual content
+                    set noteName to my replaceText(noteName, "~~~", "---")
+                    set noteName to my replaceText(noteName, "^^^", "---")
+                    set noteContent to my replaceText(noteContent, "~~~", "---")
+                    set noteContent to my replaceText(noteContent, "^^^", "---")
+
+                    if noteDataString is not "" then
+                        set noteDataString to noteDataString & "^^^" -- Note separator
+                    end if
+                    set noteDataString to noteDataString & noteName & "~~~" & noteContent -- Field separator
+                on error errMsg number errorNum
+                    log "Skipping matching note due to error: " & errMsg & " (" & errorNum & ")"
+                end try
+            end repeat
+            return noteDataString
         end tell
         """
 
         let result = try await runAppleScript(script)
-        let notes = parseNotesResult(result)
+        logger.debug("findNote raw result length: \(result.count) for search: '\(searchText)'")
+        let notes = parseNotesResult(result) // Use the updated parser
 
-        if notes.isEmpty {
-            // Try to find a close match from all notes
-            let allNotes = try await getAllNotes()
-            let lowerSearchText = searchText.lowercased()
-            if let closestMatch = allNotes.first(where: { $0.name.lowercased().contains(lowerSearchText) }) {
-                return [closestMatch]
-            }
-        }
+        // Removed the potentially problematic Swift fallback search.
+        // Rely solely on the AppleScript search result.
+        // if notes.isEmpty { ... }
 
         return notes
     }
@@ -264,8 +330,11 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
         let formattedBody = formatNoteBody(body)
         // Format the body specifically for embedding in AppleScript (use \r)
         let appleScriptBody = formattedBody.replacingOccurrences(of: "\n", with: "\r")
-        
-        logger.debug("Creating note. Title: '\(title)', Folder: '\(folderName)', Body for AppleScript: \(appleScriptBody.prefix(50))...")
+
+        logger
+            .debug(
+                "Creating note. Title: '\(title)', Folder: '\(folderName)', Body for AppleScript: \(appleScriptBody.prefix(50))..."
+            )
 
         // Create an AppleScript task to create a note
         let script = """
@@ -275,16 +344,16 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                 delay 2
             end if
         end tell
-        
+
         tell application "Notes"
             -- No need to activate again here
-            
+
             -- Try to find the specified folder
             set targetFolder to null
             set folderFound to false
             set usedDefaultFolder to false
             set actualFolderName to "\(escapeAppleScriptString(folderName))"
-            
+
             set allFolders to every folder
             repeat with currentFolder in allFolders
                 if name of currentFolder is "\(escapeAppleScriptString(folderName))" then
@@ -293,7 +362,7 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                     exit repeat
                 end if
             end repeat
-            
+
             -- If the specified folder doesn't exist
             if not folderFound then
                 if "\(escapeAppleScriptString(folderName))" is "Claude" then
@@ -301,7 +370,7 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                     try
                         make new folder with properties {name:"Claude"}
                         set usedDefaultFolder to true
-                        
+
                         -- Find it again after creation
                         set allFolders to every folder
                         repeat with currentFolder in allFolders
@@ -316,22 +385,26 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                     end try
                 end if
             end if
-            
+
             -- Create the note
             if folderFound then
-                set newNote to make new note with properties {name:"\(escapeAppleScriptString(title))", body:"\(escapeAppleScriptString(appleScriptBody))"} at targetFolder
+                set newNote to make new note with properties {name:"\(escapeAppleScriptString(
+                    title
+                ))", body:"\(escapeAppleScriptString(appleScriptBody))"} at targetFolder
                 return {success:true, folderName:actualFolderName, usedDefaultFolder:usedDefaultFolder}
             else
                 -- Fall back to default folder
-                set newNote to make new note with properties {name:"\(escapeAppleScriptString(title))", body:"\(escapeAppleScriptString(appleScriptBody))"}
+                set newNote to make new note with properties {name:"\(escapeAppleScriptString(
+                    title
+                ))", body:"\(escapeAppleScriptString(appleScriptBody))"}
                 return {success:true, folderName:"Default", usedDefaultFolder:true}
             end if
         end tell
         """
-        
+
         let resultString = try await runAppleScript(script)
         // Pass the original formattedBody (with \n) for the result struct
-        return parseCreateNoteResult(resultString, title: title, body: formattedBody) 
+        return parseCreateNoteResult(resultString, title: title, body: formattedBody)
     }
 
     // MARK: - Helper Functions
@@ -405,7 +478,8 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
                         continuation.resume(throwing: NSError(
                             domain: "AppleScriptError",
                             code: (error[NSAppleScript.errorNumber] as? Int) ?? 1,
-                            userInfo: error as? [String: Any] ?? [NSLocalizedDescriptionKey: "AppleScript execution failed with unknown details."]
+                            userInfo: error as? [String: Any] ??
+                                [NSLocalizedDescriptionKey: "AppleScript execution failed with unknown details."]
                         ))
                     } else {
                         let resultString = output.stringValue ?? ""
@@ -425,40 +499,33 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
     }
 
     private func parseNotesResult(_ result: String) -> [NoteInfo] {
-        // Simple parsing logic - this is a simplification and may need enhancements
-        // In a real implementation, you'd need more robust parsing of AppleScript results
-        let lines = result.split(separator: "\n")
+        guard !result.isEmpty else {
+            logger.debug("parseNotesResult received empty string.")
+            return []
+        }
+
         var notes: [NoteInfo] = []
+        // Split notes using the note separator "^^^"
+        let noteStrings = result.components(separatedBy: "^^^")
+        logger.debug("parseNotesResult split into \(noteStrings.count) potential note segments.")
 
-        var currentNote: (name: String, content: String)?
+        for noteString in noteStrings {
+            // Split each note segment into fields using "~~~"
+            let fields = noteString.components(separatedBy: "~~~")
 
-        for line in lines {
-            let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if trimmedLine.starts(with: "name:") {
-                // If we were building a note, add it to the list
-                if let note = currentNote {
-                    notes.append(NoteInfo(name: note.name, content: note.content))
-                }
-
-                // Start a new note
-                let nameValue = String(trimmedLine.dropFirst(5)).trimmingCharacters(in: .whitespacesAndNewlines)
-                currentNote = (name: nameValue, content: "")
-            } else if trimmedLine.starts(with: "content:"), let note = currentNote {
-                let contentValue = String(trimmedLine.dropFirst(8)).trimmingCharacters(in: .whitespacesAndNewlines)
-                currentNote = (name: note.name, content: contentValue)
-
-                // Add this note to our list
-                notes.append(NoteInfo(name: note.name, content: contentValue))
-                currentNote = nil
+            // Expect exactly two fields: name and content
+            if fields.count == 2 {
+                let name = fields[0]
+                let content = fields[1]
+                // Note: We are not reversing the "---" replacement currently.
+                // This is usually fine for display/LLM processing.
+                notes.append(NoteInfo(name: name, content: content))
+            } else if !noteString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                // Log if we get a non-empty segment that doesn't split correctly
+                logger.warning("Could not parse note string segment into name/content: '\(noteString.prefix(100))...'")
             }
         }
-
-        // Add the last note if we have one
-        if let note = currentNote {
-            notes.append(NoteInfo(name: note.name, content: note.content))
-        }
-
+        logger.debug("parseNotesResult finished parsing, found \(notes.count) notes.")
         return notes
     }
 
@@ -586,12 +653,10 @@ public final class PetalNotesTool: OllamaCompatibleTool, MLXCompatibleTool {
     }
 }
 #endif
-/*
- Show me all my notes
- Find my notes about project ideas
- Create a new note titled "Meeting with Sam" with content "# Discussion Points
- 
- - Project timeline
- - Budget concerns
- - Next steps"
- */
+// Show me all my notes
+// Find my notes about project ideas
+// Create a new note titled "Meeting with Sam" with content "# Discussion Points
+//
+// - Project timeline
+// - Budget concerns
+// - Next steps"

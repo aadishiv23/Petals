@@ -25,6 +25,7 @@ public class ExemplarProvider {
         ],
         "petalCalendarCreateEventTool": [
             "Create a calendar event on [date]",
+            "Create an event titled EECS 449 Project on 2025-03-20 from 10:00 AM to 11:30 AM in UGLI",
             "Schedule a new calendar event",
             "Add a calendar event to my schedule",
             "Book an event on my calendar",

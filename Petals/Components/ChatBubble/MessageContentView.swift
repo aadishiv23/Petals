@@ -26,7 +26,7 @@ struct MessageContentView: View {
 //            else if message.message.contains("<think>") {
 //                ReasoningMessageView(chatMessage: message)
 //            }
-            else if message.message.hasPrefix("<think>") {
+            else if message.message.hasPrefix("<t") {
                 ReasoningMessageView(chatMessage: message)
             }
             // Existing handling for tool calls:

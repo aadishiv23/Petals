@@ -14,62 +14,16 @@
             filePath = "PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "522"
-            endingLineNumber = "522"
+            startingLineNumber = "550"
+            endingLineNumber = "550"
             landmarkName = "processToolCallArgument(with:argument:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "615E40BF-4D5A-4F55-8E6D-564B80EE55CC - 28013c20e9d39c7b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for PetalMLX.AppToolCallHandler.processToolCallArgument(with: PetalCore.MLXToolCallType, argument: PetalCore.MLXToolCallArguments) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "522"
-                  endingLineNumber = "522">
-               </Location>
-               <Location
-                  uuid = "615E40BF-4D5A-4F55-8E6D-564B80EE55CC - 78976915d2062822"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(23) suspend resume partial function for PetalMLX.AppToolCallHandler.processToolCallArgument(with: PetalCore.MLXToolCallType, argument: PetalCore.MLXToolCallArguments) async throws -&gt; Swift.String"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "522"
-                  endingLineNumber = "522">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7D2818B7-0DCF-4363-BAE7-C2C1D2DE7DC1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PetalCore/Sources/PetalCore/NLP/ExemplarProvider.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
-            landmarkName = "shouldUseTools(for:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FCDF8965-5077-4A65-9BC2-4A86E25B2445"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -85,6 +39,22 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "FCDF8965-5077-4A65-9BC2-4A86E25B2445"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalCore/Sources/PetalCore/NLP/ExemplarProvider.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "shouldUseTools(for:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "7B6CC4C3-A79F-4793-B278-EAB75C04499E"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -93,7 +63,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "588"
-            endingLineNumber = "588">
+            endingLineNumber = "588"
+            landmarkName = "==(lhs:rhs:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -107,7 +79,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "589"
-            endingLineNumber = "589">
+            endingLineNumber = "589"
+            landmarkName = "==(lhs:rhs:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -120,8 +94,8 @@
             filePath = "PetalCore/Sources/PetalCore/NLP/ExemplarProvider.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "shouldUseTools(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -129,93 +103,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CD1E6FD0-0FE7-4DE5-8398-E23E44B30B89"
+            uuid = "DC9F1ED2-8E65-414D-A39F-4AB21DB8112C"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "PetalTools/Sources/PetalTools/Tools/Calendar/PetalCalendarFetchEventsTool.swift"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
-            landmarkName = "execute(_:)"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "streamConversation(model:messages:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "CD1E6FD0-0FE7-4DE5-8398-E23E44B30B89 - ca79bfb0aeeb1d11"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalTools.PetalCalendarFetchEventsTool.execute(PetalTools.PetalCalendarFetchEventsTool.Input) async throws -&gt; PetalTools.PetalCalendarFetchEventsTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Calendar/PetalCalendarFetchEventsTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "182"
-                  endingLineNumber = "182">
-               </Location>
-               <Location
-                  uuid = "CD1E6FD0-0FE7-4DE5-8398-E23E44B30B89 - fce63e210dead953"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for PetalTools.PetalCalendarFetchEventsTool.execute(PetalTools.PetalCalendarFetchEventsTool.Input) async throws -&gt; PetalTools.PetalCalendarFetchEventsTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Calendar/PetalCalendarFetchEventsTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "182"
-                  endingLineNumber = "182">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C3CD09D2-3DA7-4FA8-8340-10CCD2BC1FAC"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PetalTools/Sources/PetalTools/Tools/Calendar/PetalCalendarFetchEventsTool.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "execute(_:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C3CD09D2-3DA7-4FA8-8340-10CCD2BC1FAC - ca79bfb0aeeb1f8c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for PetalTools.PetalCalendarFetchEventsTool.execute(PetalTools.PetalCalendarFetchEventsTool.Input) async throws -&gt; PetalTools.PetalCalendarFetchEventsTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Calendar/PetalCalendarFetchEventsTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "193"
-                  endingLineNumber = "193">
-               </Location>
-               <Location
-                  uuid = "C3CD09D2-3DA7-4FA8-8340-10CCD2BC1FAC - fce63e210deadbce"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for PetalTools.PetalCalendarFetchEventsTool.execute(PetalTools.PetalCalendarFetchEventsTool.Input) async throws -&gt; PetalTools.PetalCalendarFetchEventsTool.Output"
-                  moduleName = "Petals.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalTools/Sources/PetalTools/Tools/Calendar/PetalCalendarFetchEventsTool.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "193"
-                  endingLineNumber = "193">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

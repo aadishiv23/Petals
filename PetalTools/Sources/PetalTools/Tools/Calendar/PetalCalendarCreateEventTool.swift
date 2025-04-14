@@ -4,11 +4,13 @@
 //
 //  Created by Aadi Shiv Malhotra on 3/11/25.
 //
+//  This version uses FLEXIBLE date parsing to handle various common formats.
+//
 
 import EventKit
 import Foundation
-import PetalCore
-import SwiftUI
+import PetalCore // Make sure PetalCore contains necessary definitions like PetalToolError if used
+import SwiftUI // If used for Logger, otherwise can be removed
 
 public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompatibleTool {
 
@@ -17,7 +19,6 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
     // MARK: - Ollama Tool Definition
 
     public func asOllamaTool() -> OllamaTool {
-        // NOTE: Using a minimal approach here—no "items" or "properties" in OllamaFunctionProperty.
         OllamaTool(
             type: "function",
             function: OllamaFunction(
@@ -32,11 +33,11 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
                         ),
                         "startDate": OllamaFunctionProperty(
                             type: "string",
-                            description: "ISO date string for the event start time."
+                            description: "Date/time string (e.g., ISO 8601, YYYY-MM-DD HH:mm:ss, YYYY-MM-DD) for the event start time." // Flexible description
                         ),
                         "endDate": OllamaFunctionProperty(
                             type: "string",
-                            description: "ISO date string for the event end time."
+                            description: "Date/time string (e.g., ISO 8601, YYYY-MM-DD HH:mm:ss, YYYY-MM-DD) for the event end time." // Flexible description
                         ),
                         "calendarName": OllamaFunctionProperty(
                             type: "string",
@@ -100,14 +101,14 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
             ),
             PetalToolParameter(
                 name: "startDate",
-                description: "ISO date string for the event start time.",
+                description: "Date/time string (e.g., ISO 8601, YYYY-MM-DD HH:mm:ss, YYYY-MM-DD) for the event start time.", // Flexible description
                 dataType: .string,
                 required: true,
                 example: AnyCodable("2025-03-20T10:00:00Z")
             ),
             PetalToolParameter(
                 name: "endDate",
-                description: "ISO date string for the event end time.",
+                description: "Date/time string (e.g., ISO 8601, YYYY-MM-DD HH:mm:ss, YYYY-MM-DD) for the event end time.", // Flexible description
                 dataType: .string,
                 required: true,
                 example: AnyCodable("2025-03-20T11:00:00Z")
@@ -192,125 +193,230 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
     }
 
     public struct Recurrence: Codable {
-        public let frequency: String
-        public let interval: Int?
-        public let endDate: String?
-        public let occurrences: Int?
+        public let frequency: String // e.g., "daily", "weekly"
+        public let interval: Int?    // e.g., 1 for every week, 2 for every other week
+        public let endDate: String?  // Date string (needs flexible parsing too)
+        public let occurrences: Int? // Number of times
+        // Add support for daysOfWeek, daysOfMonth etc. if needed later
     }
 
     public struct Output: Codable, Sendable {
-        public let event: String
+        public let event: String // Confirmation message
     }
 
     public func execute(_ input: Input) async throws -> Output {
         let eventStore = EKEventStore()
-        try await eventStore.requestFullAccessToEvents()
+        // Request permission using the helper function
         try await requestCalendarAccess(eventStore: eventStore)
 
         let event = EKEvent(eventStore: eventStore)
         event.title = input.title
 
-        let isoFormatter = ISO8601DateFormatter()
-        guard
-            let start = isoFormatter.date(from: input.startDate),
-            let end = isoFormatter.date(from: input.endDate)
-        else {
-            throw NSError(
-                domain: "CalendarError",
-                code: 2,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid date format."]
-            )
+        // --- Flexible Date Parsing Logic ---
+        // Use the helper function defined below
+        guard let start = parseFlexibleDateString(input.startDate) else {
+            print("ERROR: Failed to parse start date: \(input.startDate)")
+            throw PetalToolError.invalidDateFormat(input.startDate)
         }
+
+        guard let end = parseFlexibleDateString(input.endDate, isEndDate: true) else {
+             print("ERROR: Failed to parse end date: \(input.endDate)")
+            throw PetalToolError.invalidDateFormat(input.endDate)
+        }
+
+        // Ensure end date is after start date
+        guard end > start else {
+            let errorMsg = "End date (\(end)) must be after start date (\(start))."
+            print("ERROR: \(errorMsg)")
+            throw PetalToolError.invalidDateLogic(errorMsg)
+        }
+
         event.startDate = start
         event.endDate = end
+        print("INFO: Successfully parsed dates - Start: \(start), End: \(end)")
+        // --- End of Flexible Date Parsing ---
+
 
         // Choose calendar
-        if let calName = input.calendarName?.lowercased(),
+        if let calName = input.calendarName?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), !calName.isEmpty,
            let foundCal = eventStore.calendars(for: .event)
            .first(where: { $0.title.lowercased() == calName })
         {
             event.calendar = foundCal
+            print("INFO: Found and selected calendar: \(foundCal.title)")
         } else if let defaultCal = eventStore.defaultCalendarForNewEvents {
             event.calendar = defaultCal
+             print("INFO: Calendar '\(input.calendarName ?? "Not Specified")' not found or not provided. Using default calendar: \(defaultCal.title)")
         } else {
-            throw NSError(
-                domain: "CalendarError",
-                code: 2,
-                userInfo: [NSLocalizedDescriptionKey: "No available calendar. Please select one."]
-            )
+             print("ERROR: No default calendar available and requested calendar not found.")
+            throw PetalToolError.internalError("No default calendar found and specified calendar was invalid or not provided.")
         }
 
         // Optional fields
-        event.location = input.location
+        event.location = input.location?.trimmingCharacters(in: .whitespacesAndNewlines)
         event.notes = input.notes
         if let urlString = input.url, let parsedURL = URL(string: urlString) {
             event.url = parsedURL
         }
+        // Handle allDay before setting availability, as it might affect it
         if let isAllDay = input.isAllDay {
             event.isAllDay = isAllDay
+            if isAllDay {
+                // All-day events typically span from start of start day to start of day after end day
+                event.startDate = Calendar.current.startOfDay(for: start)
+                // To make an all-day event span one full day from a date-only input:
+                let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: event.startDate) ?? end
+                event.endDate = Calendar.current.startOfDay(for: endOfDay)
+                print("INFO: Adjusted dates for all-day event: \(event.startDate!) to \(event.endDate!)")
+            }
         }
         if let availability = input.availability {
-            event.availability = EKEventAvailability(availability)
+            event.availability = EKEventAvailability(availability) // Assumes extension exists
         }
         if let alarms = input.alarms {
-            event.alarms = alarms.map { EKAlarm(relativeOffset: -TimeInterval($0 * 60)) }
+            // Ensure alarms are non-negative offsets
+            event.alarms = alarms.filter { $0 >= 0 }.map { EKAlarm(relativeOffset: -TimeInterval($0 * 60)) }
         }
 
         // Recurrence
         if let rec = input.recurrence {
-            let freq = EKRecurrenceFrequency(rec.frequency)
+            let freq = EKRecurrenceFrequency(rec.frequency) // Assumes extension exists
             let interval = rec.interval ?? 1
-            let end: EKRecurrenceEnd? = {
-                if let endDateStr = rec.endDate, let parsedEnd = isoFormatter.date(from: endDateStr) {
+            let endRecurrence: EKRecurrenceEnd? = {
+                // Use flexible parsing for the recurrence end date too
+                if let endDateStr = rec.endDate, let parsedEnd = parseFlexibleDateString(endDateStr, isEndDate: true) {
+                    // Recurrence end date should generally be inclusive
                     return EKRecurrenceEnd(end: parsedEnd)
-                } else if let occurrences = rec.occurrences {
+                } else if let occurrences = rec.occurrences, occurrences > 0 {
                     return EKRecurrenceEnd(occurrenceCount: occurrences)
                 }
+                 print("WARN: Could not parse recurrence end date '\(rec.endDate ?? "nil")' or invalid occurrences '\(rec.occurrences ?? -1)'. No recurrence end set.")
                 return nil
             }()
-            let rule = EKRecurrenceRule(recurrenceWith: freq, interval: interval, end: end)
+            // Ensure interval is positive
+            let rule = EKRecurrenceRule(recurrenceWith: freq, interval: max(1, interval), end: endRecurrence)
             event.recurrenceRules = [rule]
+             print("INFO: Added recurrence rule: Freq=\(freq), Interval=\(max(1, interval)), End=\(String(describing: endRecurrence))")
         }
 
         // Save event
-        try eventStore.save(event, span: .thisEvent)
+        do {
+            // For recurring events, .futureEvents is often needed to apply to all instances
+            let span: EKSpan = event.hasRecurrenceRules ? .futureEvents : .thisEvent
+            try eventStore.save(event, span: span)
+            print("INFO: Event '\(event.title ?? "")' saved successfully to calendar '\(event.calendar.title)' with span '\(span == .futureEvents ? "Future Events" : "This Event")'.")
+        } catch {
+             print("ERROR: Failed to save event: \(error.localizedDescription)")
+            throw PetalToolError.eventSaveFailed(error)
+        }
 
-        let confirmation = "Event '\(event.title ?? "Untitled")' scheduled from \(input.startDate) to \(input.endDate)."
+        // Use DateFormatter for user-friendly confirmation message
+        let outputDateFormatter = DateFormatter()
+        outputDateFormatter.dateStyle = .medium
+        outputDateFormatter.timeStyle = .short
+        let startStrFormatted = outputDateFormatter.string(from: event.startDate)
+        let endStrFormatted = outputDateFormatter.string(from: event.endDate)
+
+        let confirmation = "OK. Event '\(event.title ?? "Untitled")' scheduled in calendar '\(event.calendar.title)' from \(startStrFormatted) to \(endStrFormatted)."
         return Output(event: confirmation)
     }
 
+
+    // MARK: - Date Parsing Helper
+
+    /// Attempts to parse a date string using multiple common formats.
+    /// - Parameters:
+    ///   - dateString: The string potentially containing a date.
+    ///   - isEndDate: If true and the format is date-only (YYYY-MM-DD), adjusts the time to the end of that day.
+    /// - Returns: A `Date` object if parsing is successful, otherwise `nil`.
+    private func parseFlexibleDateString(_ dateString: String, isEndDate: Bool = false) -> Date? {
+        let trimmedString = dateString.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedString.isEmpty else { return nil }
+
+        // Reusable formatters
+        let isoFormatter = ISO8601DateFormatter()
+        let standardFormatter = DateFormatter()
+        standardFormatter.locale = Locale(identifier: "en_US_POSIX") // Crucial for fixed formats
+
+        // 1. Try ISO8601 with Timezone/Fractional Seconds (Most specific)
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = isoFormatter.date(from: trimmedString) { return date }
+
+        // 2. Try ISO8601 with Timezone (No fractional seconds)
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        if let date = isoFormatter.date(from: trimmedString) { return date }
+
+        // 3. Try "YYYY-MM-DD HH:mm:ss" (Common non-ISO format)
+        standardFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        if let date = standardFormatter.date(from: trimmedString) { return date }
+
+        // 4. Try "YYYY-MM-DD HH:mm" (Slight variation)
+        standardFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        if let date = standardFormatter.date(from: trimmedString) { return date }
+
+        // 5. Try "YYYY-MM-DD" (Date only)
+        isoFormatter.formatOptions = [.withFullDate]
+        if let date = isoFormatter.date(from: trimmedString) {
+            // Adjust time for date-only strings
+            if isEndDate {
+                // For end dates, go to the very end of the day for inclusiveness
+                return Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: date)
+            } else {
+                // For start dates, use the beginning of the day
+                return Calendar.current.startOfDay(for: date)
+            }
+        }
+
+        // 6. Add more formats if needed (e.g., "MM/dd/yyyy HH:mm", "MMM d, yyyy h:mm a")
+        // standardFormatter.dateFormat = "MM/dd/yyyy HH:mm"
+        // if let date = standardFormatter.date(from: trimmedString) { return date }
+
+        print("WARN: Could not parse date string '\(trimmedString)' with any known format.")
+        return nil // Failed to parse with any known format
+    }
+
+
     // MARK: - Permissions
 
+    /// Requests calendar access if not already determined or granted.
+    /// Throws a `PetalToolError` if access is denied, restricted, or cannot be obtained.
     private func requestCalendarAccess(eventStore: EKEventStore) async throws {
         let status = EKEventStore.authorizationStatus(for: .event)
         switch status {
         case .notDetermined:
-            let granted = try await eventStore.requestAccess(to: .event)
-            if !granted {
-                throw NSError(domain: "CalendarError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Access denied"])
+            print("INFO: Calendar access not determined. Requesting...")
+            // Use requestFullAccessToEvents if targeting iOS 17+, otherwise requestAccess
+            let granted: Bool
+            if #available(iOS 17.0, macOS 14.0, *) {
+                 granted = try await eventStore.requestFullAccessToEvents()
+            } else {
+                 granted = try await eventStore.requestAccess(to: .event)
             }
+
+            if !granted {
+                print("ERROR: Calendar access denied by user during request.")
+                throw PetalToolError.permissionDenied
+            }
+             print("INFO: Calendar access granted after request.")
         case .denied, .restricted:
-            throw NSError(domain: "CalendarError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Access denied"])
-        case .authorized, .fullAccess:
+             print("ERROR: Calendar access is denied or restricted.")
+            throw PetalToolError.permissionDenied // Treat restricted same as denied for create
+        case .authorized, .fullAccess: // .authorized is deprecated but handle for compatibility
+            print("INFO: Calendar access already granted.")
             return
         case .writeOnly:
-            throw NSError(
-                domain: "CalendarError",
-                code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Write-only access is insufficient."]
-            )
-
+            // WriteOnly might be sufficient for creating, but reading default cal might fail? Test this.
+            // Let's assume it's OK for now, but full access is safer.
+             print("WARN: Calendar access is write-only. Proceeding, but might encounter issues reading default calendar.")
+             return
         @unknown default:
-            throw NSError(
-                domain: "CalendarError",
-                code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Unknown authorization status"]
-            )
+             print("ERROR: Unknown calendar authorization status encountered.")
+            throw PetalToolError.internalError("Unknown calendar authorization status.")
         }
     }
 
     // MARK: - MLX-Compatible
-    
+
     public func asMLXToolDefinition() -> MLXToolDefinition {
         return MLXToolDefinition(
             type: "function",
@@ -326,11 +432,11 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
                         ),
                         "startDate": MLXParameterProperty(
                             type: "string",
-                            description: "ISO date string for the event start time."
+                            description: "Date/time string (e.g., ISO 8601, YYYY-MM-DD HH:mm:ss, YYYY-MM-DD) for the event start time." // Flexible description
                         ),
                         "endDate": MLXParameterProperty(
                             type: "string",
-                            description: "ISO date string for the event end time."
+                            description: "Date/time string (e.g., ISO 8601, YYYY-MM-DD HH:mm:ss, YYYY-MM-DD) for the event end time." // Flexible description
                         ),
                         "calendarName": MLXParameterProperty(
                             type: "string",
@@ -344,6 +450,7 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
                             type: "string",
                             description: "Notes or description for the event."
                         )
+                        // Add other optional parameters here if desired for MLX definition
                     ],
                     required: ["title", "startDate", "endDate"]
                 )
@@ -355,25 +462,33 @@ public final class PetalCalendarCreateEventTool: OllamaCompatibleTool, MLXCompat
 // MARK: - Availability / Recurrence Extensions
 
 extension EKEventAvailability {
+    /// Initializes EKEventAvailability based on a lowercase string representation.
+    /// Defaults to `.busy` if the string doesn't match known availabilities.
     fileprivate init(_ string: String) {
         switch string.lowercased() {
         case "busy": self = .busy
         case "free": self = .free
         case "tentative": self = .tentative
         case "unavailable": self = .unavailable
-        default: self = .busy
+        default:
+             print("WARN: Unknown EKEventAvailability string '\(string)', defaulting to .busy")
+             self = .busy
         }
     }
 }
 
 extension EKRecurrenceFrequency {
+    /// Initializes EKRecurrenceFrequency based on a lowercase string representation.
+    /// Defaults to `.daily` if the string doesn't match known frequencies.
     fileprivate init(_ string: String) {
         switch string.lowercased() {
         case "daily": self = .daily
         case "weekly": self = .weekly
         case "monthly": self = .monthly
         case "yearly": self = .yearly
-        default: self = .daily
+        default:
+            print("WARN: Unknown EKRecurrenceFrequency string '\(string)', defaulting to .daily")
+            self = .daily
         }
     }
 }

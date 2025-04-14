@@ -87,7 +87,7 @@ public struct ToolTriggerEvaluator {
     ///   - exemplarPrototype: The prototype embedding computed from exemplar phrases.
     ///   - threshold: The similarity threshold (0 to 1) for a match.
     /// - Returns: True if the message's similarity to the prototype is at least the threshold.
-    public func shouldTriggerTool(for message: String, exemplarPrototype: [Double], threshold: Double = 0.85) -> Bool {
+    public func shouldTriggerTool(for message: String, exemplarPrototype: [Double], threshold: Double = 0.82) -> Bool {
         guard let messageVector = self.vector(for: message) else { return false }
         let similarity = cosineSimilarity(messageVector, exemplarPrototype)
         return similarity >= threshold
