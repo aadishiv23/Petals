@@ -7,8 +7,8 @@
 
 import Foundation
 import MLXLMCommon
-import SwiftUI
 import PetalCore
+import SwiftUI
 
 /// A concrete chat model that wraps PetalMLXService and conforms to AIChatModel.
 @MainActor
@@ -19,7 +19,7 @@ public class PetalMLXChatModel: AIChatModel {
     /// Initialize with a model configuration.
     public init(model: ModelConfiguration) {
         self.model = model
-        self.service = PetalMLXService()  // Now safe because we're on the MainActor.
+        self.service = PetalMLXService() // Now safe because we're on the MainActor.
     }
 
     /// Sends a complete message (non-streaming) using PetalMLXService.
@@ -36,8 +36,12 @@ public class PetalMLXChatModel: AIChatModel {
         AsyncThrowingStream { continuation in
             Task {
                 do {
+                    let systemMessage = ChatMessage(
+                        message: "You are a helpful assistant with access to calendar and other tools. Only use tools when explicitly requested. For calendar tools, use the appropriate parameters based on the user request.",
+                        participant: .system
+                    )
                     let userMessage = ChatMessage(message: text, participant: .user)
-                    let stream = service.streamConversation(model: model, messages: [userMessage])
+                    let stream = service.streamConversation(model: model, messages: [systemMessage, userMessage])
                     for try await chunk in stream {
                         continuation.yield(chunk)
                     }

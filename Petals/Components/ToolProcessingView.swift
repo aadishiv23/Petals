@@ -13,21 +13,21 @@ struct ToolProcessingView: View {
     // Animation states for the steps
     @State private var currentStep = 0
     @State private var opacity = 0.7
-    
-    // Processing steps definition
+
+    /// Processing steps definition
     let processingSteps = [
         (icon: "arrow.down.doc.fill", text: "Processing Input"),
         (icon: "hammer.fill", text: "Using Tool"),
         (icon: "lightbulb.max.fill", text: "Thinking"),
         (icon: "text.badge.checkmark", text: "Preparing Output")
     ]
-    
-    // Timer for animation progression
-    let timer = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
-    
-    // For the glowing outline
+
+    /// Timer for animation progression
+    let timer = Timer.publish(every: 2.0, on: .main, in: .common).autoconnect()
+
+    /// For the glowing outline
     @State private var glowPhase: Double = 0
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(0..<processingSteps.count, id: \.self) { index in
@@ -38,13 +38,13 @@ struct ToolProcessingView: View {
                             .fill(Color(hex: index == currentStep ? "5E5CE6" : "D8D8D8"))
                             .frame(width: 28, height: 28)
                             .opacity(index == currentStep ? 1.0 : 0.5)
-                        
+
                         Image(systemName: processingSteps[index].icon)
                             .font(.system(size: 12))
                             .foregroundColor(index == currentStep ? .white : Color(.secondaryLabelColor))
                     }
                     .animation(.easeInOut(duration: 0.3), value: currentStep)
-                    
+
                     // Step text with animated opacity
                     Text(processingSteps[index].text)
                         .font(.system(size: 14, weight: index == currentStep ? .medium : .regular))
@@ -52,7 +52,7 @@ struct ToolProcessingView: View {
                         .opacity(index == currentStep ? 1.0 : 0.7)
                         .animation(.easeInOut(duration: 0.3), value: currentStep)
                 }
-                
+
                 // Progress line connecting steps
                 if index < processingSteps.count - 1 {
                     Rectangle()
@@ -107,6 +107,7 @@ struct ToolProcessingView: View {
 }
 
 // MARK: - Preview
+
 struct ToolProcessingView_Previews: PreviewProvider {
     static var previews: some View {
         ToolProcessingView()

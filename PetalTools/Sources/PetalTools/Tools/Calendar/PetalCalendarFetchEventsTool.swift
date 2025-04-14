@@ -5,28 +5,28 @@
 //  Created by Aadi Shiv Malhotra on 3/11/25.
 //
 
-import Foundation
-import SwiftUI
 import EventKit
+import Foundation
 import PetalCore
+import SwiftUI
 
 /// A tool to fetch calendar events with flexible filtering options.
 public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool, MLXCompatibleTool {
-    
+
     public init() {}
-    
+
     public let uuid: UUID = .init()
     public var id: String { "petalCalendarFetchEventsTool" }
     public var name: String { "Petal Calendar Fetch Events Tool" }
     public var description: String { "Fetches calendar events with flexible filtering options." }
-    
-    public var triggerKeywords: [String] {  ["events", "fetch"] }
+
+    public var triggerKeywords: [String] { ["events", "fetch"] }
     public var domain: String { "calendar" }
     public var requiredPermission: PetalToolPermission { .basic }
-    
+
     /// Define the parameters for this tool.
     public var parameters: [PetalToolParameter] {
-        return [
+        [
             PetalToolParameter(
                 name: "startDate",
                 description: "ISO date string for the start of the date range (defaults to now if not specified)",
@@ -92,7 +92,7 @@ public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool, MLXCompat
             )
         ]
     }
-    
+
     /// Input parameters for fetching events.
     public struct Input: Codable {
         public let startDate: String?
@@ -105,96 +105,98 @@ public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool, MLXCompat
         public let hasAlarms: Bool?
         public let isRecurring: Bool?
     }
-    
+
     /// Output containing a formatted list of events.
     public struct Output: Codable, Sendable {
         public let events: String
     }
-    
+
     /// Executes the tool by fetching calendar events based on the provided input.
     ///
     /// - Parameter input: An `Input` struct containing filtering options.
     /// - Returns: An `Output` struct with a string listing of the events.
     public func execute(_ input: Input) async throws -> Output {
         let eventStore = EKEventStore()
-        
+
         // Request access to the calendar if not already authorized.
         if EKEventStore.authorizationStatus(for: .event) != .authorized {
             try await eventStore.requestAccess(to: .event)
         }
-        
+
         let isoFormatter = ISO8601DateFormatter()
         let now = Date()
-        var startDate = now
-        var endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: now)!
-        
+
+        // Default window: yesterday to tomorrow
+        var startDate = Calendar.current.date(byAdding: .day, value: -1, to: now)!
+        var endDate = Calendar.current.date(byAdding: .day, value: 1, to: now)!
+
         if let startStr = input.startDate, let parsed = isoFormatter.date(from: startStr) {
             startDate = parsed
         }
         if let endStr = input.endDate, let parsed = isoFormatter.date(from: endStr) {
             endDate = parsed
         }
-        
+
         // Filter calendars if specific names are provided.
         var calendars = eventStore.calendars(for: .event)
         if let names = input.calendarNames, !names.isEmpty {
             let lowercasedNames = Set(names.map { $0.lowercased() })
             calendars = calendars.filter { lowercasedNames.contains($0.title.lowercased()) }
         }
-        
+
         // Create predicate for events within the given date range.
         let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: calendars)
         var events = eventStore.events(matching: predicate)
-        
+
         // Apply additional filters.
         if let includeAllDay = input.includeAllDay, includeAllDay == false {
             events = events.filter { !$0.isAllDay }
         }
-        
+
         if let search = input.searchText, !search.isEmpty {
             events = events.filter {
                 ($0.title?.localizedCaseInsensitiveContains(search) ?? false)
-                || ($0.location?.localizedCaseInsensitiveContains(search) ?? false)
+                    || ($0.location?.localizedCaseInsensitiveContains(search) ?? false)
             }
         }
-        
+
         if let statusStr = input.status {
             let statusValue = EKEventStatus(statusStr)
             events = events.filter { $0.status == statusValue }
         }
-        
+
         if let availabilityStr = input.availability {
             let availValue = EKEventAvailability(availabilityStr)
             events = events.filter { $0.availability == availValue }
         }
-        
+
         if let hasAlarms = input.hasAlarms {
             events = events.filter { $0.hasAlarms == hasAlarms }
         }
-        
+
         if let isRecurring = input.isRecurring {
             events = events.filter { $0.hasRecurrenceRules == isRecurring }
         }
-        
+
         // Format the events into a readable string.
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .short
-        
+
         let eventList = events.map { event in
             let title = event.title ?? "Untitled Event"
             let startStr = dateFormatter.string(from: event.startDate)
             let location = event.location ?? ""
             return "• \(title) @ \(startStr)" + (location.isEmpty ? "" : " - \(location)")
         }.joined(separator: "\n")
-        
+
         let eventsOutput = eventList.isEmpty ? "No events found for the specified criteria." : eventList
         return Output(events: eventsOutput)
     }
-    
+
     /// Converts this tool into an Ollama-compatible tool representation.
     public func asOllamaTool() -> OllamaTool {
-        return OllamaTool(
+        OllamaTool(
             type: "function",
             function: OllamaFunction(
                 name: "petalCalendarFetchEventsTool",
@@ -244,11 +246,11 @@ public final class PetalCalendarFetchEventsTool: OllamaCompatibleTool, MLXCompat
             )
         )
     }
-    
+
     // MARK: - MLX-Compatible
-    
+
     public func asMLXToolDefinition() -> MLXToolDefinition {
-        return MLXToolDefinition(
+        MLXToolDefinition(
             type: "function",
             function: MLXFunctionDefinition(
                 name: "petalCalendarFetchEventsTool",

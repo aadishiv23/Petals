@@ -205,34 +205,7 @@ struct MobileGeminiChatView: View {
     // MARK: - Helper Methods
     
     private func toolLoadingView(for msg: ChatMessage) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            MobileAvatar(participant: .llm)
-                .offset(y: 2)
-            
-            // Enhanced loading animation
-            HStack(spacing: 4) {
-                ForEach(0..<3, id: \.self) { index in
-                    Circle()
-                        .fill(Color(hex: "5E5CE6").opacity(0.7))
-                        .frame(width: 8, height: 8)
-                        .offset(y: sin(Double(index) * 0.3) * 4)
-                        .animation(
-                            Animation.easeInOut(duration: 0.5)
-                                .repeatForever()
-                                .delay(Double(index) * 0.15),
-                            value: index
-                        )
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(UIColor.secondarySystemBackground))
-            )
-            
-            Spacer()
-        }
+        EnhancedToolView(message: msg)
     }
     
     private func scrollToBottom(proxy: ScrollViewProxy) {

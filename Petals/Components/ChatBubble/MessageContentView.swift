@@ -21,20 +21,21 @@ struct MessageContentView: View {
                     .padding(.vertical, 6)
                     .padding(.horizontal, 12)
                     .background(Capsule().fill(bubbleColor))
-                    .onAppear {
-                        print("\(message.participant.stringValue)")
-                        print("🩸 typing indicator appeared")
-                    }
-            } else if let toolName = message.toolCallName {
+            }
+            // Use the custom reasoning view if the message contains a chain-of-thought.
+//            else if message.message.contains("<think>") {
+//                ReasoningMessageView(chatMessage: message)
+//            }
+            else if message.message.hasPrefix("<think>") {
+                ReasoningMessageView(chatMessage: message)
+            }
+            // Existing handling for tool calls:
+            else if let toolName = message.toolCallName {
                 ToolMessageView(message: message, bubbleColor: bubbleColor, toolName: toolName)
-                    .onAppear {
-                        print("🙅‍♂️ tool message view appeared")
-                    }
-            } else {
+            }
+            // Otherwise, fall back to a regular text message view.
+            else {
                 TextMessageView(message: message, bubbleColor: bubbleColor, textColor: textColor)
-                    .onAppear {
-                        print("💀 text msg view appeared")
-                    }
             }
 
             if !message.pending {
@@ -46,4 +47,4 @@ struct MessageContentView: View {
             }
         }
     }
-} 
+}

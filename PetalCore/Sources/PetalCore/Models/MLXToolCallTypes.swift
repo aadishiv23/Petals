@@ -178,7 +178,22 @@ public enum MLXToolCallArguments: Codable {
         if try container.contains(.startDate) || container.contains(.endDate) || container.contains(.calendarNames) {
             let startDate = try container.decodeIfPresent(String.self, forKey: .startDate)
             let endDate = try container.decodeIfPresent(String.self, forKey: .endDate)
-            let calendarNames = try container.decodeIfPresent([String].self, forKey: .calendarNames)
+            let calendarNames: [String]? = {
+                if let array = try? container.decodeIfPresent([String].self, forKey: .calendarNames) {
+                    return array
+                } else if let singleString = try? container.decodeIfPresent(String.self, forKey: .calendarNames) {
+                    // Convert string like "['Work', 'Personal']" into an actual array
+                    let trimmed = singleString.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let noBrackets = trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+                    let split = noBrackets.split(separator: ",").map {
+                        $0.trimmingCharacters(in: .whitespacesAndNewlines)
+                            .trimmingCharacters(in: CharacterSet(charactersIn: "'\""))
+                    }
+                    return split.isEmpty ? nil : split
+                } else {
+                    return nil
+                }
+            }()
             let searchText = try container.decodeIfPresent(String.self, forKey: .searchText)
             let includeAllDay = try container.decodeIfPresent(Bool.self, forKey: .includeAllDay)
             let status = try container.decodeIfPresent(String.self, forKey: .status)

@@ -132,6 +132,110 @@ struct MobileToolProcessingView: View {
     }
 }
 
+// MARK: - Enhanced Tool View
+
+struct EnhancedToolView: View {
+    let message: ChatMessage
+    @State private var animationPhase = 0.0
+    let accentColor = Color(hex: "5E5CE6")
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            MobileAvatar(participant: .llm)
+                .overlay(
+                    Circle()
+                        .stroke(accentColor.opacity(0.5), lineWidth: 2)
+                        .scaleEffect(1.0 + sin(animationPhase) * 0.1)
+                )
+                .offset(y: 4)
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Petals")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 2)
+                
+                toolProcessingBubble
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .onAppear {
+            withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
+                animationPhase = .pi * 2
+            }
+        }
+    }
+    
+    private var toolProcessingBubble: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Text("Processing")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                
+                ForEach(0..<3, id: \.self) { i in
+                    Circle()
+                        .fill(accentColor)
+                        .frame(width: 6, height: 6)
+                        .opacity(0.7 + 0.3 * sin(animationPhase + Double(i) * 0.5))
+                }
+            }
+            
+            progressView
+            
+            HStack(spacing: 12) {
+                toolIcon("gearshape", rotationAngle: animationPhase * 30)
+                toolIcon("sparkles", scale: 1.0 + sin(animationPhase) * 0.2)
+                toolIcon("bolt.fill", offset: sin(animationPhase) * 4)
+            }
+            .padding(.vertical, 4)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(UIColor.secondarySystemBackground))
+                .shadow(color: accentColor.opacity(0.2), radius: 8, x: 0, y: 4)
+        )
+    }
+    
+    private var progressView: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Background
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(height: 6)
+                
+                // Progress indicator
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(LinearGradient(
+                        colors: [accentColor, accentColor.opacity(0.7)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ))
+                    .frame(width: geometry.size.width * (0.1 + 0.3 * sin(animationPhase) + 0.3), height: 6)
+                    .shadow(color: accentColor.opacity(0.3), radius: 2, x: 0, y: 0)
+            }
+        }
+        .frame(height: 6)
+    }
+    
+    private func toolIcon(
+        _ name: String,
+        rotationAngle: Double = 0,
+        scale: CGFloat = 1.0,
+        offset: CGFloat = 0
+    ) -> some View {
+        Image(systemName: name)
+            .font(.system(size: 16))
+            .foregroundColor(accentColor)
+            .rotationEffect(.degrees(rotationAngle))
+            .scaleEffect(scale)
+            .offset(y: offset)
+    }
+}
+
+
 //
 //  ToolTriggerEvaluator.swift
 //  Petals
