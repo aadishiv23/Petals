@@ -102,14 +102,14 @@ struct MobileGeminiChatView: View {
     }
     
     private var inputBarView: some View {
-        HStack(alignment: .bottom, spacing: 0) {
-            // Model picker button
-            modelPickerButton
-            
-            // Text input field
-            chatInput
-        }
-        .padding()
+        ModernChatInputBar(
+            text: $userInput,
+            isFocused: $inputIsFocused,
+            isLoading: conversationVM.busy,
+            isEnabled: !conversationVM.busy,
+            onSend: sendMessage,
+            onModelPicker: { showModelPicker.toggle() }
+        )
     }
     
     private var navigationModelPickerView: some View {
@@ -125,81 +125,6 @@ struct MobileGeminiChatView: View {
                     }
                 }
         }
-    }
-    
-    // MARK: - Input Components
-    
-    private var modelPickerButton: some View {
-        Button {
-            // Add haptic feedback if available in your app
-            showModelPicker.toggle()
-        } label: {
-            Image(systemName: "chevron.up")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 16)
-                .tint(.primary)
-                .frame(width: 48, height: 48)
-                .background(
-                    Circle()
-                        .fill(platformBackgroundColor)
-                )
-        }
-    }
-    
-    private var chatInput: some View {
-        HStack(alignment: .bottom, spacing: 0) {
-            TextField("Message", text: $userInput, axis: .vertical)
-                .focused($inputIsFocused)
-                .textFieldStyle(.plain)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .frame(minHeight: 48)
-                .onSubmit {
-                    inputIsFocused = true
-                    sendMessage()
-                }
-            
-            if conversationVM.busy {
-                stopButton
-            } else {
-                sendButton
-            }
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(platformBackgroundColor)
-        )
-    }
-    
-    private var sendButton: some View {
-        Button {
-            sendMessage()
-        } label: {
-            Image(systemName: "arrow.up.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 24, height: 24)
-                .foregroundColor(isUserInputEmpty ? .gray.opacity(0.5) : Color(hex: "5E5CE6"))
-        }
-        .disabled(isUserInputEmpty)
-        .padding(.trailing, 12)
-        .padding(.bottom, 12)
-    }
-    
-    private var stopButton: some View {
-        Button {
-            // Implement stop functionality if needed
-            conversationVM.stop()
-        } label: {
-            Image(systemName: "stop.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 24, height: 24)
-                .foregroundColor(Color.red.opacity(0.8))
-        }
-        .padding(.trailing, 12)
-        .padding(.bottom, 12)
     }
     
     // MARK: - Helper Methods
