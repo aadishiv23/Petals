@@ -7,6 +7,8 @@
 
 import Foundation
 import PetalCore
+import PetalMLX
+import MLXLMCommon
 import SwiftUI
 
 /// The main chat interface view.
@@ -29,8 +31,11 @@ struct GeminiChatView: View {
 
                 Spacer()
 
-                ModelToggle(isOn: $conversationVM.useOllama)
-                    .padding(.trailing)
+                ModelToggleView(
+                    useMLX: $conversationVM.useOllama,
+                    selectedMLXModel: $conversationVM.selectedMLXModel
+                )
+                .padding(.trailing)
             }
             .padding(.vertical, 10)
             .background(

@@ -30,6 +30,16 @@ extension ModelConfiguration: @retroactive Equatable {
     public static func == (lhs: MLXLMCommon.ModelConfiguration, rhs: MLXLMCommon.ModelConfiguration) -> Bool {
         lhs.name == rhs.name
     }
+    
+    /// Convenience property to get a string representation of the model ID for use as dictionary keys
+    public var idString: String {
+        switch id {
+        case .id(let stringId):
+            return stringId
+        case .directory(let url):
+            return url.path
+        }
+    }
 
     public static let llama_3_2_1b_4bit = ModelConfiguration(
         id: "mlx-community/Llama-3.2-1B-Instruct-4bit"
@@ -71,9 +81,9 @@ extension ModelConfiguration: @retroactive Equatable {
 
     public static func getModelByName(_ name: String) -> ModelConfiguration? {
         if let model = availableModels.first(where: { $0.name == name }) {
-            model
+            return model
         } else {
-            nil
+            return nil
         }
     }
 

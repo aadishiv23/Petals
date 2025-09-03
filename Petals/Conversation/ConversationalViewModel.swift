@@ -52,6 +52,15 @@ class ConversationViewModel: ObservableObject {
         }
     }
     
+    /// The currently selected MLX model configuration
+    @Published var selectedMLXModel: ModelConfiguration = ModelConfiguration.defaultModel {
+        didSet {
+            if useOllama {
+                switchModel()
+            }
+        }
+    }
+    
     // MARK: Chat History Management
     
     /// Array of all saved chat sessions
@@ -74,6 +83,9 @@ class ConversationViewModel: ObservableObject {
     
     /// UserDefaults key for chat history persistence
     private let chatHistoryKey = "SavedChatHistory"
+    
+    /// MLX Model Manager for handling model downloads and availability
+    private let mlxModelManager = MLXModelManager.shared
 
     // MARK: Initializer
 
@@ -221,13 +233,51 @@ class ConversationViewModel: ObservableObject {
     /// and optionally resets the conversation history.
     private func switchModel() {
         if useOllama {
-            let modelConfig = ModelConfiguration.defaultModel
-            chatModel = PetalMLXChatModel(model: modelConfig)
-            print("🔵 Now using PetalML (local model) with \(modelConfig.name)")
+            // Check if selected MLX model is available
+            if mlxModelManager.isModelAvailable(selectedMLXModel) {
+                chatModel = PetalMLXChatModel(model: selectedMLXModel)
+                print("🔵 Now using PetalMLX (local model) with \(selectedMLXModel.name)")
+            } else {
+                // Model not available, show error or fallback
+                error = MLXModelManagerError.modelNotDownloaded(selectedMLXModel.name)
+                print("❌ MLX model \(selectedMLXModel.name) is not downloaded")
+                
+                // Fallback to Gemini temporarily
+                useOllama = false
+                chatModel = GeminiChatModel(modelName: selectedModel)
+                print("🔄 Falling back to Gemini due to unavailable MLX model")
+            }
         } else {
             chatModel = GeminiChatModel(modelName: selectedModel)
             print("🟢 Now using Gemini (Google API) with model: \(selectedModel)")
         }
+    }
+    
+    // MARK: MLX Model Management
+    
+    /// Check if the currently selected MLX model is available
+    var isSelectedMLXModelAvailable: Bool {
+        mlxModelManager.isModelAvailable(selectedMLXModel)
+    }
+    
+    /// Get the status of the currently selected MLX model
+    var selectedMLXModelStatus: MLXModelStatus {
+        mlxModelManager.getModelStatus(selectedMLXModel)
+    }
+    
+    /// Download the currently selected MLX model
+    func downloadSelectedMLXModel() async {
+        await mlxModelManager.downloadModel(selectedMLXModel)
+    }
+    
+    /// Cancel download of the currently selected MLX model
+    func cancelMLXModelDownload() {
+        mlxModelManager.cancelDownload(selectedMLXModel)
+    }
+    
+    /// Get download progress for the currently selected MLX model
+    var mlxModelDownloadProgress: MLXModelDownloadProgress? {
+        mlxModelManager.activeDownloads[selectedMLXModel.idString]
     }
 
     // MARK: Message Handling

@@ -50,6 +50,14 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
         print("Model ID: \(modelConfiguration.id)")
         print("Model Name: \(modelConfiguration.name)")
         
+        // Check if model is available through model manager
+        let isAvailable = await MainActor.run {
+            MLXModelManager.shared.isModelAvailable(modelConfiguration)
+        }
+        guard isAvailable else {
+            throw MLXModelManagerError.modelNotDownloaded(modelConfiguration.name)
+        }
+        
         // Most importantly, this will show the file path
         switch modelConfiguration.id {
         case .id(let stringID):
@@ -69,7 +77,7 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
             configuration: modelConfiguration
         ) { progress in
             Task { @MainActor in
-                print("Download \(self.modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%")
+                print("Loading \(self.modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%")
             }
         }
 
@@ -99,48 +107,6 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
 
         return modelContainer
     }
-
-    // *old*
-//    public func generate(
-//        messages: [[String: String]],
-//        tools: [Tool]?,
-//        onProgress: @escaping OnProgress
-//    ) async throws -> GenerateResult {
-//        // Load the model container, catching any errors during the process.
-//        let modelContainer = try await load()
-//
-//        // Seed the random number generator for consistent results.
-//        MLXRandom.seed(UInt64(Date.timeIntervalBetween1970AndReferenceDate * 100))
-//
-//        // Perform the generation process using the model container's context.
-//        return try await modelContainer.perform { context in
-//            // Prepare the input data for the model processor.
-//            let input = try await context.processor.prepare(
-//                input:
-//                .init(messages: messages, tools: tools)
-//            )
-//
-//            // Generate output using the MLXLMCommon library and provide progress updates.
-//            return try MLXLMCommon.generate(
-//                input: input,
-//                parameters: generateParameters,
-//                context: context
-//            ) { tokens in
-//                if tokens.count % 1 == 0 {
-//                    self.lock.lock()
-//                    defer { self.lock.unlock() }
-//
-    // THIS IS THE KEY LINE:
-    // You are decoding ALL tokens generated up to this point on *every callback*.
-//                    let text = context.tokenizer.decode(tokens: tokens)
-//                    Task { @MainActor in
-//                        onProgress(text)
-//                    }
-//                }
-//                return .more
-//            }
-//        }
-//    }
 
     /// Generates a result from the model based on given messages and tools, and provides progress updates.
     /// - Parameters:

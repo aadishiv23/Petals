@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PetalCore
+import PetalMLX
 
 struct MobileUnifiedHomeView: View {
     @ObservedObject var conversationVM: ConversationViewModel
@@ -356,10 +357,26 @@ struct MobileSettingsView: View {
                         HStack {
                             Image(systemName: conversationVM.useMLX ? "desktopcomputer" : "cloud")
                                 .foregroundColor(Color(hex: "5E5CE6"))
-                            Text(conversationVM.useMLX ? "MLX (Local)" : "Gemini API (Cloud)")
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(conversationVM.useMLX ? "MLX (Local)" : "Gemini API (Cloud)")
+                                
+                                if conversationVM.useMLX {
+                                    Text(conversationVM.selectedMLXModel.name)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
                         }
                     }
                     .toggleStyle(SwitchToggleStyle(tint: Color(hex: "5E5CE6")))
+                    
+                    if conversationVM.useMLX {
+                        NavigationLink("MLX Model Settings") {
+                            MLXModelSettingsView()
+                        }
+                        .foregroundColor(Color(hex: "5E5CE6"))
+                    }
                 } header: {
                     Text("AI Model")
                 }
