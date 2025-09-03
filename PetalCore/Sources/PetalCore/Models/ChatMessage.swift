@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ChatMessage: Identifiable, Equatable, Hashable {
+public struct ChatMessage: Identifiable, Equatable, Hashable, Codable {
     public let id = UUID()
     public let date = Date()
 
@@ -16,10 +16,10 @@ public struct ChatMessage: Identifiable, Equatable, Hashable {
     public var participant: Participant
     public var toolCallName: String? = nil
 
-    public enum Participant {
-        case user
-        case system
-        case llm
+    public enum Participant: String, Codable, CaseIterable {
+        case user = "user"
+        case system = "system"
+        case llm = "llm"
 
         public var stringValue: String {
             switch self {

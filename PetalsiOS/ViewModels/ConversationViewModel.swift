@@ -44,7 +44,11 @@ class ConversationViewModel: ObservableObject {
     
     // Chat history management
     @Published var chatHistory: [ChatHistory] = []
+    @Published var currentChatId: UUID?
     @Published var currentChatTitle: String = "New Chat"
+    
+    /// UserDefaults key for chat history persistence
+    private let chatHistoryKey = "SavedChatHistory"
 
     // MARK: Private Properties
 
@@ -60,6 +64,7 @@ class ConversationViewModel: ObservableObject {
         let initialModel = "gemini-1.5-flash-latest"
         self.selectedModel = initialModel
         self.chatModel = GeminiChatModel(modelName: initialModel)
+        loadChatHistory()
         startNewChat()
     }
 
@@ -70,8 +75,72 @@ class ConversationViewModel: ObservableObject {
         stop()
         error = nil
         messages.removeAll()
-        switchModel()
+        currentChatId = UUID()
         currentChatTitle = "New Chat"
+        switchModel()
+    }
+    
+    /// Creates a new chat and adds it to history
+    func createNewChat() -> UUID {
+        // Save current chat if it has messages
+        if !messages.isEmpty && currentChatId != nil {
+            saveCurrentChatToHistory()
+        }
+        
+        startNewChat()
+        return currentChatId!
+    }
+    
+    /// Saves the current chat session to history
+    func saveCurrentChatToHistory() {
+        guard let chatId = currentChatId, !messages.isEmpty else { return }
+        
+        // Generate a title from the first user message
+        let firstUserMessage = messages.first { $0.participant == .user }
+        let title = firstUserMessage?.message.prefix(50).description ?? "New Chat"
+        
+        // Get the last message for preview
+        let lastMessage = messages.last?.message.prefix(100).description
+        
+        // Check if chat already exists in history
+        if let existingIndex = chatHistory.firstIndex(where: { $0.id == chatId }) {
+            // Update existing chat
+            chatHistory[existingIndex].title = String(title)
+            chatHistory[existingIndex].lastMessage = lastMessage
+            chatHistory[existingIndex].lastActivityDate = Date()
+            chatHistory[existingIndex].messages = messages
+        } else {
+            // Create new chat entry
+            let newChat = ChatHistory(
+                id: chatId,
+                title: String(title),
+                lastMessage: lastMessage,
+                lastActivityDate: Date(),
+                messages: messages
+            )
+            chatHistory.insert(newChat, at: 0) // Add to the beginning
+        }
+        
+        saveChatHistory()
+    }
+    
+    /// Loads a specific chat from history
+    func loadChat(_ chatId: UUID) {
+        // Save current chat first if it has messages
+        if !messages.isEmpty && currentChatId != nil {
+            saveCurrentChatToHistory()
+        }
+        
+        currentChatId = chatId
+        
+        if let chat = chatHistory.first(where: { $0.id == chatId }) {
+            currentChatTitle = chat.title
+            // Load the actual messages from the saved chat
+            messages = chat.messages
+        }
+        
+        error = nil
+        switchModel()
     }
 
     /// Stops any ongoing tasks and clears any errors
@@ -142,6 +211,11 @@ class ConversationViewModel: ObservableObject {
         
         busy = false
         isProcessingTool = false
+        
+        // Auto-save chat to history after receiving a response
+        if !messages.isEmpty && currentChatId != nil {
+            saveCurrentChatToHistory()
+        }
     }
 
     // MARK: Tool Trigger Evaluation
@@ -154,16 +228,41 @@ class ConversationViewModel: ObservableObject {
     
     /// Selects a chat from history by ID
     func selectChat(_ id: UUID) {
-        guard let index = chatHistory.firstIndex(where: { $0.id == id }) else {
-            return
-        }
-        // Load this chat
-        // Implementation details depend on how you store chat content
-        currentChatTitle = chatHistory[index].title
+        loadChat(id)
     }
 
     /// Deletes chats at the specified indices
     func deleteChats(_ indexSet: IndexSet) {
         chatHistory.remove(atOffsets: indexSet)
+        saveChatHistory()
+    }
+    
+    /// Deletes a specific chat by ID
+    func deleteChat(_ chatId: UUID) {
+        chatHistory.removeAll { $0.id == chatId }
+        saveChatHistory()
+    }
+    
+    /// Clears all chat history
+    func clearAllChatHistory() {
+        chatHistory.removeAll()
+        saveChatHistory()
+    }
+    
+    // MARK: Persistence
+    
+    /// Loads chat history from UserDefaults
+    private func loadChatHistory() {
+        guard let data = UserDefaults.standard.data(forKey: chatHistoryKey),
+              let decodedHistory = try? JSONDecoder().decode([ChatHistory].self, from: data) else {
+            return
+        }
+        chatHistory = decodedHistory
+    }
+    
+    /// Saves chat history to UserDefaults
+    private func saveChatHistory() {
+        guard let encoded = try? JSONEncoder().encode(chatHistory) else { return }
+        UserDefaults.standard.set(encoded, forKey: chatHistoryKey)
     }
 } 

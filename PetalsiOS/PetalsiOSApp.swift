@@ -14,9 +14,9 @@ struct PetalsiOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MobileHomeView(
-                conversationVM: conversationVM
-            )
+            NavigationStack {
+                MobileUnifiedHomeView(conversationVM: conversationVM)
+            }
         }
     }
 }
