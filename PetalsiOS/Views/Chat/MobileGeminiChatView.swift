@@ -108,22 +108,26 @@ struct MobileGeminiChatView: View {
             isLoading: conversationVM.busy,
             isEnabled: !conversationVM.busy,
             onSend: sendMessage,
+            onStop: { conversationVM.stop() },
             onModelPicker: { showModelPicker.toggle() }
         )
     }
     
     private var navigationModelPickerView: some View {
         NavigationStack {
-            ModelPickerView(useOllama: $conversationVM.useMLX)
-                .presentationDragIndicator(.visible)
-                .presentationDetents([.fraction(0.4)])
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(action: { showModelPicker.toggle() }) {
-                            Image(systemName: "xmark")
-                        }
+            ModelPickerView(
+                useMLX: $conversationVM.useMLX,
+                selectedMLXModel: $conversationVM.selectedMLXModel
+            )
+            .presentationDragIndicator(.visible)
+            .presentationDetents([.fraction(0.4)])
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: { showModelPicker.toggle() }) {
+                        Image(systemName: "xmark")
                     }
                 }
+            }
         }
     }
     

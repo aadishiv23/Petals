@@ -15,17 +15,18 @@ struct ModernChatInputBar: View {
     let isLoading: Bool
     let isEnabled: Bool
     let onSend: () -> Void
+    let onStop: () -> Void
     let onModelPicker: () -> Void
     
-    @State private var textHeight: CGFloat = 44
+    @State private var textHeight: CGFloat = 20
     @State private var showingPlaceholder = true
     @State private var sendButtonScale: CGFloat = 1.0
-    @State private var inputScale: CGFloat = 1.0
-    @State private var glowOpacity: Double = 0.0
     
     private let accentColor = Color(hex: "5E5CE6")
-    private let maxHeight: CGFloat = 120
+    private let maxHeight: CGFloat = 100
     private let minHeight: CGFloat = 44
+    private let cornerRadius: CGFloat = 22 // Half of minHeight for proper pill shape
+    private let singleLineHeight: CGFloat = 20
     
     private var isTextEmpty: Bool {
         text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -35,114 +36,106 @@ struct ModernChatInputBar: View {
         !isTextEmpty && isEnabled
     }
     
+    // Dynamic corner radius based on height
+    private var dynamicCornerRadius: CGFloat {
+        let currentHeight = max(minHeight, min(textHeight + 24, maxHeight))
+        // Keep it pill-shaped when at min height, transition to rounded rect as it grows
+        return currentHeight <= minHeight + 4 ? cornerRadius : min(cornerRadius, 16)
+    }
+    
     var body: some View {
-        VStack(spacing: 0) {
-            // Main input container
-            HStack(alignment: .bottom, spacing: 12) {
-                modelPickerButton
-                inputTextContainer
-                actionButton
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 8)
-            .background(
-                inputBackgroundView
-            )
+        HStack(alignment: .bottom, spacing: 12) {
+            inputContainer
+            actionButton
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: textHeight)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: shouldShowSendButton)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isLoading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(
+            // Subtle background for the entire input area
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(.systemBackground).opacity(0.01))
+        )
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: textHeight)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: shouldShowSendButton)
         .onChange(of: text) { _ in
             updatePlaceholderVisibility()
+            updateTextHeight()
         }
-        .onChange(of: isFocused) { focused in
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                glowOpacity = focused ? 0.3 : 0.0
-                inputScale = focused ? 1.02 : 1.0
-            }
+        .onAppear {
+            // Initialize with single line height
+            textHeight = singleLineHeight
         }
     }
     
-    // MARK: - Input Components
+    // MARK: - Components
+    
+    private var inputContainer: some View {
+        HStack(alignment: .center, spacing: 8) {
+            modelPickerButton
+            textInputArea
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: dynamicCornerRadius)
+                .fill(.regularMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: dynamicCornerRadius)
+                        .stroke(
+                            isFocused ? accentColor.opacity(0.3) : Color(.separator).opacity(0.3),
+                            lineWidth: isFocused ? 1.5 : 0.5
+                        )
+                )
+                .shadow(
+                    color: isFocused ? accentColor.opacity(0.1) : .clear,
+                    radius: isFocused ? 8 : 0,
+                    x: 0,
+                    y: 0
+                )
+        )
+        .animation(.easeInOut(duration: 0.2), value: isFocused)
+    }
     
     private var modelPickerButton: some View {
         Button(action: {
             impactFeedback()
             onModelPicker()
         }) {
-            Image(systemName: "gearshape.2")
-                .font(.system(size: 16, weight: .medium))
+            Image(systemName: "gear")
+                .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 32, height: 32)
-                .background(
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(
-                            Circle()
-                                .stroke(Color(UIColor.separator), lineWidth: 0.5)
-                        )
-                )
-                .scaleEffect(inputScale * 0.98)
         }
         .buttonStyle(ScaleButtonStyle())
     }
     
-    private var inputTextContainer: some View {
+    private var textInputArea: some View {
         ZStack(alignment: .topLeading) {
-            // Background with dynamic height
-            RoundedRectangle(cornerRadius: 18)
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(isFocused ? accentColor.opacity(0.5) : Color(UIColor.separator), lineWidth: isFocused ? 1.5 : 0.5)
-                        .shadow(color: accentColor.opacity(glowOpacity), radius: 8, x: 0, y: 0)
-                )
-                .frame(height: max(minHeight, min(textHeight + 16, maxHeight)))
-                .scaleEffect(inputScale)
-            
-            // Text input with placeholder
-            VStack(spacing: 0) {
-                ZStack(alignment: .topLeading) {
-                    // Custom placeholder
-                    if showingPlaceholder {
-                        Text("Message")
-                            .foregroundStyle(.tertiary)
-                            .font(.system(size: 16))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .opacity(showingPlaceholder ? 1 : 0)
-                            .animation(.easeInOut(duration: 0.2), value: showingPlaceholder)
-                    }
-                    
-                    // Actual text field
-                    TextEditor(text: $text)
-                        .focused($isFocused)
-                        .font(.system(size: 16))
-                        .scrollContentBackground(.hidden)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .frame(minHeight: minHeight - 16)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .background(
-                            // Height measurement
-                            GeometryReader { geometry in
-                                Color.clear.onAppear {
-                                    updateTextHeight(geometry.size.height)
-                                }
-                                .onChange(of: text) { _ in
-                                    DispatchQueue.main.async {
-                                        updateTextHeight(geometry.size.height)
-                                    }
-                                }
-                            }
-                        )
-                        .onSubmit {
-                            if !isTextEmpty {
-                                sendMessage()
-                            }
-                        }
-                }
+            // Custom placeholder
+            if showingPlaceholder {
+                Text("Message")
+                    .foregroundStyle(.tertiary)
+                    .font(.system(size: 16))
+                    .padding(.leading, 6)
+                    .padding(.top, 16)
+                    .allowsHitTesting(false)
             }
+            
+            // Text editor with proper sizing
+            TextEditor(text: $text)
+                .focused($isFocused)
+                .font(.system(size: 16))
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
+                .frame(minHeight: singleLineHeight, maxHeight: maxHeight)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 8)
+                .fixedSize(horizontal: false, vertical: true)
+                .onSubmit {
+                    if !isTextEmpty {
+                        sendMessage()
+                    }
+                }
         }
     }
     
@@ -154,87 +147,50 @@ struct ModernChatInputBar: View {
                 sendButton
             }
         }
-        .frame(width: 32, height: 32)
     }
     
     private var sendButton: some View {
         Button(action: sendMessage) {
-            Image(systemName: "arrow.up")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(shouldShowSendButton ? .white : Color(UIColor.tertiaryLabel))
-                .frame(width: 32, height: 32)
-                .background(
-                    Circle()
-                        .fill(
-                            shouldShowSendButton ? 
-                            LinearGradient(
-                                colors: [accentColor, accentColor.opacity(0.8)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ) : 
-                            LinearGradient(
-                                colors: [Color(UIColor.systemGray4), Color(UIColor.systemGray5)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .shadow(
-                            color: shouldShowSendButton ? accentColor.opacity(0.3) : Color.clear, 
-                            radius: shouldShowSendButton ? 6 : 0, 
-                            x: 0, 
-                            y: shouldShowSendButton ? 3 : 0
-                        )
+            Image(systemName: shouldShowSendButton ? "arrow.up.circle.fill" : "arrow.up.circle")
+                .font(.system(size: 28, weight: .medium))
+                .foregroundStyle(
+                    shouldShowSendButton ?
+                    accentColor :
+                    Color(.tertiaryLabel)
                 )
                 .scaleEffect(sendButtonScale)
-                .opacity(shouldShowSendButton ? 1.0 : 0.6)
         }
         .disabled(!shouldShowSendButton)
         .buttonStyle(ScaleButtonStyle())
-        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: shouldShowSendButton)
+        .frame(width: 44, height: 44)
     }
     
     private var stopButton: some View {
         Button(action: {
             impactFeedback()
-            // Stop functionality would go here
+            onStop()
         }) {
-            Image(systemName: "stop.fill")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.white)
-                .frame(width: 32, height: 32)
-                .background(
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.red, .red.opacity(0.8)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .shadow(color: .red.opacity(0.3), radius: 6, x: 0, y: 3)
-                )
+            Image(systemName: "stop.circle.fill")
+                .font(.system(size: 28, weight: .medium))
+                .foregroundStyle(.primary)
         }
         .buttonStyle(ScaleButtonStyle())
-    }
-    
-    private var inputBackgroundView: some View {
-        Rectangle()
-            .fill(.clear)
+        .frame(width: 44, height: 44)
     }
     
     // MARK: - Helper Methods
     
     private func sendMessage() {
-        guard !isTextEmpty else { return }
+        guard !isTextEmpty && isEnabled else { return }
         
         impactFeedback(.medium)
         
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-            sendButtonScale = 0.8
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+            sendButtonScale = 0.9
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 sendButtonScale = 1.0
             }
         }
@@ -242,15 +198,35 @@ struct ModernChatInputBar: View {
         onSend()
     }
     
-    private func updateTextHeight(_ height: CGFloat) {
-        let newHeight = max(minHeight, min(height + 16, maxHeight))
-        if abs(newHeight - textHeight) > 1 {
-            textHeight = newHeight
+    private func updateTextHeight() {
+        if text.isEmpty {
+            withAnimation(.easeOut(duration: 0.15)) {
+                textHeight = singleLineHeight
+            }
+            return
+        }
+        
+        let textToMeasure = text
+        let constraintWidth = UIScreen.main.bounds.width - 140 // Account for padding and buttons
+        
+        let size = textToMeasure.boundingRect(
+            with: CGSize(width: constraintWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: UIFont.systemFont(ofSize: 16)],
+            context: nil
+        ).size
+        
+        let newHeight = max(singleLineHeight, size.height)
+        
+        if abs(newHeight - textHeight) > 2 {
+            withAnimation(.easeOut(duration: 0.15)) {
+                textHeight = newHeight
+            }
         }
     }
     
     private func updatePlaceholderVisibility() {
-        withAnimation(.easeInOut(duration: 0.2)) {
+        withAnimation(.easeInOut(duration: 0.15)) {
             showingPlaceholder = text.isEmpty
         }
     }
@@ -275,13 +251,21 @@ struct ScaleButtonStyle: ButtonStyle {
     @State var text = ""
     @FocusState var isFocused: Bool
     
-    return ModernChatInputBar(
-        text: $text,
-        isFocused: $isFocused,
-        isLoading: false,
-        isEnabled: true,
-        onSend: { print("Send") },
-        onModelPicker: { print("Model Picker") }
-    )
-    .background(Color(.systemGroupedBackground))
+    return VStack {
+        Spacer()
+        ModernChatInputBar(
+            text: $text,
+            isFocused: $isFocused,
+            isLoading: false,
+            isEnabled: true,
+            onSend: {
+                print("Send: \(text)")
+                text = ""
+            },
+            onStop: { print("Stop pressed") },
+            onModelPicker: { print("Model Picker") }
+        )
+        .padding()
+        .background(Color(.systemGroupedBackground))
+    }
 }

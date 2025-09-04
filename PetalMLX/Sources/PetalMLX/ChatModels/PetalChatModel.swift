@@ -34,7 +34,7 @@ public class PetalMLXChatModel: AIChatModel {
     /// Returns an asynchronous stream of output chunks from PetalMLXService.
     public func sendMessageStream(_ text: String) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
         AsyncThrowingStream { continuation in
-            Task {
+            let producer = Task {
                 do {
                     let systemMessage = ChatMessage(
                         message: "You are a helpful assistant with access to calendar and other tools. Only use tools when explicitly requested. For calendar tools, use the appropriate parameters based on the user request. Current date is April 14, 2025. When the user asks about calendar events without specifying a date, assume they mean today or the near future (e.g., the next few days or week). Only use specific dates if the user explicitly provides them.",
@@ -43,12 +43,16 @@ public class PetalMLXChatModel: AIChatModel {
                     let userMessage = ChatMessage(message: text, participant: .user)
                     let stream = service.streamConversation(model: model, messages: [systemMessage, userMessage])
                     for try await chunk in stream {
+                        if Task.isCancelled { break }
                         continuation.yield(chunk)
                     }
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { @Sendable _ in
+                producer.cancel()
             }
         }
     }
