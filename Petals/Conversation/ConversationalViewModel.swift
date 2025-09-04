@@ -44,6 +44,15 @@ class ConversationViewModel: ObservableObject {
         }
     }
 
+    /// A user-facing display string for the currently active model
+    var currentModelDisplayName: String {
+        if useOllama {
+            return "MLX: \(selectedMLXModel.name)"
+        } else {
+            return "Gemini: \(selectedModel)"
+        }
+    }
+
     /// A boolean indicating whether to use Ollama (local model) instead of Gemini (Google API).
     /// Changing this value switches the active model.
     @Published var useOllama: Bool = false {

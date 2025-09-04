@@ -24,10 +24,22 @@ struct GeminiChatView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header with the app title and a model toggle.
-            HStack {
+            HStack(spacing: 8) {
                 Text("Petals")
                     .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .padding(.leading)
+
+                // Current model badge
+                Text(conversationVM.currentModelDisplayName)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.secondary.opacity(0.12))
+                    )
+                    .help(conversationVM.currentModelDisplayName)
 
                 Spacer()
 

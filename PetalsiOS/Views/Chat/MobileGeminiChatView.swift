@@ -13,6 +13,7 @@ struct MobileGeminiChatView: View {
     @State private var userInput: String = ""
     @FocusState private var inputIsFocused: Bool
     @State private var showModelPicker = false
+    @State private var showModelInfo = false
     @Namespace private var bottomID
     
     let platformBackgroundColor = Color(UIColor.secondarySystemBackground)
@@ -33,6 +34,24 @@ struct MobileGeminiChatView: View {
             }
             .navigationTitle(conversationVM.currentChatTitle)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showModelInfo = true }) {
+                        Text(conversationVM.currentModelDisplayName)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                }
+            }
+            .alert("Current Model", isPresented: $showModelInfo) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(conversationVM.currentModelDisplayName)
+            }
             .sheet(isPresented: $showModelPicker) {
                 navigationModelPickerView
             }

@@ -43,26 +43,32 @@ public actor PetalToolRegistry: PetalToolRegistering {
         let getCanvasCoursesTool = await PetalToolFactory.createFetchCanvasCoursesTool()
         let fetchCanvasAssignmentsTool = await PetalToolFactory.createFetchCanvasAssignmentsTool()
         let fetchCanvasGradesTool = await PetalToolFactory.createFetchCanvasGradesTool()
-        let calendarCreateEventTool = await PetalToolFactory.createCalendarCreateEventTool()
-        let calendarFetchEventTool = await PetalToolFactory.createCalendarFetchEventTool()
-        let fetchRemindersTool = await PetalToolFactory.createFetchRemindersTool()
+//        let calendarCreateEventTool = await PetalToolFactory.createCalendarCreateEventTool()
+//        let calendarFetchEventTool = await PetalToolFactory.createCalendarFetchEventTool()
+//        let fetchRemindersTool = await PetalToolFactory.createFetchRemindersTool()
 
         #if os(macOS)
         let notesTool = await PetalToolFactory.createNotesTool()
         let remindersTool = await PetalToolFactory.createRemindersTool()
+        #endif
+        #if os(iOS)
+        let contactsTool = await PetalToolFactory.createContactsTool()
         #endif
 
         await registerTool(calendarTool)
         await registerTool(getCanvasCoursesTool)
         await registerTool(fetchCanvasAssignmentsTool)
         await registerTool(fetchCanvasGradesTool)
-        await registerTool(calendarCreateEventTool)
-        await registerTool(calendarFetchEventTool)
-        await registerTool(fetchRemindersTool)
+//        await registerTool(calendarCreateEventTool)
+//        await registerTool(calendarFetchEventTool)
+//        await registerTool(fetchRemindersTool)
 
         #if os(macOS)
         await registerTool(notesTool)
-        await registerTool(remindersTool)
+//        await registerTool(remindersTool)
+        #endif
+        #if os(iOS)
+        await registerTool(contactsTool)
         #endif
 
         isInitialized = true

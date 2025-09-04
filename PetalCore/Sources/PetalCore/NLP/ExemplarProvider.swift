@@ -70,6 +70,13 @@ public class ExemplarProvider {
             "Make a note about [topic]",
             "Search my notes for [query]",
             "Create a new note titled Meeting with Sam with content # Discussion Points -Project timeline -Budget concerns -Next steps"
+        ],
+        "petalContactsTool": [
+            "Show my contacts",
+            "List contacts with phone numbers",
+            "Find Alice in contacts",
+            "Search contacts for Bob",
+            "Get contact emails for Charlie"
         ]
     ]
 

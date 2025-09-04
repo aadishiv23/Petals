@@ -56,6 +56,14 @@ public class PetalToolFactory {
         return remindersTool
     }
     
+    #if os(iOS)
+    public static func createContactsTool() async -> any PetalTool {
+        let contactsTool = PetalContactsTool()
+        await PetalToolRegistry.shared.registerTool(contactsTool)
+        return contactsTool
+    }
+    #endif
+    
     #if os(macOS)
     public static func createNotesTool() async -> any PetalTool {
         let notesTool = PetalNotesTool()

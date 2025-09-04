@@ -28,6 +28,15 @@ class ConversationViewModel: ObservableObject {
     /// Stores any errors encountered during message processing
     @Published var error: Error?
 
+    /// A user-facing display string for the currently active model
+    var currentModelDisplayName: String {
+        if useMLX {
+            return "MLX: \(selectedMLXModel.name)"
+        } else {
+            return "Gemini: \(selectedModel)"
+        }
+    }
+
     /// The currently selected AI model name
     @Published var selectedModel: String {
         didSet {
