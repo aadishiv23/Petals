@@ -21,9 +21,10 @@ class GeminiChatModel: AIChatModel {
 
     func sendMessageStream(_ text: String) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
         return AsyncThrowingStream { continuation in
-            Task {
+            let producer = Task {
                 do {
                     for try await response in chat.sendMessageStream(text) {
+                        if Task.isCancelled { break }
                         if let textChunk = response.text {
                             continuation.yield(PetalMessageStreamChunk(message: textChunk, toolCallName: nil))
                         }
@@ -33,6 +34,9 @@ class GeminiChatModel: AIChatModel {
                     print("Gemini streaming error: \(error.localizedDescription)")
                     continuation.finish()
                 }
+            }
+            continuation.onTermination = { @Sendable _ in
+                producer.cancel()
             }
         }
     }

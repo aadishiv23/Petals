@@ -24,7 +24,11 @@ public class MLXModelManager: ObservableObject, Sendable {
     @Published public var availableModels: [ModelConfiguration] = ModelConfiguration.availableModels
     
     /// Currently selected model
-    @Published public var selectedModel: ModelConfiguration = ModelConfiguration.defaultModel
+    @Published public var selectedModel: ModelConfiguration = ModelConfiguration.defaultModel {
+        didSet {
+            persistSelectedModel()
+        }
+    }
     
     /// Download status for each model
     @Published public var modelStatus: [String: MLXModelStatus] = [:]
@@ -38,6 +42,7 @@ public class MLXModelManager: ObservableObject, Sendable {
     private let fileManager = FileManager.default
     
     private init() {
+        loadPersistedSelectedModel()
         loadModelStatuses()
     }
     
@@ -219,6 +224,18 @@ public class MLXModelManager: ObservableObject, Sendable {
         }
         
         UserDefaults.standard.set(statusData, forKey: "MLXModelStatuses")
+    }
+
+    private func persistSelectedModel() {
+        // Persist selected model by name to avoid URL serialization issues
+        UserDefaults.standard.set(selectedModel.name, forKey: "MLXSelectedModelName")
+    }
+
+    private func loadPersistedSelectedModel() {
+        if let name = UserDefaults.standard.string(forKey: "MLXSelectedModelName"),
+           let model = ModelConfiguration.getModelByName(name) {
+            selectedModel = model
+        }
     }
 }
 

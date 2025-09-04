@@ -15,6 +15,7 @@ struct ModernChatInputBar: View {
     let isLoading: Bool
     let isEnabled: Bool
     let onSend: () -> Void
+    let onStop: () -> Void
     let onModelPicker: () -> Void
     
     @State private var textHeight: CGFloat = 20
@@ -167,7 +168,7 @@ struct ModernChatInputBar: View {
     private var stopButton: some View {
         Button(action: {
             impactFeedback()
-            // Add stop functionality here
+            onStop()
         }) {
             Image(systemName: "stop.circle.fill")
                 .font(.system(size: 28, weight: .medium))
@@ -261,6 +262,7 @@ struct ScaleButtonStyle: ButtonStyle {
                 print("Send: \(text)")
                 text = ""
             },
+            onStop: { print("Stop pressed") },
             onModelPicker: { print("Model Picker") }
         )
         .padding()

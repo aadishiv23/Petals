@@ -45,12 +45,12 @@ public class PetalMLXService {
 
         let formattedMessages = formatMessages(messages)
 
-        // --- CHANGE START ---
-        let rawContainer = modelService.provideModelContainer()
+        // Request a container for the provided model configuration
+        let rawContainer = modelService.provideModelContainer(model: model)
         guard let container = rawContainer as? ConcreteCoreModelContainer else {
             throw PetalMLXServiceError.unexpectedModelContainerType
         }
-        // --- CHANGE END ---
+        
 
         let toolDefinitions: [[String: any Sendable]]? = tools?.map { tool in
             tool.asMLXToolDefinition().toDictionary()
@@ -73,14 +73,14 @@ public class PetalMLXService {
         messages: [ChatMessage]
     ) -> AsyncThrowingStream<PetalMessageStreamChunk, Error> {
         AsyncThrowingStream { continuation in
-            Task {
+            let producer = Task {
                 do {
                     let lastMessage = messages.last?.message ?? ""
                     let useTools = await shouldUseTools(for: lastMessage)
                     let tools: [any MLXCompatibleTool]? = useTools ? await PetalMLXToolRegistry.mlxTools() : nil
                     let formattedMessages = formatMessages(messages)
 
-                    let rawContainer = modelService.provideModelContainer()
+                    let rawContainer = modelService.provideModelContainer(model: model)
                     guard let container = rawContainer as? ConcreteCoreModelContainer else {
                         throw PetalMLXServiceError.unexpectedModelContainerType
                     }
@@ -132,6 +132,7 @@ public class PetalMLXService {
                         onProgress: { progressText in
                             // Safely update the complete output through the actor
                             Task {
+                                if Task.isCancelled { return }
                                 await outputStore.update(with: progressText)
                                 let isToolCall = await outputStore.getIsToolCall()
 
@@ -174,6 +175,9 @@ public class PetalMLXService {
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { @Sendable _ in
+                producer.cancel()
             }
         }
     }
@@ -269,7 +273,7 @@ public class PetalMLXService {
             ["role": "user", "content": refinementPrompt]
         ]
 
-        let container = modelService.provideModelContainer()
+        let container = modelService.provideModelContainer(model: ModelConfiguration.defaultModel)
         guard let container = container as? ConcreteCoreModelContainer else {
             throw PetalMLXServiceError.unexpectedModelContainerType
         }

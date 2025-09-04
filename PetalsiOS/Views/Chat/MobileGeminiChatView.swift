@@ -108,6 +108,7 @@ struct MobileGeminiChatView: View {
             isLoading: conversationVM.busy,
             isEnabled: !conversationVM.busy,
             onSend: sendMessage,
+            onStop: { conversationVM.stop() },
             onModelPicker: { showModelPicker.toggle() }
         )
     }

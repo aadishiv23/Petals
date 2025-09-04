@@ -43,11 +43,13 @@ class ConversationViewModel: ObservableObject {
     }
     
     /// The currently selected MLX model configuration
-    @Published var selectedMLXModel: ModelConfiguration = ModelConfiguration.defaultModel {
+    @Published var selectedMLXModel: ModelConfiguration = MLXModelManager.shared.selectedModel {
         didSet {
             if useMLX {
                 switchModel()
             }
+            // Persist selection into manager
+            MLXModelManager.shared.selectedModel = selectedMLXModel
         }
     }
     
@@ -63,6 +65,7 @@ class ConversationViewModel: ObservableObject {
 
     /// The active AI chat model being used for conversation
     private var chatModel: AIChatModel
+    private var currentStreamTask: Task<Void, Never>?
 
     private let toolEvaluator = ToolTriggerEvaluator()
     
@@ -75,6 +78,8 @@ class ConversationViewModel: ObservableObject {
     init() {
         let initialModel = "gemini-1.5-flash-latest"
         self.selectedModel = initialModel
+        // Initialize MLX model selection from persisted manager value
+        self.selectedMLXModel = MLXModelManager.shared.selectedModel
         self.chatModel = GeminiChatModel(modelName: initialModel)
         loadChatHistory()
         startNewChat()
@@ -158,6 +163,13 @@ class ConversationViewModel: ObservableObject {
     /// Stops any ongoing tasks and clears any errors
     func stop() {
         error = nil
+        currentStreamTask?.cancel()
+        currentStreamTask = nil
+        busy = false
+        isProcessingTool = false
+        if let lastIndex = messages.indices.last {
+            messages[lastIndex].pending = false
+        }
     }
 
     /// Switches the active AI model between Gemini and MLX
@@ -228,27 +240,47 @@ class ConversationViewModel: ObservableObject {
         do {
             if streaming {
                 let stream = chatModel.sendMessageStream(text)
-                
-                // Process the stream
-                for try await chunk in stream {
-                    // If this is a tool call, don't update the message content until we have the final result
-                    if isProcessingTool {
-                        // Only update if we actually get content back (which would be the final processed result)
-                        if !chunk.message.isEmpty {
-                            messages[messages.count - 1].message = chunk.message
+                currentStreamTask = Task { [weak self] in
+                    guard let self = self else { return }
+                    do {
+                        for try await chunk in stream {
+                            if Task.isCancelled { break }
+                            // If this is a tool call, don't update the message content until we have the final result
+                            await MainActor.run {
+                                if isProcessingTool {
+                                    if !chunk.message.isEmpty {
+                                        messages[messages.count - 1].message = chunk.message
+                                    }
+                                    
+                                    if let toolName = chunk.toolCallName {
+                                        messages[messages.count - 1].toolCallName = toolName
+                                    }
+                                } else {
+                                    messages[messages.count - 1].message += chunk.message
+                                }
+                            }
                         }
                         
-                        if let toolName = chunk.toolCallName {
-                            messages[messages.count - 1].toolCallName = toolName
+                        // After stream completes, mark as not pending
+                        await MainActor.run {
+                            messages[messages.count - 1].pending = false
                         }
-                    } else {
-                        // For regular messages, append each chunk
-                        messages[messages.count - 1].message += chunk.message
+                    } catch {
+                        await MainActor.run {
+                            self.error = error
+                            messages.removeLast()
+                        }
+                    }
+                    await MainActor.run {
+                        self.currentStreamTask = nil
+                        busy = false
+                        isProcessingTool = false
+                        if !messages.isEmpty && currentChatId != nil {
+                            saveCurrentChatToHistory()
+                        }
                     }
                 }
-                
-                // After stream completes, mark as not pending
-                messages[messages.count - 1].pending = false
+                await currentStreamTask?.value
             } else {
                 let response = try await chatModel.sendMessage(text)
                 messages[messages.count - 1].message = response
@@ -257,14 +289,8 @@ class ConversationViewModel: ObservableObject {
         } catch {
             self.error = error
             messages.removeLast()
-        }
-        
-        busy = false
-        isProcessingTool = false
-        
-        // Auto-save chat to history after receiving a response
-        if !messages.isEmpty && currentChatId != nil {
-            saveCurrentChatToHistory()
+            busy = false
+            isProcessingTool = false
         }
     }
 

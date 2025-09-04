@@ -136,6 +136,9 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
                 parameters: generateParameters,
                 context: context
             ) { tokens in
+                if Task.isCancelled {
+                    return .stop
+                }
                 self.lock
                     .lock() // Still need lock if accessing shared state, though maybe not needed just for calculation
                 defer { self.lock.unlock() }
@@ -158,7 +161,7 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
                 }
                 // --- CHANGE END ---
 
-                return .more
+                return Task.isCancelled ? .stop : .more
             }
         }
     }

@@ -13,11 +13,15 @@ import SwiftUI
 public struct CoreModelService {
     public init() {}
     
-    public func provideModelContainer() -> any CoreModelContainerProtocol {
-        // Here we choose our ConcreteModelContainer (see next file) with the default model.
-        return ConcreteCoreModelContainer(
-            modelConfiguration: ModelConfiguration.defaultModel,
-            generateParameters: GenerateParameters(temperature: 0.5)
+    /// Provide a model container for a given MLX `ModelConfiguration`.
+    /// Defaults to `ModelConfiguration.defaultModel` if none is provided.
+    public func provideModelContainer(
+        model: ModelConfiguration = ModelConfiguration.defaultModel,
+        parameters: GenerateParameters = GenerateParameters(temperature: 0.5)
+    ) -> any CoreModelContainerProtocol {
+        ConcreteCoreModelContainer(
+            modelConfiguration: model,
+            generateParameters: parameters
         )
     }
 }
