@@ -48,6 +48,14 @@ struct GeminiChatView: View {
                     selectedMLXModel: $conversationVM.selectedMLXModel
                 )
                 .padding(.trailing)
+
+                // Telemetry quick view button
+                NavigationLink(destination: TelemetrySessionsView()) {
+                    Image(systemName: "gauge.with.dots.needle.67percent")
+                        .help("Telemetry")
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing)
             }
             .padding(.vertical, 10)
             .background(

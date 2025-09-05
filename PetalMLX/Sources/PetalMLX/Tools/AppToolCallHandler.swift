@@ -441,6 +441,13 @@ public class AppToolCallHandler {
         }
 
         logger.debug("Matched tool: \(mlxMatchingTool.name)")
+        
+        // Telemetry capture
+        let chatId = TelemetryContext.shared.currentChatId
+        let messageId = TelemetryContext.shared.currentMessageId
+        if let chatId, let messageId {
+            TelemetryManager.shared.startTool(chatId: chatId, messageId: messageId, name: name.rawValue)
+        }
 
         switch (mlxMatchingTool, argument) {
         case let (tool as PetalGenericFetchCanvasCoursesTool, .canvasCourses(args)):
@@ -450,9 +457,15 @@ public class AppToolCallHandler {
 
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.courses
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
 
@@ -464,9 +477,15 @@ public class AppToolCallHandler {
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
                 print(output.assignments)
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.assignments
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
 
@@ -477,9 +496,15 @@ public class AppToolCallHandler {
 
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.grades
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
 
@@ -490,9 +515,15 @@ public class AppToolCallHandler {
 
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.event
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
 
@@ -503,11 +534,59 @@ public class AppToolCallHandler {
 
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.events
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
+
+        #if os(iOS)
+        case let (tool as PetalContactsTool, .contacts(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                var input = try JSONDecoder().decode(PetalContactsTool.Input.self, from: jsonData)
+
+                // Heuristic: if a query is present but action says listContacts, treat as searchContacts
+                if input.action == "listContacts",
+                   let q = input.query?.trimmingCharacters(in: .whitespacesAndNewlines),
+                   !q.isEmpty
+                {
+                    input = PetalContactsTool.Input(
+                        action: "searchContacts",
+                        query: input.query,
+                        limit: input.limit,
+                        includePhones: input.includePhones,
+                        includeEmails: input.includeEmails
+                    )
+                }
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
+                // Return a human-readable list
+                let text = output.contacts.isEmpty ? "No contacts found." : output.contacts.map { c in
+                    var line = c.displayName
+                    if !c.phoneNumbers.isEmpty { line += " • " + c.phoneNumbers.joined(separator: ", ") }
+                    if !c.emails.isEmpty { line += " • " + c.emails.joined(separator: ", ") }
+                    return line
+                }.joined(separator: "\n")
+                return text
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
+        #endif
 
 //        case let (tool as PetalFetchRemindersTool, .reminders(args)):
 //            do {
@@ -546,9 +625,15 @@ public class AppToolCallHandler {
 
                 let output = try await tool.execute(input)
                 logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.result
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
 
@@ -561,9 +646,15 @@ public class AppToolCallHandler {
                 logger.info("Tool \(name.rawValue) executed successfully.")
 
                 // Convert the output to a formatted string
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
                 return output.result
             } catch {
                 logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
         #endif

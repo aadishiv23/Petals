@@ -73,6 +73,21 @@ public final class PetalContactsTool: OllamaCompatibleTool, MLXCompatibleTool {
         public let limit: Int?
         public let includePhones: Bool?
         public let includeEmails: Bool?
+
+        // Public memberwise initializer so other modules can construct Input
+        public init(
+            action: String,
+            query: String? = nil,
+            limit: Int? = nil,
+            includePhones: Bool? = nil,
+            includeEmails: Bool? = nil
+        ) {
+            self.action = action
+            self.query = query
+            self.limit = limit
+            self.includePhones = includePhones
+            self.includeEmails = includeEmails
+        }
     }
 
     public struct ContactOutput: Codable, Sendable {

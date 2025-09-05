@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "588"
             endingLineNumber = "588"
-            landmarkName = "==(lhs:rhs:)"
+            landmarkName = "processToolCallArgument(with:argument:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -80,7 +80,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "589"
             endingLineNumber = "589"
-            landmarkName = "==(lhs:rhs:)"
+            landmarkName = "processToolCallArgument(with:argument:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -112,7 +112,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "79"
             endingLineNumber = "79"
-            landmarkName = "streamConversation(model:messages:)"
+            landmarkName = "sendSingleMessage(model:messages:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

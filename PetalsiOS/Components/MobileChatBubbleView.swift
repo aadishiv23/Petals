@@ -87,6 +87,8 @@ struct MobileToolMessageView: View {
             MobileCanvasAssignmentsView(message: message)
         case "petalGenericCanvasCoursesTool":
             MobileCanvasCoursesView(message: message)
+        case "petalContactsTool":
+            MobileContactsToolView(message: message)
         default:
             MobileGenericToolMessageView(message: message, toolName: toolName)
         }

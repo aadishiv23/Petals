@@ -46,6 +46,11 @@ struct MobileGeminiChatView: View {
                             .truncationMode(.middle)
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(destination: TelemetrySessionsMobileView()) {
+                        Image(systemName: "gauge.with.dots.needle.67percent")
+                    }
+                }
             }
             .alert("Current Model", isPresented: $showModelInfo) {
                 Button("OK", role: .cancel) { }
@@ -67,12 +72,16 @@ struct MobileGeminiChatView: View {
                     ForEach(conversationVM.messages, id: \.self) { msg in
                         if msg.pending && conversationVM.isProcessingTool {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                toolLoadingView(for: msg)
-                                    .transition(.asymmetric(
-                                        insertion: .opacity.combined(with: .scale(scale: 0.95)),
-                                        removal: .opacity.combined(with: .scale(scale: 0.95))
-                                    ))
-                                    .id(msg)
+                                HStack(spacing: 8) {
+                                    MobileAvatar(participant: .llm)
+                                        .offset(y: 2)
+                                    MobileToolActivityView(toolName: msg.toolCallName)
+                                }
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .scale(scale: 0.95)),
+                                    removal: .opacity.combined(with: .scale(scale: 0.95))
+                                ))
+                                .id(msg)
                             }
                         } else if !msg.message.isEmpty {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -152,9 +161,7 @@ struct MobileGeminiChatView: View {
     
     // MARK: - Helper Methods
     
-    private func toolLoadingView(for msg: ChatMessage) -> some View {
-        EnhancedToolView(message: msg)
-    }
+    private func toolLoadingView(for msg: ChatMessage) -> some View { EmptyView() }
     
     private func scrollToBottom(proxy: ScrollViewProxy) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {

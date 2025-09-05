@@ -8,6 +8,7 @@
 import SwiftUI
 import PetalMLX
 import MLXLMCommon
+import PetalCore
 
 /// Settings view for the desktop Petals app
 struct SettingsView: View {
@@ -17,6 +18,25 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
+                // Telemetry Section
+                Section {
+                    Toggle("Enable Telemetry", isOn: Binding(
+                        get: { TelemetrySettings.shared.telemetryEnabled },
+                        set: { TelemetrySettings.shared.telemetryEnabled = $0 }
+                    ))
+                    Toggle("Verbose Logging", isOn: Binding(
+                        get: { TelemetrySettings.shared.verboseLoggingEnabled },
+                        set: { TelemetrySettings.shared.verboseLoggingEnabled = $0 }
+                    ))
+
+                    NavigationLink("View Telemetry Sessions") {
+                        TelemetrySessionsView()
+                    }
+                } header: {
+                    Text("Telemetry")
+                } footer: {
+                    Text("Collects per-chat metrics like latencies, token speeds, and tool timings. Stored locally.")
+                }
                 // Model Selection Section
                 Section {
                     ModelSelectionRow(conversationVM: conversationVM)

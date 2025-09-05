@@ -380,6 +380,26 @@ struct MobileSettingsView: View {
                 } header: {
                     Text("AI Model")
                 }
+
+                // Telemetry section
+                Section {
+                    Toggle("Enable Telemetry", isOn: Binding(
+                        get: { TelemetrySettings.shared.telemetryEnabled },
+                        set: { TelemetrySettings.shared.telemetryEnabled = $0 }
+                    ))
+                    Toggle("Verbose Logging", isOn: Binding(
+                        get: { TelemetrySettings.shared.verboseLoggingEnabled },
+                        set: { TelemetrySettings.shared.verboseLoggingEnabled = $0 }
+                    ))
+
+                    NavigationLink("View Telemetry Sessions") {
+                        TelemetrySessionsMobileView()
+                    }
+                } header: {
+                    Text("Telemetry")
+                } footer: {
+                    Text("Collects per-chat metrics like latencies, token speeds, and tool timings. Stored locally.")
+                }
                 
                 Section {
                     HStack {

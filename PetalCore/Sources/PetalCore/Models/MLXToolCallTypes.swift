@@ -107,6 +107,7 @@ public enum MLXToolCallType: String, Codable, CaseIterable { // Added CaseIterab
     // case petalFetchRemindersTool // Consider uncommenting if using the old reminder fetch tool
     case petalNotesTool
     case petalRemindersTool // The unified reminders tool
+    case petalContactsTool
 }
 
 // MARK: - Tool Call Arguments Enum
@@ -124,6 +125,7 @@ public enum MLXToolCallArguments: Codable {
     case calendarFetchEvents(CalendarFetchEventsArguments)
     case reminders(RemindersArguments)
     case notes(NotesArguments)
+    case contacts(ContactsArguments)
     /// Represents a state where arguments were missing, couldn't be parsed, or didn't match a known tool structure.
     case unknown
 
@@ -159,6 +161,12 @@ public enum MLXToolCallArguments: Codable {
         // Search Related (used by multiple tools)
         case searchText
         case search // If LLM uses this instead of searchText, map it if necessary
+
+        // Contacts Related
+        case query
+        case limit
+        case includePhones
+        case includeEmails
     }
 
     /// Creates `MLXToolCallArguments` by decoding from a decoder.
@@ -214,6 +222,25 @@ public enum MLXToolCallArguments: Codable {
                 name: name,
                 notes: notes,
                 dueDate: dueDate
+            ))
+            return
+        }
+
+        // 2b. Check for Contacts tool ('action' only is valid for listContacts)
+        if let actionContacts = try container.decodeIfPresent(String.self, forKey: .action),
+           (actionContacts == "searchContacts" || actionContacts == "listContacts")
+        {
+            let query = try container.decodeIfPresent(String.self, forKey: .query)?.nilIfNullString()
+            let limit = try? container.decodeIfPresent(Int.self, forKey: .limit)
+            let includePhones = try? container.decodeIfPresent(Bool.self, forKey: .includePhones)
+            let includeEmails = try? container.decodeIfPresent(Bool.self, forKey: .includeEmails)
+
+            self = .contacts(ContactsArguments(
+                action: actionContacts,
+                query: query,
+                limit: limit,
+                includePhones: includePhones,
+                includeEmails: includeEmails
             ))
             return
         }
@@ -372,6 +399,12 @@ public enum MLXToolCallArguments: Codable {
             try container.encodeIfPresent(args.title, forKey: .title)
             try container.encodeIfPresent(args.body, forKey: .body)
             try container.encodeIfPresent(args.folderName, forKey: .folderName)
+        case let .contacts(args):
+            try container.encode(args.action, forKey: .action)
+            try container.encodeIfPresent(args.query, forKey: .query)
+            try container.encodeIfPresent(args.limit, forKey: .limit)
+            try container.encodeIfPresent(args.includePhones, forKey: .includePhones)
+            try container.encodeIfPresent(args.includeEmails, forKey: .includeEmails)
         case .unknown:
             // Encode as an empty object or handle as needed.
             // Encoding nothing might be appropriate if the outer call expects arguments.
@@ -473,6 +506,15 @@ public struct NotesArguments: Codable {
     public let body: String?
     /// The name of the folder the note belongs to or should be created in (optional).
     public let folderName: String?
+}
+
+/// Arguments for interacting with Contacts (search or list)
+public struct ContactsArguments: Codable {
+    public let action: String
+    public let query: String?
+    public let limit: Int?
+    public let includePhones: Bool?
+    public let includeEmails: Bool?
 }
 
 

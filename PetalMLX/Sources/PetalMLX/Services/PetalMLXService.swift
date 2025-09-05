@@ -62,8 +62,19 @@ public class PetalMLXService {
             onProgress: { _ in }
         ) as! GenerateResult
 
+        // Telemetry: capture model initial output if tool calling is used or detected
+        if shouldUseTools(for: lastMessage) {
+            if let chatId = TelemetryContext.shared.currentChatId, let messageId = TelemetryContext.shared.currentMessageId {
+                TelemetryManager.shared.setModelInitialOutput(chatId: chatId, messageId: messageId, text: result.output)
+            }
+        }
+
         // Process the result for potential tool calls.
         let finalOutput = try await processToolCallsIfNeeded(result)
+        // Telemetry: capture final response text
+        if let chatId = TelemetryContext.shared.currentChatId, let messageId = TelemetryContext.shared.currentMessageId {
+            TelemetryManager.shared.setFinalResponse(chatId: chatId, messageId: messageId, text: finalOutput)
+        }
         return finalOutput
     }
 
@@ -156,6 +167,12 @@ public class PetalMLXService {
                     if isToolCall || useTools {
                         let processedResult = try await processToolCallsIfNeeded(result)
                         let toolName = extractToolName(from: finalOutput)
+                        // Telemetry: record initial model output, chosen tool, and processed result
+                        if let chatId = TelemetryContext.shared.currentChatId, let messageId = TelemetryContext.shared.currentMessageId {
+                            TelemetryManager.shared.setModelInitialOutput(chatId: chatId, messageId: messageId, text: finalOutput)
+                            TelemetryManager.shared.setChosenTool(chatId: chatId, messageId: messageId, name: toolName)
+                            TelemetryManager.shared.setToolRawOutput(chatId: chatId, messageId: messageId, text: processedResult)
+                        }
 
                         // Yield the final processed result for the tool call
                         continuation.yield(PetalMessageStreamChunk(
@@ -198,6 +215,8 @@ public class PetalMLXService {
             return "petalFetchCanvasAssignmentsTool"
         } else if lowercasedMessage.contains("grade") {
             return "petalFetchCanvasGradesTool"
+        } else if lowercasedMessage.contains("contact") || lowercasedMessage.contains("phone") || lowercasedMessage.contains("email") {
+            return "petalContactsTool"
         }
 
         return nil

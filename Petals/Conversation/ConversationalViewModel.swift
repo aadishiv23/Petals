@@ -327,6 +327,19 @@ class ConversationViewModel: ObservableObject {
         // For tool calls, start with an empty message but mark it as pending
         let pendingMessage = ChatMessage.pending(participant: .llm)
         messages.append(pendingMessage)
+        // Telemetry: establish context and start
+        let chatId = currentChatId ?? {
+            let newId = UUID(); currentChatId = newId; return newId
+        }()
+        let responseMessageId = messages.last?.id ?? UUID()
+        TelemetryManager.shared.ensureSession(for: chatId)
+        TelemetryManager.shared.startMessage(
+            chatId: chatId,
+            messageId: responseMessageId,
+            userText: text,
+            modelName: useOllama ? selectedMLXModel.name : selectedModel
+        )
+        TelemetryContext.shared.set(chatId: chatId, messageId: responseMessageId)
 
         do {
             if streaming {
@@ -352,16 +365,21 @@ class ConversationViewModel: ObservableObject {
                                     messages[messages.count - 1].message += chunk.message
                                 }
                             }
+                            // Telemetry: first token and chunk size
+                            TelemetryManager.shared.markFirstToken(chatId: chatId, messageId: responseMessageId)
+                            TelemetryManager.shared.appendGeneratedChunk(chatId: chatId, messageId: responseMessageId, chunk: chunk.message)
                         }
                         // After stream completes, mark as not pending
                         await MainActor.run {
                             messages[messages.count - 1].pending = false
                         }
+                        TelemetryManager.shared.completeMessage(chatId: chatId, messageId: responseMessageId)
                     } catch {
                         await MainActor.run {
                             self.error = error
                             messages.removeLast()
                         }
+                        TelemetryManager.shared.failMessage(chatId: chatId, messageId: responseMessageId, errorDescription: error.localizedDescription)
                     }
                     await MainActor.run {
                         self.currentStreamTask = nil
@@ -371,6 +389,7 @@ class ConversationViewModel: ObservableObject {
                             saveCurrentChatToHistory()
                         }
                     }
+                    TelemetryContext.shared.clear()
                 }
                 // Detach handling; the outer async function can return while streaming continues
                 await currentStreamTask?.value
@@ -378,12 +397,17 @@ class ConversationViewModel: ObservableObject {
                 let response = try await chatModel.sendMessage(text)
                 messages[messages.count - 1].message = response
                 messages[messages.count - 1].pending = false
+                // Non-streaming telemetry
+                TelemetryManager.shared.markFirstToken(chatId: chatId, messageId: responseMessageId)
+                TelemetryManager.shared.appendGeneratedChunk(chatId: chatId, messageId: responseMessageId, chunk: response)
+                TelemetryManager.shared.completeMessage(chatId: chatId, messageId: responseMessageId)
             }
         } catch {
             self.error = error
             messages.removeLast()
             busy = false
             isProcessingTool = false
+            TelemetryManager.shared.failMessage(chatId: chatId, messageId: responseMessageId, errorDescription: error.localizedDescription)
         }
     }
 
