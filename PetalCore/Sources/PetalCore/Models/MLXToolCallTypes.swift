@@ -205,25 +205,33 @@ public enum MLXToolCallArguments: Codable {
             return
         }
 
-        // 2. Check for Reminders tool ('action' + listName/dueDate/name)
-        if let action = try container.decodeIfPresent(String.self, forKey: .action),
-           (allKeys.contains(.listName) || allKeys.contains(.dueDate) || allKeys.contains(.name)) // 'name' is reminder title key
-        {
+        // 2. Check for Reminders tool
+        // Accept any of the supported actions, even if only 'action' is provided (e.g., getAllLists)
+        if let actionRaw = try container.decodeIfPresent(String.self, forKey: .action) {
+            let action = actionRaw
             let listName = try container.decodeIfPresent(String.self, forKey: .listName)?.nilIfNullString()
-            let searchText = try container.decodeIfPresent(String.self, forKey: .searchText)?.nilIfNullString()
-            let name = try container.decodeIfPresent(String.self, forKey: .name)?.nilIfNullString() // Reminder title
-            let notes = try container.decodeIfPresent(String.self, forKey: .notes)?.nilIfNullString() // Reminder notes/body
-            let dueDate = try container.decodeIfPresent(String.self, forKey: .dueDate)?.nilIfNullString() // Handle "null"
+            // Accept both 'searchText' and 'search'
+            let searchTextPrimary = try container.decodeIfPresent(String.self, forKey: .searchText)?.nilIfNullString()
+            let searchTextAlt = try container.decodeIfPresent(String.self, forKey: .search)?.nilIfNullString()
+            let searchText = searchTextPrimary ?? searchTextAlt
+            let name = try container.decodeIfPresent(String.self, forKey: .name)?.nilIfNullString()
+            let notes = try container.decodeIfPresent(String.self, forKey: .notes)?.nilIfNullString()
+            let dueDate = try container.decodeIfPresent(String.self, forKey: .dueDate)?.nilIfNullString()
 
-            self = .reminders(RemindersArguments(
-                action: action,
-                listName: listName,
-                searchText: searchText,
-                name: name,
-                notes: notes,
-                dueDate: dueDate
-            ))
-            return
+            let supported = [
+                "getAllLists", "getAllReminders", "searchReminders", "createReminder", "openReminder"
+            ]
+            if supported.contains(action) {
+                self = .reminders(RemindersArguments(
+                    action: action,
+                    listName: listName,
+                    searchText: searchText,
+                    name: name,
+                    notes: notes,
+                    dueDate: dueDate
+                ))
+                return
+            }
         }
 
         // 2b. Check for Contacts tool ('action' only is valid for listContacts)

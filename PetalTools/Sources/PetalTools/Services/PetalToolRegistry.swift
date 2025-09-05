@@ -53,6 +53,7 @@ public actor PetalToolRegistry: PetalToolRegistering {
         #endif
         #if os(iOS)
         let contactsTool = await PetalToolFactory.createContactsTool()
+        let remindersTool = await PetalToolFactory.createRemindersTool()
         #endif
 
         await registerTool(calendarTool)
@@ -69,6 +70,7 @@ public actor PetalToolRegistry: PetalToolRegistering {
         #endif
         #if os(iOS)
         await registerTool(contactsTool)
+        await registerTool(remindersTool)
         #endif
 
         isInitialized = true

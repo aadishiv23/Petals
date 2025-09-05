@@ -657,6 +657,25 @@ public class AppToolCallHandler {
                 }
                 throw ToolCallError.toolExecutionFailed(name.rawValue, error)
             }
+        #else
+        case let (tool as PetalRemindersTool, .reminders(args)):
+            do {
+                let jsonData = try JSONEncoder().encode(args)
+                let input = try JSONDecoder().decode(PetalRemindersTool.Input.self, from: jsonData)
+
+                let output = try await tool.execute(input)
+                logger.info("Tool \(name.rawValue) executed successfully.")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: true)
+                }
+                return output.result
+            } catch {
+                logger.error("Error executing tool \(name.rawValue): \(error)")
+                if let chatId, let messageId {
+                    TelemetryManager.shared.endTool(chatId: chatId, messageId: messageId, name: name.rawValue, success: false, errorDescription: error.localizedDescription)
+                }
+                throw ToolCallError.toolExecutionFailed(name.rawValue, error)
+            }
         #endif
 
         default:

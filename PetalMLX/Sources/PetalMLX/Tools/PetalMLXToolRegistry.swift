@@ -54,7 +54,9 @@ public class PetalMLXToolRegistry {
         #endif
         #if os(iOS)
         let contactsTool = PetalContactsTool()
+        let remindersTool = PetalRemindersTool()
         tools.append(contactsTool)
+        tools.append(remindersTool)
         #endif
 
         return tools
