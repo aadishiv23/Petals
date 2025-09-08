@@ -58,6 +58,20 @@ public class MLXModelManager: ObservableObject, Sendable {
         return modelStatus[model.idString] ?? .notDownloaded
     }
     
+    /// Get the first available (downloaded) model, or nil if none are available
+    public func getFirstAvailableModel() -> ModelConfiguration? {
+        return availableModels.first { model in
+            isModelAvailable(model)
+        }
+    }
+    
+    /// Get all downloaded models
+    public func getDownloadedModels() -> [ModelConfiguration] {
+        return availableModels.filter { model in
+            isModelAvailable(model)
+        }
+    }
+    
     /// Start downloading a model
     public func downloadModel(_ model: ModelConfiguration) async {
         let modelId = model.idString

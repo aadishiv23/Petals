@@ -73,13 +73,16 @@ class ConversationViewModel: ObservableObject {
     // MARK: Private Properties
 
     /// The active AI chat model being used for conversation
-    private var chatModel: AIChatModel
+    internal var chatModel: AIChatModel
     private var currentStreamTask: Task<Void, Never>?
 
     private let toolEvaluator = ToolTriggerEvaluator()
     
     /// MLX Model Manager for handling model downloads and availability
     private let mlxModelManager = MLXModelManager.shared
+    
+    /// Published token usage for UI display
+    @Published var currentTokenUsage: (used: Int, max: Int) = (0, 0)
 
     // MARK: Initializer
 
@@ -103,6 +106,12 @@ class ConversationViewModel: ObservableObject {
         messages.removeAll()
         currentChatId = UUID()
         currentChatTitle = "New Chat"
+        
+        // Clear MLX model history when starting new chat
+        if useMLX, let mlxModel = chatModel as? PetalMLXChatModel {
+            mlxModel.clearHistory()
+        }
+        
         switchModel()
     }
     
@@ -186,22 +195,30 @@ class ConversationViewModel: ObservableObject {
         if useMLX {
             // Check if selected MLX model is available
             if mlxModelManager.isModelAvailable(selectedMLXModel) {
-                chatModel = PetalMLXChatModel(model: selectedMLXModel)
+                chatModel = PetalMLXChatModel(model: selectedMLXModel, maxContextTokens: AppExtiOSConstants.contextWindowLength)
                 print("🔵 Now using PetalMLX (local model) with \(selectedMLXModel.name)")
             } else {
-                // Model not available, show error or fallback
-                error = MLXModelManagerError.modelNotDownloaded(selectedMLXModel.name)
-                print("❌ MLX model \(selectedMLXModel.name) is not downloaded")
-                
-                // Fallback to Gemini temporarily
-                useMLX = false
-                chatModel = GeminiChatModel(modelName: selectedModel)
-                print("🔄 Falling back to Gemini due to unavailable MLX model")
+                // Try to find any available MLX model as fallback
+                if let availableModel = mlxModelManager.getFirstAvailableModel() {
+                    selectedMLXModel = availableModel // Update selection to the available model
+                    chatModel = PetalMLXChatModel(model: availableModel, maxContextTokens: AppExtiOSConstants.contextWindowLength)
+                    print("🔵 Using available MLX model: \(availableModel.name) instead of \(selectedMLXModel.name)")
+                } else {
+                    // No MLX models available, show error and fallback to Gemini
+                    error = MLXModelManagerError.modelNotDownloaded(selectedMLXModel.name)
+                    print("❌ MLX model \(selectedMLXModel.name) is not downloaded")
+                    
+                    // Fallback to Gemini temporarily
+                    useMLX = false
+                    chatModel = GeminiChatModel(modelName: selectedModel)
+                    print("🔄 Falling back to Gemini due to unavailable MLX model")
+                }
             }
         } else {
             chatModel = GeminiChatModel(modelName: selectedModel)
             print("🟢 Now using Gemini (Google API) with model: \(selectedModel)")
         }
+        updateTokenUsage()
     }
     
     // MARK: MLX Model Management
@@ -302,6 +319,7 @@ class ConversationViewModel: ObservableObject {
                         self.currentStreamTask = nil
                         busy = false
                         isProcessingTool = false
+                        updateTokenUsage() // Update token usage after response
                         if !messages.isEmpty && currentChatId != nil {
                             saveCurrentChatToHistory()
                         }
@@ -313,6 +331,7 @@ class ConversationViewModel: ObservableObject {
                 let response = try await chatModel.sendMessage(text)
                 messages[messages.count - 1].message = response
                 messages[messages.count - 1].pending = false
+                updateTokenUsage() // Update token usage after response
                 // Non-streaming telemetry
                 TelemetryManager.shared.markFirstToken(chatId: chatId, messageId: responseMessageId)
                 TelemetryManager.shared.appendGeneratedChunk(chatId: chatId, messageId: responseMessageId, chunk: response)
@@ -331,6 +350,18 @@ class ConversationViewModel: ObservableObject {
 
     private func messageRequiresTool(_ text: String) -> Bool {
         return ExemplarProvider.shared.shouldUseTools(for: text)
+    }
+    
+    // MARK: Token Usage Management
+    
+    /// Updates the current token usage from the MLX chat model
+    internal func updateTokenUsage() {
+        if useMLX, let mlxModel = chatModel as? PetalMLXChatModel {
+            currentTokenUsage = mlxModel.getCurrentTokenUsage()
+        } else {
+            // For non-MLX models, reset token usage
+            currentTokenUsage = (0, 0)
+        }
     }
 
     // MARK: Chat History Management

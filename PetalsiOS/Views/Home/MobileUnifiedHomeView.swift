@@ -344,6 +344,79 @@ struct MobileChatHistoryCard: View {
     }
 }
 
+/// Token usage display view for MLX models
+struct TokenUsageView: View {
+    @ObservedObject var conversationVM: ConversationViewModel
+    
+    private var usagePercentage: Double {
+        guard conversationVM.currentTokenUsage.max > 0 else { return 0 }
+        return Double(conversationVM.currentTokenUsage.used) / Double(conversationVM.currentTokenUsage.max)
+    }
+    
+    private var usageColor: Color {
+        switch usagePercentage {
+        case 0..<0.7:
+            return .green
+        case 0.7..<0.9:
+            return .orange
+        default:
+            return .red
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Token Usage", systemImage: "text.alignleft")
+                    .font(.headline)
+                Spacer()
+                Text("\(conversationVM.currentTokenUsage.used)/\(conversationVM.currentTokenUsage.max)")
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundColor(.secondary)
+            }
+            
+            // Progress bar
+            ProgressView(value: usagePercentage) {
+                HStack {
+                    Text("Context Window")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("\(Int(usagePercentage * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .progressViewStyle(LinearProgressViewStyle(tint: usageColor))
+            
+            // Warning if near capacity
+            if usagePercentage > 0.8 {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                        .font(.caption)
+                    Text("Context window is nearly full. Older messages will be trimmed.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            // Clear context button
+            if conversationVM.currentTokenUsage.used > 0 {
+                Button("Clear Conversation Context") {
+                    if let mlxModel = conversationVM.chatModel as? PetalMLXChatModel {
+                        mlxModel.clearHistory()
+                        conversationVM.updateTokenUsage()
+                    }
+                }
+                .font(.caption)
+                .foregroundColor(.blue)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 /// Mobile settings view
 struct MobileSettingsView: View {
     @ObservedObject var conversationVM: ConversationViewModel
@@ -376,11 +449,49 @@ struct MobileSettingsView: View {
                             MLXModelSettingsView()
                         }
                         .foregroundColor(Color(hex: "5E5CE6"))
+                        
+                        // Show MLX model status
+                        let downloadedModels = MLXModelManager.shared.getDownloadedModels()
+                        HStack {
+                            if downloadedModels.isEmpty {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.orange)
+                                Text("No MLX models downloaded")
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                Text("\(downloadedModels.count) MLX model(s) available")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .font(.caption)
+                        .padding(.top, 4)
                     }
                 } header: {
                     Text("AI Model")
+                } footer: {
+                    if conversationVM.useMLX {
+                        let downloadedModels = MLXModelManager.shared.getDownloadedModels()
+                        if downloadedModels.isEmpty {
+                            Text("Download MLX models to use local AI processing.")
+                        } else {
+                            Text("Using \(downloadedModels.count) local MLX model(s) for privacy and offline capability.")
+                        }
+                    }
                 }
 
+                // Token Usage section (only show for MLX models)
+                if conversationVM.useMLX {
+                    Section {
+                        TokenUsageView(conversationVM: conversationVM)
+                    } header: {
+                        Text("Context Usage")
+                    } footer: {
+                        Text("Shows current token usage for the MLX conversation context window.")
+                    }
+                }
+                
                 // Telemetry section
                 Section {
                     Toggle("Enable Telemetry", isOn: Binding(
