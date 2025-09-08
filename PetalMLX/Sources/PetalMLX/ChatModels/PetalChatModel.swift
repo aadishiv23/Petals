@@ -37,7 +37,7 @@ public class PetalMLXChatModel: AIChatModel {
             let producer = Task {
                 do {
                     let systemMessage = ChatMessage(
-                        message: "You are a helpful assistant with access to tools: Calendar (create/fetch events), Canvas/LMS (courses, assignments, grades), Reminders (create/search/manage), Notes (create/search/manage), and Contacts (search/list). Only use tools when explicitly requested. Current date is April 14, 2025.",
+                        message: "You are a helpful assistant with access to tools: Calendar (create/fetch events), Canvas/LMS (courses, assignments, grades), Reminders (create/search/manage), Notes (create/search/manage), and Contacts (search/list). Only use tools when explicitly requested. You will be passed in a set of tools for a query IF it is deemed to require tools. Current date is \(Date).",
                         participant: .system
                     )
                     let userMessage = ChatMessage(message: text, participant: .user)
