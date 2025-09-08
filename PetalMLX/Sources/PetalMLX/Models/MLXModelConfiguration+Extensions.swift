@@ -35,7 +35,7 @@ extension ModelConfiguration: @retroactive Equatable {
     public var idString: String {
         switch id {
         case .id(let stringId):
-            return stringId
+            return stringId.0  // Extract the string from the tuple (String, revision: String)
         case .directory(let url):
             return url.path
         }
@@ -64,6 +64,15 @@ extension ModelConfiguration: @retroactive Equatable {
     public static let deepseek_r1_distill_llama_8b_4bit = ModelConfiguration(
         id: "mlx-community/DeepSeek-R1-Distill-Llama-8B-4bit"
     )
+    
+    // image/text to text
+    public static let gemma_3_4b_it_8bit = ModelConfiguration(
+        id: "mlx-community/gemma-3-4b-it-8bit-DWQ"
+    )
+    
+    public static let gemma_3_4b_it_4bit = ModelConfiguration(
+        id: "mlx-community/gemma-3-4b-it-4bit-DWQ"
+    )
 
     public static let availableModels: [ModelConfiguration] = [
         llama_3_2_1b_4bit,
@@ -71,11 +80,14 @@ extension ModelConfiguration: @retroactive Equatable {
         llama_3_1_8b_4bit,
         deepseek_r1_distill_qwen_1_5b_4bit,
         deepseek_r1_distill_qwen_1_5b_8bit,
-        deepseek_r1_distill_llama_8b_4bit
+        deepseek_r1_distill_llama_8b_4bit,
+        gemma_3_4b_it_4bit,
+        gemma_3_4b_it_8bit
     ]
 
     public static var defaultModel: ModelConfiguration {
-        llama_3_2_3b_4bit
+        gemma_3_4b_it_4bit
+        //llama_3_2_3b_4bit
         // deepseek_r1_distill_llama_8b_4bit
     }
 

@@ -27,6 +27,49 @@ struct TelemetrySessionsMobileView: View {
                                 Text("Chars: \(m.responseLengthChars)")
                                     .foregroundColor(.secondary)
                             }
+                            // New: Model/tool-call visibility
+                            if let initial = m.modelInitialOutput, !initial.isEmpty {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Model output (pre-tool)")
+                                        .font(.subheadline)
+                                    ScrollView(.horizontal, showsIndicators: false) { Text(initial).font(.caption).foregroundColor(.secondary) }
+                                }
+                                .padding(.top, 4)
+                            }
+                            if let raw = m.toolCallJsonRaw, !raw.isEmpty {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Tool call JSON (raw)")
+                                        .font(.subheadline)
+                                    ScrollView(.horizontal, showsIndicators: false) { Text(raw).font(.caption2).foregroundColor(.secondary) }
+                                }
+                                .padding(.top, 2)
+                            }
+                            if let norm = m.toolCallJsonNormalized, !norm.isEmpty {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Tool call JSON (normalized)")
+                                        .font(.subheadline)
+                                    ScrollView(.horizontal, showsIndicators: false) { Text(norm).font(.caption2).foregroundColor(.secondary) }
+                                }
+                            }
+                            if let tool = m.chosenToolName, !tool.isEmpty {
+                                HStack { Text("Chosen tool:") .font(.subheadline); Text(tool).font(.subheadline).foregroundColor(.secondary) }
+                            }
+                            if let rawOut = m.toolRawOutput, !rawOut.isEmpty {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Tool processed output")
+                                        .font(.subheadline)
+                                    Text(rawOut).font(.caption).foregroundColor(.secondary)
+                                }
+                                .padding(.top, 2)
+                            }
+                            if let final = m.finalResponse, !final.isEmpty {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Final response")
+                                        .font(.subheadline)
+                                    Text(final).font(.caption).foregroundColor(.secondary)
+                                }
+                                .padding(.top, 2)
+                            }
                             if !m.toolInvocations.isEmpty {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Tools").font(.subheadline)

@@ -18,6 +18,36 @@
             endingLineNumber = "550"
             landmarkName = "processToolCallArgument(with:argument:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "615E40BF-4D5A-4F55-8E6D-564B80EE55CC - 52d1ca9b7738db15"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for PetalMLX.AppToolCallHandler.processToolCallArgument(with: PetalCore.MLXToolCallType, argument: PetalCore.MLXToolCallArguments) async throws -&gt; Swift.String"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "550"
+                  endingLineNumber = "550">
+               </Location>
+               <Location
+                  uuid = "615E40BF-4D5A-4F55-8E6D-564B80EE55CC - 836f74f9ee8ab25f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(22) suspend resume partial function for PetalMLX.AppToolCallHandler.processToolCallArgument(with: PetalCore.MLXToolCallType, argument: PetalCore.MLXToolCallArguments) async throws -&gt; Swift.String"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Tools/AppToolCallHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "550"
+                  endingLineNumber = "550">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -113,6 +143,214 @@
             startingLineNumber = "79"
             endingLineNumber = "79"
             landmarkName = "sendSingleMessage(model:messages:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "DC9F1ED2-8E65-414D-A39F-4AB21DB8112C - 78ebb4982c76cebd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for PetalMLX.PetalMLXService.sendSingleMessage(model: MLXLMCommon.ModelConfiguration, messages: Swift.Array&lt;PetalCore.ChatMessage&gt;) async throws -&gt; Swift.String"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79">
+               </Location>
+               <Location
+                  uuid = "DC9F1ED2-8E65-414D-A39F-4AB21DB8112C - cbd2f2f710d84a9f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for PetalMLX.PetalMLXService.sendSingleMessage(model: MLXLMCommon.ModelConfiguration, messages: Swift.Array&lt;PetalCore.ChatMessage&gt;) async throws -&gt; Swift.String"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79">
+               </Location>
+               <Location
+                  uuid = "DC9F1ED2-8E65-414D-A39F-4AB21DB8112C - 9bf02ed198761042"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(8) suspend resume partial function for PetalMLX.PetalMLXService.sendSingleMessage(model: MLXLMCommon.ModelConfiguration, messages: Swift.Array&lt;PetalCore.ChatMessage&gt;) async throws -&gt; Swift.String"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79">
+               </Location>
+               <Location
+                  uuid = "DC9F1ED2-8E65-414D-A39F-4AB21DB8112C - c4448dfc1e00de35"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for PetalMLX.PetalMLXService.sendSingleMessage(model: MLXLMCommon.ModelConfiguration, messages: Swift.Array&lt;PetalCore.ChatMessage&gt;) async throws -&gt; Swift.String"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/PetalMLXService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "79"
+                  endingLineNumber = "79">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "generate(messages:tools:onProgress:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1 - c2351f9940f76110"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for PetalMLX.ConcreteCoreModelContainer.generate(messages: Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.String&gt;&gt;, tools: Swift.Optional&lt;Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.Sendable&gt;&gt;&gt;, onProgress: @Sendable (Swift.String) -&gt; ()) async throws -&gt; MLXLMCommon.GenerateResult"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+               <Location
+                  uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1 - fcaaa414175be566"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) await resume partial function for PetalMLX.ConcreteCoreModelContainer.generate(messages: Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.String&gt;&gt;, tools: Swift.Optional&lt;Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.Sendable&gt;&gt;&gt;, onProgress: @Sendable (Swift.String) -&gt; ()) async throws -&gt; MLXLMCommon.GenerateResult"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+               <Location
+                  uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1 - 6eda51227c61dcf6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for PetalMLX.ConcreteCoreModelContainer.generate(messages: Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.String&gt;&gt;, tools: Swift.Optional&lt;Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.Sendable&gt;&gt;&gt;, onProgress: @Sendable (Swift.String) -&gt; ()) async throws -&gt; MLXLMCommon.GenerateResult"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+               <Location
+                  uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1 - 1b83934b7f0c58d4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for PetalMLX.ConcreteCoreModelContainer.generate(messages: Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.String&gt;&gt;, tools: Swift.Optional&lt;Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.Sendable&gt;&gt;&gt;, onProgress: @Sendable (Swift.String) -&gt; ()) async throws -&gt; MLXLMCommon.GenerateResult"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+               <Location
+                  uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1 - 20abbf3d9cdec298"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (MLXLMCommon.ModelContext) async throws -&gt; MLXLMCommon.GenerateResult in PetalMLX.ConcreteCoreModelContainer.generate(messages: Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.String&gt;&gt;, tools: Swift.Optional&lt;Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.Sendable&gt;&gt;&gt;, onProgress: @Sendable (Swift.String) -&gt; ()) async throws -&gt; MLXLMCommon.GenerateResult"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+               <Location
+                  uuid = "A8DA9F2B-44FC-449A-A80C-FBF8F0F9F3F1 - c5de74856550a4ee"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable (MLXLMCommon.ModelContext) async throws -&gt; MLXLMCommon.GenerateResult in PetalMLX.ConcreteCoreModelContainer.generate(messages: Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.String&gt;&gt;, tools: Swift.Optional&lt;Swift.Array&lt;Swift.Dictionary&lt;Swift.String, Swift.Sendable&gt;&gt;&gt;, onProgress: @Sendable (Swift.String) -&gt; ()) async throws -&gt; MLXLMCommon.GenerateResult"
+                  moduleName = "PetalsiOS.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/aadishivmalhotra/Desktop/SwiftProjects/Petals/PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "913C6F64-0721-453B-BDDB-093FF8B69E0C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "generate(messages:tools:onProgress:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BC16C3C5-C67E-4C02-954E-0CE6F8D0103E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "generate(messages:tools:onProgress:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "50712A10-EE14-4117-9F56-A6C1BF24FB11"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PetalMLX/Sources/PetalMLX/Services/ConcreteCoreModelContainer.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "generate(messages:tools:onProgress:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

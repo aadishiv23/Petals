@@ -36,6 +36,8 @@ public struct TelemetryMessageMetrics: Codable, Hashable {
     public var modelInitialOutput: String?
     public var chosenToolName: String?
     public var toolRawOutput: String?
+    public var toolCallJsonRaw: String?
+    public var toolCallJsonNormalized: String?
     public var responseLengthChars: Int
     public var estimatedTokens: Int
     public var toolInvocations: [TelemetryToolInvocation]
@@ -56,6 +58,8 @@ public struct TelemetryMessageMetrics: Codable, Hashable {
         self.modelInitialOutput = nil
         self.chosenToolName = nil
         self.toolRawOutput = nil
+        self.toolCallJsonRaw = nil
+        self.toolCallJsonNormalized = nil
     }
 
     public var timeToFirstTokenMs: Double? {

@@ -117,7 +117,7 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
     /// - Returns: A `GenerateResult` object containing the generated output.
     public func generate(
         messages: [[String: String]],
-        tools: [Tool]?,
+        tools: [[String: any Sendable]]?,
         onProgress: @escaping OnProgress
     ) async throws -> GenerateResult {
         let modelContainer = try await load()
@@ -238,7 +238,7 @@ public final class ConcreteCoreModelContainer: CoreModelContainerProtocol, @unch
      // Keep the generate method but remove the immediate load
      public func generate(
          messages: [[String: String]],
-         tools: [Tool]?,
+         tools: [[String: any Sendable]]?,
          onProgress: @escaping OnProgress
      ) async throws -> GenerateResult {
          // Use the cached model or load if needed

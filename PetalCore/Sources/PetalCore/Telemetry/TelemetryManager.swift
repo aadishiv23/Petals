@@ -113,6 +113,16 @@ public final class TelemetryManager: ObservableObject {
         persist()
     }
 
+    public func setToolCallJson(chatId: UUID, messageId: UUID, raw: String?, normalized: String?) {
+        guard settings.telemetryEnabled else { return }
+        guard var session = sessions[chatId], let idx = session.messages.firstIndex(where: { $0.messageId == messageId }) else { return }
+        if let raw { session.messages[idx].toolCallJsonRaw = raw }
+        if let normalized { session.messages[idx].toolCallJsonNormalized = normalized }
+        session.updatedAt = Date()
+        sessions[chatId] = session
+        persist()
+    }
+
     public func failMessage(chatId: UUID, messageId: UUID, errorDescription: String) {
         guard settings.telemetryEnabled else { return }
         guard var session = sessions[chatId], let idx = session.messages.firstIndex(where: { $0.messageId == messageId }) else { return }

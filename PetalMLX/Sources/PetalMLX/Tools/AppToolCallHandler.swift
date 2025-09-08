@@ -276,6 +276,10 @@ public class AppToolCallHandler {
 
             logger.debug("Normalized JSON: \(normalizedJson)")
 
+            // Telemetry: store raw and normalized JSON
+            if let chatId = TelemetryContext.shared.currentChatId, let messageId = TelemetryContext.shared.currentMessageId {
+                TelemetryManager.shared.setToolCallJson(chatId: chatId, messageId: messageId, raw: jsonString, normalized: normalizedJson)
+            }
             return try await decodeAndExecuteToolCall(normalizedJson)
         } catch {
             logger.error("JSON processing or decoding error: \(error.localizedDescription)")
@@ -381,6 +385,10 @@ public class AppToolCallHandler {
 
             logger.debug("Normalized JSON: \(normalizedJson)")
 
+            // Telemetry: store raw and normalized JSON
+            if let chatId = TelemetryContext.shared.currentChatId, let messageId = TelemetryContext.shared.currentMessageId {
+                TelemetryManager.shared.setToolCallJson(chatId: chatId, messageId: messageId, raw: jsonString, normalized: normalizedJson)
+            }
             return try await decodeAndExecuteToolCall(normalizedJson)
         } catch {
             logger.error("JSON processing error: \(error.localizedDescription)")
